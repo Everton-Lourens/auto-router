@@ -162,23 +162,51 @@ async function screenshot(name) {
   console.log('Menu WAN aberto.');
 
     ///////
-await page.evaluate(() => {
+await page.evaluate(async () => {
   const normalize = (v) => (v || '').replace(/\s+/g, ' ').trim().toLowerCase();
 
-  const target = [...document.querySelectorAll('span.instName.collapsibleInst')]
-    .find(el => {
-      const t = normalize(el.innerText || el.textContent);
-      return t === 'pppoe' || t === 'ppoe' || t.includes('pppoe') || t.includes('ppoe');
+  const isVisible = (el) => {
+    if (!el) return false;
+    const s = getComputedStyle(el);
+    return s.display !== 'none' && s.visibility !== 'hidden' && el.getClientRects().length > 0;
+  };
+
+  const clickEl = (el) => {
+    if (!el) return false;
+    el.scrollIntoView({ block: 'center', inline: 'center' });
+    el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }));
+    el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
+    el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
+    el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+    el.click?.();
+    return true;
+  };
+
+  const getMatches = () =>
+    [...document.querySelectorAll('span.instName.collapsibleInst')].filter((el) => {
+      const t = normalize(el.textContent);
+      return isVisible(el) && (t === 'pppoe' || t === 'ppoe' || t.includes('pppoe') || t.includes('ppoe'));
     });
 
-  if (!target) return false;
+  const getClickable = (el) =>
+    el.closest('tr, li, div') ||
+    el.parentElement ||
+    el;
 
-  const clickable = target.closest('tr, li, div, span') || target;
+  const all = getMatches();
 
-  clickable.scrollIntoView({ block: 'center', inline: 'center' });
-  clickable.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
-  clickable.click?.();
+  for (const el of all) {
+    if (el.classList.contains('instNameExp')) {
+      clickEl(getClickable(el));
+    }
+  }
 
+  await new Promise((r) => setTimeout(r, 400));
+
+  const first = getMatches().find((el) => !el.classList.contains('instNameExp')) || getMatches()[0];
+  if (!first) return false;
+
+  clickEl(getClickable(first));
   return true;
 });
     ///////
