@@ -143,7 +143,9 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
     console.log('Abrindo Controle de serviço local...');
 
-    await clickContains('p.AE1leMenu3', 'Controle de serviço local');
+    const ok = await clickText(page, 'Controle de serviço local');
+    console.log('clicou em Controle de serviço local?', ok);
+
     await wait(2000);
 
     await screenshot('06-acess-control.png');
