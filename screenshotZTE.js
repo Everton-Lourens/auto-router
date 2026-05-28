@@ -33,6 +33,25 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     height: 720
   });
 
+  await loginPage();
+  await wanPage()
+
+  
+  
+
+async function screenshot(name) {
+
+    const path = `${SAVE_DIR}/${name}`;
+
+    console.log(`Screenshot: ${path}`);
+
+    await page.screenshot({
+      path,
+      fullPage: true
+    });
+  }
+  
+
   async function wait(time) {
     await new Promise(resolve => setTimeout(resolve, time));
   }
@@ -62,6 +81,8 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     return clicked;
   }
 
+  async function loginPage(login = 'multipro', password = '@62474b3745JR') {
+  
   console.log('Abrindo roteador...');
 
   await page.goto('http://192.168.2.1/', {
@@ -73,31 +94,49 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
   console.log('Preenchendo login...');
 
-  await page.type('input[type="text"]', 'multipro');
-  await page.type('input[type="password"]', '@62474b3745JR');
+  await page.type('input[type="text"]', `${login}`);
+  await page.type('input[type="password"]', `${password}`);
 
   console.log('Clicando login...');
   await page.click('input.button.login');
 
   await wait(8000);
 
+      console.log('Login realizado.');
+  }
+
+  async function wanPage() {
+
   console.log('Abrindo menu WAN...');
 
-  const clickedWan = await clickIfExistsByText(
+  await clickIfExistsByText(
     'WAN',
     'span.emColor.link2More, a, div, p, span'
   );
 
-  if (clickedWan) {
-    console.log('WAN clicado com sucesso.');
-  } else {
-    console.log('WAN não encontrado. Seguindo sem clicar.');
-  }
-
   await wait(2000);
 
-  console.log('Etapa WAN concluída. Nenhum print foi tirado.');
+  console.log('Menu WAN aberto.');
+
+  await screenshot('01-pppoe-expanded.png')
+  
+  console.log('Etapa WAN concluída.');
+  }
 
   await browser.close();
 
 })();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
