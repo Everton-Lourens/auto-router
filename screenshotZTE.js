@@ -161,6 +161,28 @@ async function screenshot(name) {
 
   console.log('Menu WAN aberto.');
 
+    ///////
+await page.evaluate(() => {
+  const normalize = (v) => (v || '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+  const target = [...document.querySelectorAll('span.instName.collapsibleInst')]
+    .find(el => {
+      const t = normalize(el.innerText || el.textContent);
+      return t === 'pppoe' || t === 'ppoe' || t.includes('pppoe') || t.includes('ppoe');
+    });
+
+  if (!target) return false;
+
+  const clickable = target.closest('tr, li, div, span') || target;
+
+  clickable.scrollIntoView({ block: 'center', inline: 'center' });
+  clickable.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+  clickable.click?.();
+
+  return true;
+});
+    ///////
+
   await screenshot('01-pppoe-expanded.png')
 
   console.log('Etapa WAN concluída.');
