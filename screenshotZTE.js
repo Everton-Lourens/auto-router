@@ -61,18 +61,56 @@ async function screenshot(name) {
 
     const clicked = await page.evaluate(
       ({ text, selectorFallback }) => {
-        const elements = Array.from(document.querySelectorAll(selectorFallback));
-        const target = elements.find(el => {
-          const value = (el.innerText || el.textContent || '').trim();
-          return value === text || value.includes(text);
-        });
+        const normalize = value => (value || '').replace(/\s+/g, ' ').trim();
 
-        if (target) {
-          target.click();
-          return true;
+        const elements = Array.from(document.querySelectorAll(selectorFallback)).filter(
+          el => {
+            const style = window.getComputedStyle(el);
+            return (
+              style &&
+              style.visibility !== 'hidden' &&
+              style.display !== 'none' &&
+              el.getClientRects().length > 0
+            );
+          }
+        );
+
+        const exactMatch = elements.find(el => normalize(el.innerText || el.textContent) === text);
+        const partialMatch = elements.find(el => normalize(el.innerText || el.textContent).includes(text));
+        const target = exactMatch || partialMatch;
+
+        if (!target) {
+          return false;
         }
 
-        return false;
+        const clickable =
+          target.closest('a, button, [role="button"], [onclick]') ||
+          target;
+
+        clickable.scrollIntoView({ block: 'center', inline: 'center' });
+
+        clickable.dispatchEvent(
+          new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window })
+        );
+        clickable.dispatchEvent(
+          new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window })
+        );
+        clickable.dispatchEvent(
+          new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window })
+        );
+        clickable.dispatchEvent(
+          new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+          })
+        );
+
+        if (typeof clickable.click === 'function') {
+          clickable.click();
+        }
+
+        return true;
       },
       { text, selectorFallback }
     );
@@ -107,11 +145,16 @@ async function screenshot(name) {
 
   async function wanPage() {
 
-  console.log('Abrindo menu WAN...');
+  console.log('Abrindo menu Internet...');
+
+  await page.click('#internet');
+  await wait(1500);
+
+  console.log('Abrindo submenu WAN...');
 
   await clickIfExistsByText(
     'WAN',
-    'span.emColor.link2More, a, div, p, span'
+    'a'
   );
 
   await wait(2000);
@@ -119,7 +162,7 @@ async function screenshot(name) {
   console.log('Menu WAN aberto.');
 
   await screenshot('01-pppoe-expanded.png')
-  
+
   console.log('Etapa WAN concluída.');
   }
 
