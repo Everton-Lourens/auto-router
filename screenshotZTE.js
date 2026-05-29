@@ -183,12 +183,12 @@ async function clickIfExistsBySelector(selector) {
 
   async function wanPage() {
 
-  console.log('Abrindo menu Internet...');
+  //console.log('Abrindo menu Internet...');
 
-  await page.click('#internet');
+  //await page.click('#internet');
   await wait(1500);
 
-  console.log('Abrindo submenu WAN...');
+  //console.log('Abrindo submenu WAN...');
 
   await clickIfExistsBySelector('#WANUrl');
 
