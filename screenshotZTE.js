@@ -56,50 +56,24 @@ async function screenshot(name) {
     await new Promise(resolve => setTimeout(resolve, time));
   }
 
-async function clickFirstInternetItem() {
-  console.log('Procurando o primeiro item visível da lista Internet...');
+async function clickFirstInternetItem(page) {
+  console.log('Procurando o primeiro item visível...');
 
-  const clicked = await page.evaluate(() => {
-    const isVisible = (el) => {
-      const style = window.getComputedStyle(el);
-      return (
-        style &&
-        style.display !== 'none' &&
-        style.visibility !== 'hidden' &&
-        el.getClientRects().length > 0
-      );
-    };
+  await page.waitForSelector('#Internet_container .instName.collapsibleInst');
 
-    // Pega só os itens reais da lista, não o template escondido
-    const cards = Array.from(
-      document.querySelectorAll('#Internet_container > div[id^="template_Internet_"]')
-    ).filter(isVisible);
+  const items = await page.$$('#Internet_container .instName.collapsibleInst');
 
-    const card = cards[0];
-    if (!card) return false;
+  for (const item of items) {
+    const box = await item.boundingBox();
+    if (!box) continue; // ignora ocultos
 
-    // Clica na barra do item, que é mais confiável que clicar só no span
-    const target =
-      card.querySelector('[id^="topLine_Internet:"]') ||
-      card.querySelector('.formTblCtrlBar') ||
-      card;
-
-    target.scrollIntoView({ block: 'center', inline: 'center' });
-
-    // Um único clique
-    target.dispatchEvent(
-      new MouseEvent('click', {
-        bubbles: true,
-        cancelable: true,
-        view: window
-      })
-    );
-
+    await item.click({ delay: 50 });
+    console.log('Clique executado no primeiro item visível.');
     return true;
-  });
+  }
 
-  console.log('clickFirstInternetItem() =>', clicked);
-  return clicked;
+  console.log('Nenhum item visível encontrado.');
+  return false;
 }
   
 async function clickIfExistsBySelector(selector) {
@@ -243,7 +217,7 @@ async function clickIfExistsBySelector(selector) {
   console.log('Menu WAN aberto.');
 
     ///////
-await clickFirstInternetItem();
+await clickFirstInternetItem(page);
       await wait(1500);
     ///////
 
