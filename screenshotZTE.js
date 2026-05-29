@@ -81,7 +81,7 @@ async function clickFirstInternetItem(page) {
 
   const el = await page.$(selector);
   if (!el) {
-    console.log(`clickIfExistsBySelector(${selector}) => false`);
+    console.log(`clickIfExistsBySelectorRealClick(${selector}) => false`);
     return false;
   }
 
