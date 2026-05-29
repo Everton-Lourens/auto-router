@@ -56,6 +56,48 @@ async function screenshot(name) {
     await new Promise(resolve => setTimeout(resolve, time));
   }
 
+async function clickFirstInternetItem() {
+  console.log('Procurando o primeiro item da lista Internet...');
+
+  const clicked = await page.evaluate(() => {
+    const normalizeVisible = (el) => {
+      const style = window.getComputedStyle(el);
+      return (
+        style &&
+        style.visibility !== 'hidden' &&
+        style.display !== 'none' &&
+        el.getClientRects().length > 0
+      );
+    };
+
+    const candidates = Array.from(
+      document.querySelectorAll('#Internet_container .instName.collapsibleInst')
+    ).filter(normalizeVisible);
+
+    const target = candidates[0];
+    if (!target) return false;
+
+    const clickable =
+      target.closest('.formTblCtrlBar, a, button, [role="button"], [onclick]') || target;
+
+    clickable.scrollIntoView({ block: 'center', inline: 'center' });
+
+    clickable.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }));
+    clickable.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
+    clickable.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
+    clickable.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+
+    if (typeof clickable.click === 'function') {
+      clickable.click();
+    }
+
+    return true;
+  });
+
+  console.log('clickFirstInternetItem() =>', clicked);
+  return clicked;
+}
+  
 async function clickIfExistsBySelector(selector) {
   console.log(`Procurando seletor: ${selector}`);
 
@@ -197,7 +239,8 @@ async function clickIfExistsBySelector(selector) {
   console.log('Menu WAN aberto.');
 
     ///////
-
+await clickFirstInternetItem();
+      await wait(1500);
     ///////
 
   await screenshot('01-pppoe-expanded.png')
