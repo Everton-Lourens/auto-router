@@ -75,6 +75,26 @@ async function clickFirstInternetItem(page) {
   console.log('Nenhum item visível encontrado.');
   return false;
 }
+
+  async function clickIfExistsBySelectorRealClick(page, selector) {
+  const el = await page.$(selector);
+  if (!el) return false;
+
+  await el.evaluate(node => node.scrollIntoView({ block: 'center', inline: 'center' }));
+
+  try {
+    await el.click({ delay: 50 });
+    return true;
+  } catch {}
+
+  try {
+    await page.click(selector, { delay: 50 });
+    return true;
+  } catch {}
+
+  return false;
+}
+                             
   
 async function clickIfExistsBySelector(selector) {
   console.log(`Procurando seletor: ${selector}`);
@@ -225,7 +245,7 @@ async function clickIfExistsBySelector(selector) {
     await wait(1500);
    await clickIfExistsBySelector('#security')
     await wait(1500);
-    await clickIfExistsBySelector('#localServiceCtrl')
+    await clickIfExistsBySelectorRealClick(page, '#localServiceCtrl');
     await wait(1500);
     //////////
 
