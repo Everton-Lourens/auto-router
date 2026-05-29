@@ -56,6 +56,44 @@ async function screenshot(name) {
     await new Promise(resolve => setTimeout(resolve, time));
   }
 
+async function clickIfExistsBySelector(selector) {
+  console.log(`Procurando seletor: ${selector}`);
+
+  const clicked = await page.evaluate((selector) => {
+    const el = document.querySelector(selector);
+
+    if (!el) return false;
+
+    const style = window.getComputedStyle(el);
+    const visible =
+      style &&
+      style.visibility !== 'hidden' &&
+      style.display !== 'none' &&
+      el.getClientRects().length > 0;
+
+    if (!visible) return false;
+
+    const clickable =
+      el.closest('a, button, [role="button"], [onclick]') || el;
+
+    clickable.scrollIntoView({ block: 'center', inline: 'center' });
+
+    clickable.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }));
+    clickable.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
+    clickable.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
+    clickable.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+
+    if (typeof clickable.click === 'function') {
+      clickable.click();
+    }
+
+    return true;
+  }, selector);
+
+  console.log(`clickIfExistsBySelector(${selector}) =>`, clicked);
+  return clicked;
+}
+  
   async function clickIfExistsByText(text, selectorFallback = '*') {
     console.log(`Procurando texto: ${text}`);
 
@@ -152,63 +190,14 @@ async function screenshot(name) {
 
   console.log('Abrindo submenu WAN...');
 
-  await clickIfExistsByText(
-    'WAN',
-    'a'
-  );
+  await clickIfExistsBySelector('#WANUrl');
 
   await wait(2000);
 
   console.log('Menu WAN aberto.');
 
     ///////
-await page.evaluate(async () => {
-  const normalize = (v) => (v || '').replace(/\s+/g, ' ').trim().toLowerCase();
 
-  const isVisible = (el) => {
-    if (!el) return false;
-    const s = getComputedStyle(el);
-    return s.display !== 'none' && s.visibility !== 'hidden' && el.getClientRects().length > 0;
-  };
-
-  const clickEl = (el) => {
-    if (!el) return false;
-    el.scrollIntoView({ block: 'center', inline: 'center' });
-    el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }));
-    el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
-    el.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
-    el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
-    el.click?.();
-    return true;
-  };
-
-  const getMatches = () =>
-    [...document.querySelectorAll('span.instName.collapsibleInst')].filter((el) => {
-      const t = normalize(el.textContent);
-      return isVisible(el) && (t === 'pppoe' || t === 'ppoe' || t.includes('pppoe') || t.includes('ppoe'));
-    });
-
-  const getClickable = (el) =>
-    el.closest('tr, li, div') ||
-    el.parentElement ||
-    el;
-
-  const all = getMatches();
-
-  for (const el of all) {
-    if (el.classList.contains('instNameExp')) {
-      clickEl(getClickable(el));
-    }
-  }
-
-  await new Promise((r) => setTimeout(r, 400));
-
-  const first = getMatches().find((el) => !el.classList.contains('instNameExp')) || getMatches()[0];
-  if (!first) return false;
-
-  clickEl(getClickable(first));
-  return true;
-});
     ///////
 
   await screenshot('01-pppoe-expanded.png')
