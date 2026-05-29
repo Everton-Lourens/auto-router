@@ -271,11 +271,9 @@ async function clickIfExistsBySelector(selector) {
   await page.type('input[type="password"]', `${password}`);
 
   console.log('Clicando login...');
-  await page.click('input.button.login');
+  await clickIfExistsBySelector('#loginbutton')
 
   await wait(8000);
-
-    await wait(1500);
 
    await screenshot('02-login-after.png')
 
