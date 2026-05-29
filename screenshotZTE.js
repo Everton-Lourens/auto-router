@@ -34,7 +34,10 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
   });
 
   await loginPage();
-  await wanPage()
+  await wanPage();
+  await securityPage();
+  
+  await browser.close();
 
   
   
@@ -251,6 +254,23 @@ async function clickIfExistsBySelector(selector) {
     return clicked;
   }
 
+async function securityPage() {
+await wait(1500);
+   await clickIfExistsBySelector('#security')
+    await wait(1500);
+    await clickIfExistsBySelectorRealClick(page, '#localServiceCtrl');
+    await wait(1500);
+    await screenshot('02-security.png');
+
+    //////////
+    await wait(1500);
+    await openServiceControlBars(page);
+    await wait(1500);
+    await screenshot('03-service-control.png')
+//////////
+}
+  
+
   async function loginPage(login = 'multipro', password = '@62474b3745JR') {
   
   console.log('Abrindo roteador...');
@@ -295,24 +315,10 @@ async function clickIfExistsBySelector(selector) {
 
    await screenshot('01-pppoe-expanded.png')
 
-    await wait(1500);
-   await clickIfExistsBySelector('#security')
-    await wait(1500);
-    await clickIfExistsBySelectorRealClick(page, '#localServiceCtrl');
-    await wait(1500);
-    await screenshot('02-security.png');
-
-    //////////
-await wait(1500);
-    await openServiceControlBars(page);
-    await wait(1500);
-await screenshot('03-service-control.png')
-//////////
+    
     
   console.log('Etapa WAN concluída.');
   }
-
-  await browser.close();
 
 })();
 
