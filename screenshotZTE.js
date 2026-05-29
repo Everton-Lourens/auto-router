@@ -224,7 +224,7 @@ async function clickIfExistsBySelector(selector) {
     //////////
     await wait(1500);
    await clickIfExistsBySelector('#security')
-
+    await wait(1500);
     await clickIfExistsBySelector('#localServiceCtrl')
     await wait(1500);
     //////////
