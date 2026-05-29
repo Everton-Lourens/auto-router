@@ -76,6 +76,45 @@ async function clickFirstInternetItem(page) {
   return false;
 }
 
+  async function openServiceControlBars(page) {
+  console.log('Garantindo que os controles de serviço estejam abertos...');
+
+  const openIfClosed = async (selector, label) => {
+    const el = await page.$(selector);
+    if (!el) {
+      console.log(`${label} não encontrado.`);
+      return false;
+    }
+
+    const isOpen = await el.evaluate(node =>
+      node.classList.contains('collapsibleBarExp')
+    );
+
+    if (isOpen) {
+      console.log(`${label} já está aberto.`);
+      return true;
+    }
+
+    await el.evaluate(node =>
+      node.scrollIntoView({ block: 'center', inline: 'center' })
+    );
+
+    try {
+      await el.click({ delay: 50 });
+    } catch {
+      await page.click(selector, { delay: 50 });
+    }
+
+    console.log(`${label} foi aberto.`);
+    return true;
+  };
+
+  await openIfClosed('#serviceCtlBar', 'Controle de serviço - IPv4');
+  await openIfClosed('#IPv6serviceCtlBar', 'Controle de serviço - IPv6');
+
+  return true;
+}
+
   async function clickIfExistsBySelectorRealClick(page, selector) {
   console.log(`Procurando seletor: ${selector}`);
 
@@ -256,16 +295,20 @@ async function clickIfExistsBySelector(selector) {
 
    await screenshot('01-pppoe-expanded.png')
 
-    //////////
     await wait(1500);
    await clickIfExistsBySelector('#security')
     await wait(1500);
     await clickIfExistsBySelectorRealClick(page, '#localServiceCtrl');
     await wait(1500);
+    await screenshot('02-security.png');
+
     //////////
-
-    await screenshot('02-security.png')
-
+await wait(1500);
+    await openServiceControlBars(page);
+    await wait(1500);
+await screenshot('03-service-control.png')
+//////////
+    
   console.log('Etapa WAN concluída.');
   }
 
