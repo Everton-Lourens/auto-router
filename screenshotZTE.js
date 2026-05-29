@@ -77,22 +77,37 @@ async function clickFirstInternetItem(page) {
 }
 
   async function clickIfExistsBySelectorRealClick(page, selector) {
-  const el = await page.$(selector);
-  if (!el) return false;
+  console.log(`Procurando seletor: ${selector}`);
 
-  await el.evaluate(node => node.scrollIntoView({ block: 'center', inline: 'center' }));
+  const el = await page.$(selector);
+  if (!el) {
+    console.log(`clickIfExistsBySelector(${selector}) => false`);
+    return false;
+  }
+
+  await el.evaluate(node =>
+    node.scrollIntoView({
+      block: 'center',
+      inline: 'center'
+    })
+  );
+
+  let clicked = false;
 
   try {
     await el.click({ delay: 50 });
-    return true;
+    clicked = true;
   } catch {}
 
-  try {
-    await page.click(selector, { delay: 50 });
-    return true;
-  } catch {}
+  if (!clicked) {
+    try {
+      await page.click(selector, { delay: 50 });
+      clicked = true;
+    } catch {}
+  }
 
-  return false;
+  console.log(`clickIfExistsBySelectorRealClick(${selector}) =>`, clicked);
+  return clicked;
 }
                              
   
