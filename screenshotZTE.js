@@ -216,12 +216,20 @@ async function clickIfExistsBySelector(selector) {
 
   console.log('Menu WAN aberto.');
 
-    ///////
-await clickFirstInternetItem(page);
-      await wait(1500);
-    ///////
+   await clickFirstInternetItem(page);
+   await wait(1500);
 
-  await screenshot('01-pppoe-expanded.png')
+   await screenshot('01-pppoe-expanded.png')
+
+    //////////
+    await wait(1500);
+   await clickIfExistsBySelector('#security')
+
+    await clickIfExistsBySelector('#localServiceCtrl')
+    await wait(1500);
+    //////////
+
+    await screenshot('02-security.png')
 
   console.log('Etapa WAN concluída.');
   }
