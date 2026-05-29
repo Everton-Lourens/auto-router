@@ -255,19 +255,17 @@ async function clickIfExistsBySelector(selector) {
   }
 
 async function securityPage() {
-await wait(1500);
-   await clickIfExistsBySelector('#security')
+    await wait(1500);
+    await clickIfExistsBySelector('#security')
     await wait(1500);
     await clickIfExistsBySelectorRealClick(page, '#localServiceCtrl');
-    await wait(1500);
-    await screenshot('02-security.png');
 
     //////////
     await wait(1500);
     await openServiceControlBars(page);
     await wait(1500);
     await screenshot('03-service-control.png')
-//////////
+    //////////
 }
   
 
