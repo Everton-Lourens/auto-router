@@ -57,39 +57,43 @@ async function screenshot(name) {
   }
 
 async function clickFirstInternetItem() {
-  console.log('Procurando o primeiro item da lista Internet...');
+  console.log('Procurando o primeiro item visível da lista Internet...');
 
   const clicked = await page.evaluate(() => {
-    const normalizeVisible = (el) => {
+    const isVisible = (el) => {
       const style = window.getComputedStyle(el);
       return (
         style &&
-        style.visibility !== 'hidden' &&
         style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
         el.getClientRects().length > 0
       );
     };
 
-    const candidates = Array.from(
-      document.querySelectorAll('#Internet_container .instName.collapsibleInst')
-    ).filter(normalizeVisible);
+    // Pega só os itens reais da lista, não o template escondido
+    const cards = Array.from(
+      document.querySelectorAll('#Internet_container > div[id^="template_Internet_"]')
+    ).filter(isVisible);
 
-    const target = candidates[0];
-    if (!target) return false;
+    const card = cards[0];
+    if (!card) return false;
 
-    const clickable =
-      target.closest('.formTblCtrlBar, a, button, [role="button"], [onclick]') || target;
+    // Clica na barra do item, que é mais confiável que clicar só no span
+    const target =
+      card.querySelector('[id^="topLine_Internet:"]') ||
+      card.querySelector('.formTblCtrlBar') ||
+      card;
 
-    clickable.scrollIntoView({ block: 'center', inline: 'center' });
+    target.scrollIntoView({ block: 'center', inline: 'center' });
 
-    clickable.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }));
-    clickable.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
-    clickable.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
-    clickable.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
-
-    if (typeof clickable.click === 'function') {
-      clickable.click();
-    }
+    // Um único clique
+    target.dispatchEvent(
+      new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+        view: window
+      })
+    );
 
     return true;
   });
