@@ -406,9 +406,9 @@ async function securityPage() {
 
  async function redeLocalPage() {
 
-   await upnpPage();
-     await wait(2000);
-   await lanPage();
+   //await upnpPage();
+     //await wait(2000);
+ //  await lanPage();
      await wait(2000);
    await wlanBasicPage();
 
@@ -488,15 +488,34 @@ async function wlanBasicPage() {
   await wait(2000);
   await setCollapsibleBarStateByText(page, 'Configuração Global WLAN', true);
   await wait(2000);
-  //await openWlan24G5G()
+  await setWlan5GHz(page, true);
   await wait(2000);
   await setCollapsibleBarStateByText(page, 'Configuração WLAN SSID', false);
   await wait(2000);
   await clickFirstInternetItem(page);
    await wait(1500);
-  await screenshot('99-teste.png')
+  await screenshot('05-canal-2.4_5G.png')
 
   
+  async function setWlan5GHz(page, open) {
+  const selector = '#instName_WlanBasicAdConf\\:1';
+
+  await page.waitForSelector(selector, { visible: true });
+
+  const isOpen = await page.$eval(selector, el =>
+    el.classList.contains('instNameExp')
+  );
+
+  if (open && !isOpen) {
+    await page.click(selector);
+  }
+
+  if (!open && isOpen) {
+    await page.click(selector);
+  }
+
+  return true;
+}
    }
  }
 
