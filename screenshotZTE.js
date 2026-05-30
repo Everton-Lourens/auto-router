@@ -496,6 +496,27 @@ async function wlanBasicPage() {
    await wait(1500);
   await screenshot('05-canal-2.4_5G.png')
 
+
+async function setWlanOnOff(page, open) {
+  //await setWlanOnOff(page, false);
+  const selector = '#WlanBasicAdOnOffBar';
+
+  await page.waitForSelector(selector, { visible: true });
+
+  const isOpen = await page.$eval(selector, el =>
+    el.classList.contains('collapsibleBarExp')
+  );
+
+  if (open && !isOpen) {
+    await page.click(selector);
+  }
+
+  if (!open && isOpen) {
+    await page.click(selector);
+  }
+
+  return true;
+}
   
   async function setWlan5GHz(page, open) {
   const selector = '#instName_WlanBasicAdConf\\:1';
