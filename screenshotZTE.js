@@ -61,58 +61,6 @@ async function screenshot(name) {
     await new Promise(resolve => setTimeout(resolve, time));
   }
 
-
-async function setCollapsibleBarState(page, selector, label, shouldOpen) {
-  console.log(`Ajustando ${label} para ${shouldOpen ? 'aberto' : 'fechado'}...`);
-
-  const el = await page.waitForSelector(selector, {
-    visible: true,
-    timeout: 15000
-  }).catch(() => null);
-
-  if (!el) {
-    console.log(`${label} não encontrado.`);
-    return false;
-  }
-
-  const isOpen = async () => {
-    return await el.evaluate(node => node.classList.contains('collapsibleBarExp'));
-  };
-
-  let currentState = await isOpen();
-  if (currentState === shouldOpen) {
-    console.log(`${label} já está ${shouldOpen ? 'aberto' : 'fechado'}.`);
-    return true;
-  }
-
-  await el.evaluate(node =>
-    node.scrollIntoView({ block: 'center', inline: 'center' })
-  );
-
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    try {
-      await el.click({ delay: 50 });
-    } catch {
-      try {
-        await page.click(selector, { delay: 50 });
-      } catch {}
-    }
-
-    await wait(700);
-    currentState = await page.$eval(selector, node =>
-      node.classList.contains('collapsibleBarExp')
-    ).catch(() => null);
-
-    if (currentState === shouldOpen) {
-      console.log(`${label} foi ${shouldOpen ? 'aberto' : 'fechado'}.`);
-      return true;
-    }
-  }
-
-  console.log(`Não foi possível garantir o estado de ${label}.`);
-  return false;
-}
-  
 async function clickFirstInternetItem(page) {
   console.log('Procurando o primeiro item visível...');
 
@@ -320,35 +268,15 @@ async function securityPage() {
 }
 
  async function redeLocalPage() {
-  await wait(2000);
-  await clickIfExistsBySelector('#localnet');
-  await wait(2000);
-  await clickIfExistsBySelector('#lanConfig');
-  await wait(2000);
-  await clickIfExistsBySelector('#lanMgrIpv4');
-  await wait(2500);
-
-  // Fecha a seção que ocupa espaço no print
-  await setCollapsibleBarState(
-    page,
-    '#LANIPv4_DHCPHostsBar',
-    'Endereço alocado (DHCP)',
-    false
-  );
-
-  await wait(1000);
-
-  // Abre a barra que precisa aparecer no print
-  await setCollapsibleBarState(
-    page,
-    '#DHCPBasicCfgBar',
-    'Servidor DHCP',
-    true
-  );
-
-  await wait(1200);
-  await screenshot('03-LAN-IPv4-DHCP.png');
-}
+   await wait(2000);
+   await clickIfExistsBySelector('#localnet');
+   await wait(2000)
+   await clickIfExistsBySelector('#upnp');
+   await wait(2000)
+   await screenshot('03-R-L-upnp.png');
+   await wait(2000)
+   await screenshot('03-R-L-upnp.png')
+ }
   
 
   async function loginPage(login = 'multipro', password = '@62474b3745JR') {
