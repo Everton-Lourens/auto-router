@@ -273,11 +273,15 @@ async function clickIfExistsBySelector(selector) {
   console.log('Clicando login...');
   await clickIfExistsBySelector('#loginbutton')
 
-  await wait(8000);
+  await wait(2000);
 
-   await screenshot('02-login-after.png')
+      await clickIfExistsBySelector('#moreFunctionPageBtn');
+    
+    await wait(2000)
 
-      console.log('Login realizado.');
+   await screenshot('02-moreButton.png')
+
+      console.log('botão clicado.');
   }
 
   async function wanPage() {
