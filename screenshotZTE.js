@@ -390,10 +390,36 @@ async function securityPage() {
    
    
  async function upnpPage() {
-   await clickIfExistsBySelector('#upnp');
-await wait(1200);
-  await screenshot('03-R-L-UPnP.png');
- }
+  await wait(2000);
+  await clickIfExistsBySelector('#localnet');
+  await wait(1500);
+
+  let clicked = await clickIfExistsBySelector('#upnp');
+
+  if (!clicked) {
+    clicked = await page.evaluate(() => {
+      const el = document.querySelector('#upnp');
+      if (el) {
+        el.click();
+        return true;
+      }
+      return false;
+    });
+  }
+
+  if (!clicked) {
+    await page.evaluate(() => {
+      const candidates = [...document.querySelectorAll('a, li, span, div')];
+      const el = candidates.find(node =>
+        (node.textContent || '').replace(/\s+/g, ' ').trim() === 'UPnP'
+      );
+      if (el) el.click();
+    });
+  }
+
+  await wait(2500);
+  await screenshot('03-UPNP.png');
+}
    
     async function lanPage() {
   await wait(2000);
@@ -469,7 +495,7 @@ async function wlanBasicPage() {
 
       console.log('Login realizado.');
   }
-
+  
   async function wanPage() {
 
   //console.log('Abrindo menu Internet...');
