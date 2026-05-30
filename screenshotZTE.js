@@ -261,20 +261,21 @@ async function securityPage() {
     await clickIfExistsBySelector('#security')
     await wait(1500);
     await clickIfExistsBySelectorRealClick(page, '#localServiceCtrl');
-
-    //////////
     await wait(1500);
     await openServiceControlBars(page);
     await wait(1500);
-    await screenshot('02-service-control.png')
-    //////////
+    await screenshot('02-service-control.png');
 }
 
  async function redeLocalPage() {
    await wait(2000);
    await clickIfExistsBySelector('#localnet');
    await wait(2000)
-   await screenshot('03-redeLocal-Teste.png')
+   await clickIfExistsBySelector('#upnp');
+   await wait(2000)
+   await screenshot('03-R-L-upnp.png');
+   await wait(2000)
+   await screenshot('03-R-L-upnp.png')
  }
   
 
