@@ -472,6 +472,7 @@ await wait(1500);
     await screenshot('99-teste.png')
   }
 }
+ }
 
   async function loginPage(login = 'multipro', password = '@62474b3745JR') {
   
