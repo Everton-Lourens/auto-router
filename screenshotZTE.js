@@ -195,6 +195,29 @@ async function clickFirstInternetItem(page) {
   return false;
 }
 
+
+  //////////////////////////////////
+async function clickFirstInternetItemGhz(page) {
+  console.log('Procurando o primeiro item visível...');
+
+  await page.waitForSelector('#Internet_container .instName.collapsibleInst');
+
+  const items = await page.$$('#Internet_container .instName.collapsibleInst');
+
+  for (const item of items) {
+    const box = await item.boundingBox();
+    if (!box) continue; // ignora ocultos
+
+    await item.click({ delay: 50 });
+    console.log('Clique executado no primeiro item visível.');
+    return true;
+  }
+
+  console.log('Nenhum item visível encontrado.');
+  return false;
+}
+    //////////////////////////////////
+
   async function openServiceControlBars(page) {
   console.log('Garantindo que os controles de serviço estejam abertos...');
 
