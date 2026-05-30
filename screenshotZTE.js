@@ -36,6 +36,8 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
   await loginPage();
   await wanPage();
   await securityPage();
+
+  await redeLocalPage();
   
   await browser.close();
 
@@ -267,6 +269,13 @@ async function securityPage() {
     await screenshot('03-service-control.png')
     //////////
 }
+
+ async function redeLocalPage() {
+   await wait(2000);
+   await clickIfExistsBySelector('#localnet');
+   await wait(2000)
+   await screenshot('03-redeLocal-Teste.png')
+ }
   
 
   async function loginPage(login = 'multipro', password = '@62474b3745JR') {
