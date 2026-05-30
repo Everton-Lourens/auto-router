@@ -369,6 +369,117 @@ async function clickIfExistsBySelector(selector) {
     return clicked;
   }
 
+
+  async function setCollapsibleBarStateByTextFlexible(page, barText, shouldOpen) {
+  console.log(`Ajustando ${barText} para ${shouldOpen ? 'aberto' : 'fechado'}...`);
+
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    const handle = await page.evaluateHandle((barText) => {
+      const normalize = value => (value || '').replace(/\s+/g, ' ').trim();
+
+      const elements = Array.from(document.querySelectorAll('*')).filter(el => {
+        const style = window.getComputedStyle(el);
+        return (
+          style &&
+          style.visibility !== 'hidden' &&
+          style.display !== 'none' &&
+          el.getClientRects().length > 0
+        );
+      });
+
+      const target = elements.find(el => normalize(el.textContent) === barText);
+
+      if (!target) return null;
+
+      const clickable =
+        target.closest('h1, h2, h3, h4, h5, h6, .collapBarWithDataTrans, .collapsibleBarExp') ||
+        target;
+
+      return clickable;
+    }, barText);
+
+    const element = handle.asElement();
+
+    if (!element) {
+      await wait(700);
+      continue;
+    }
+
+    const isOpen = await element.evaluate(node =>
+      node.classList.contains('collapsibleBarExp')
+    );
+
+    if (isOpen === shouldOpen) {
+      console.log(`${barText} já está ${shouldOpen ? 'aberto' : 'fechado'}.`);
+      return true;
+    }
+
+    await element.evaluate(node =>
+      node.scrollIntoView({ block: 'center', inline: 'center' })
+    );
+
+    try {
+      await element.click({ delay: 50 });
+    } catch {
+      await page.evaluate((barText) => {
+        const normalize = value => (value || '').replace(/\s+/g, ' ').trim();
+        const elements = Array.from(document.querySelectorAll('*')).filter(el => {
+          const style = window.getComputedStyle(el);
+          return (
+            style &&
+            style.visibility !== 'hidden' &&
+            style.display !== 'none' &&
+            el.getClientRects().length > 0
+          );
+        });
+
+        const target = elements.find(el => normalize(el.textContent) === barText);
+        if (!target) return false;
+
+        const clickable =
+          target.closest('h1, h2, h3, h4, h5, h6, .collapBarWithDataTrans, .collapsibleBarExp') ||
+          target;
+
+        clickable.click();
+        return true;
+      }, barText);
+    }
+
+    await wait(700);
+
+    const currentState = await page.evaluate((barText) => {
+      const normalize = value => (value || '').replace(/\s+/g, ' ').trim();
+
+      const elements = Array.from(document.querySelectorAll('*')).filter(el => {
+        const style = window.getComputedStyle(el);
+        return (
+          style &&
+          style.visibility !== 'hidden' &&
+          style.display !== 'none' &&
+          el.getClientRects().length > 0
+        );
+      });
+
+      const target = elements.find(el => normalize(el.textContent) === barText);
+      if (!target) return null;
+
+      const clickable =
+        target.closest('h1, h2, h3, h4, h5, h6, .collapBarWithDataTrans, .collapsibleBarExp') ||
+        target;
+
+      return clickable.classList.contains('collapsibleBarExp');
+    }, barText);
+
+    if (currentState === shouldOpen) {
+      console.log(`${barText} foi ${shouldOpen ? 'aberto' : 'fechado'}.`);
+      return true;
+    }
+  }
+
+  console.log(`Não foi possível garantir o estado de ${barText}.`);
+  return false;
+}
+
 async function securityPage() {
     await wait(1500);
     await clickIfExistsBySelector('#security')
@@ -461,9 +572,9 @@ async function wlanBasicPage() {
   await wait(2500);
 
   await setCollapsibleBarStateByText(page, 'Configuração WLAN On/Off', true);
-  await setCollapsibleBarStateByText(page, 'Configuração Global WLAN', true);
-  await setCollapsibleBarStateByText(page, '2.4GHz', true);
-  await setCollapsibleBarStateByText(page, '5GHz', true);
+  //await setCollapsibleBarStateByText(page, 'Configuração Global WLAN', true);
+  await setCollapsibleBarStateByTextFlexible(page, 'Configuração Global WLAN', true);
+  await openWlanGlobalBands();
   await setCollapsibleBarStateByText(page, 'Configuração WLAN SSID', false);
 
   await wait(1200);
