@@ -459,13 +459,115 @@ async function wlanBasicPage() {
   await wait(2000);
   await clickIfExistsBySelector('#wlanConfig');
   await wait(2500);
+await openWlan24G5G()
+  //await setCollapsibleBarStateByText(page, 'Configuração WLAN On/Off', true);
+  //await setCollapsibleBarStateByText(page, 'Configuração Global WLAN', true);
+  //await setCollapsibleBarStateByText(page, '2.4GHz', true);
+  //await setCollapsibleBarStateByText(page, '5GHz', true);
+  //await setCollapsibleBarStateByText(page, 'Configuração WLAN SSID', false);
+
+async function openWlan24G5G() {
+  await wait(2000);
+  await clickIfExistsBySelector('#localnet');
+  await wait(1500);
+  await clickIfExistsBySelector('#wlanConfig');
+  await wait(2500);
 
   await setCollapsibleBarStateByText(page, 'Configuração WLAN On/Off', true);
   await setCollapsibleBarStateByText(page, 'Configuração Global WLAN', true);
-  await setCollapsibleBarStateByText(page, '2.4GHz', true);
-  await setCollapsibleBarStateByText(page, '5GHz', true);
+
+  async function openBarByAliases(label, aliases, fallbackIndex) {
+    console.log(`Ajustando ${label} para aberto...`);
+
+    const result = await page.evaluate(({ aliases, fallbackIndex }) => {
+      const normalize = (s) =>
+        (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+      const bars = Array.from(
+        document.querySelectorAll('h1.collapBarWithDataTrans, h1.collapsibleBarExp, h1')
+      );
+
+      let target = bars.find(bar => {
+        const text = normalize(bar.textContent);
+        return aliases.some(alias => text.includes(normalize(alias)));
+      }) || null;
+
+      if (!target && typeof fallbackIndex === 'number' && bars[fallbackIndex]) {
+        target = bars[fallbackIndex];
+      }
+
+      if (!target) return { found: false };
+
+      const isOpen = target.classList.contains('collapsibleBarExp');
+
+      if (!isOpen) {
+        const clickable = target.closest('h1, .collapBarWithDataTrans, .collapsibleBarExp') || target;
+        clickable.scrollIntoView({ block: 'center', inline: 'center' });
+        clickable.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }));
+        clickable.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
+        clickable.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
+        clickable.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+
+        if (typeof clickable.click === 'function') {
+          clickable.click();
+        }
+      }
+
+      return {
+        found: true,
+        open: target.classList.contains('collapsibleBarExp')
+      };
+    }, { aliases, fallbackIndex });
+
+    if (!result.found) {
+      console.log(`${label} não encontrado.`);
+      return false;
+    }
+
+    if (result.open) {
+      console.log(`${label} já está aberto.`);
+      return true;
+    }
+
+    await wait(800);
+
+    const after = await page.evaluate(({ aliases, fallbackIndex }) => {
+      const normalize = (s) =>
+        (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+      const bars = Array.from(
+        document.querySelectorAll('h1.collapBarWithDataTrans, h1.collapsibleBarExp, h1')
+      );
+
+      let target = bars.find(bar => {
+        const text = normalize(bar.textContent);
+        return aliases.some(alias => text.includes(normalize(alias)));
+      }) || null;
+
+      if (!target && typeof fallbackIndex === 'number' && bars[fallbackIndex]) {
+        target = bars[fallbackIndex];
+      }
+
+      return !!(target && target.classList.contains('collapsibleBarExp'));
+    }, { aliases, fallbackIndex });
+
+    if (after) {
+      console.log(`${label} foi aberto.`);
+      return true;
+    }
+
+    console.log(`Não foi possível garantir a abertura de ${label}.`);
+    return false;
+  }
+
+  await openBarByAliases('2.4GHz', ['2.4GHz', '2.4G', '2.4 GHz', '2.4'], 2);
+  await openBarByAliases('5GHz', ['5GHz', '5G', '5 GHz', '5'], 3);
+
   await setCollapsibleBarStateByText(page, 'Configuração WLAN SSID', false);
 
+  await wait(1200);
+}
+  
   await wait(1200);
   await screenshot('05-WLAN-Basica.png');
 }
