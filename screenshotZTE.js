@@ -1,3 +1,4 @@
+
 const puppeteer = require('puppeteer-core');
 const fs = require('fs');
 
@@ -522,7 +523,6 @@ await wait(1500);
   }
 
 })();
-
 
 
 
