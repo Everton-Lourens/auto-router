@@ -463,15 +463,119 @@ async function wlanBasicPage() {
 
   await setCollapsibleBarStateByText(page, 'Configuração WLAN On/Off', true);
   await setCollapsibleBarStateByText(page, 'Configuração Global WLAN', true);
-  await openWlan24G5G()
   await setCollapsibleBarStateByText(page, 'Configuração WLAN SSID', false);
+  await wait(1500);
+  await openWlan24G5G()
+  
 
   async function openWlan24G5G() {
-     await clickIfExistsBySelector('#topLine_WlanBasicAdConf:1');
-await wait(1500);
-    await screenshot('99-teste.png')
+  console.log('Abrindo abas de 2.4GHz e 5GHz...');
+
+  const candidates = [
+    {
+      name: '2.4GHz-instName',
+      selector: '[id="instName_WlanBasicAdConf:0"]'
+    },
+    {
+      name: '2.4GHz-topLine',
+      selector: '[id="topLine_WlanBasicAdConf:0"]'
+    },
+    {
+      name: '2.4GHz-title',
+      selector: '[title="2.4GHz"]'
+    },
+    {
+      name: '5GHz-instName',
+      selector: '[id="instName_WlanBasicAdConf:1"]'
+    },
+    {
+      name: '5GHz-topLine',
+      selector: '[id="topLine_WlanBasicAdConf:1"]'
+    },
+    {
+      name: '5GHz-title',
+      selector: '[title="5GHz"]'
+    }
+  ];
+
+  for (let i = 0; i < candidates.length; i++) {
+    const { name, selector } = candidates[i];
+
+    console.log(`Tentando clique em: ${name} -> ${selector}`);
+
+    const clicked = await clickAndPrintCandidate(selector, `99-${String(i + 1).padStart(2, '0')}-${name}.png`);
+
+    if (clicked) {
+      const ok = await ghzPanelsVisible();
+
+      if (ok) {
+        console.log(`Clique correto encontrado: ${name}`);
+        await screenshot(`99-final-${name}.png`);
+        return true;
+      }
+    }
   }
+
+  console.log('Nenhum clique abriu a área correta de 2.4GHz/5GHz.');
+  await screenshot('99-falha-ghz.png');
+  return false;
 }
+
+async function clickAndPrintCandidate(selector, shotName) {
+  const el = await page.$(selector);
+  if (!el) {
+    console.log(`Não encontrado: ${selector}`);
+    return false;
+  }
+
+  const box = await el.boundingBox();
+  if (!box) {
+    console.log(`Elemento oculto/sem caixa: ${selector}`);
+    return false;
+  }
+
+  await el.evaluate(node => node.scrollIntoView({ block: 'center', inline: 'center' }));
+
+  try {
+    await el.click({ delay: 80 });
+    console.log(`Clique executado em: ${selector}`);
+  } catch (e) {
+    console.log(`Falhou .click() em ${selector}, tentando click via evaluate...`);
+    try {
+      await el.evaluate(node => node.click());
+      console.log(`Clique via evaluate executado em: ${selector}`);
+    } catch (err) {
+      console.log(`Falhou também via evaluate em ${selector}`);
+      return false;
+    }
+  }
+
+  await wait(1200);
+  await screenshot(shotName);
+  return true;
+}
+
+async function ghzPanelsVisible() {
+  const state = await page.evaluate(() => {
+    const area24 = document.querySelector('[id="changeArea_WlanBasicAdConf:0"]');
+    const area5 = document.querySelector('[id="changeArea_WlanBasicAdConf:1"]');
+
+    const visible = (el) => {
+      if (!el) return false;
+      const style = window.getComputedStyle(el);
+      return style.display !== 'none' && style.visibility !== 'hidden' && el.getClientRects().length > 0;
+    };
+
+    return {
+      g24: visible(area24),
+      g5: visible(area5)
+    };
+  });
+
+  console.log('Estado GHZ:', state);
+  return state.g24 || state.g5;
+}
+   }
  }
 
   async function loginPage(login = 'multipro', password = '@62474b3745JR') {
