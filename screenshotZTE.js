@@ -466,7 +466,9 @@ async function wlanBasicPage() {
   await setCollapsibleBarStateByText(page, 'Configuração WLAN SSID', false);
 
   async function openWlan24G5G() {
-   //"setCollapsibleBarStateByText" NÃO FUNCIONA
+     await clickIfExistsBySelector('#wlanConfiginstName_WlanBasicAdConf:1');
+await wait(1500);
+    await screenshot('99-teste.png')
   }
 }
 
