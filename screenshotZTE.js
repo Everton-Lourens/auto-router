@@ -266,7 +266,7 @@ async function securityPage() {
     await wait(1500);
     await openServiceControlBars(page);
     await wait(1500);
-    await screenshot('03-service-control.png')
+    await screenshot('02-service-control.png')
     //////////
 }
 
