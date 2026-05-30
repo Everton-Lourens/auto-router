@@ -1,3 +1,92 @@
+<body>
+<script type="text/javascript">
+if(top != self)
+{
+document.getElementsByTagName("body")[0].style.display = 'none';
+top.location = self.location;
+}
+function LogOff()
+{
+showWaitTip(true);
+$.post( "/?_type=loginData&_tag=logout_entry", {IF_LogOff:1, _sessionTOKEN:_sessionTmpToken}, undefined, "json" )
+.done(function( data ) {
+if ( data.need_refresh )
+{
+top.location.href = top.location.href;
+}
+else
+{
+alert("Essa página está expirada, por favor refresque e tente novamente.");
+showWaitTip(false);
+}
+});
+}
+function initLogUserLnk()
+{
+var hasAccountMgr = "7538";
+if(hasAccountMgr)
+{
+$("#logUser").addClass("clickable").click(function(){
+openLink("accountMgr&Menu3Location=0");
+});
+}
+}
+</script>
+<div id="blackMask" class="black_overlay" style="display: none;"></div>
+<div id="tipLayer" class="white_content" style="display: none; top: 417.5px; left: 307.5px; position: fixed;">
+<div id="confirmLayer" style="display:none;">
+<div id="confirmMsg">
+<p>are you sure?</p>
+</div>
+<div id="waitingImgArea" style="display:none;">
+</div>
+<div id="confirmBtnArea" style="display: block;">
+<input type="button" class="button" id="confirmCancel" value="Cancelar" style="display: block;">
+<input type="button" class="button" id="confirmOK" value="OK" style="display: block;">
+<input type="button" class="button" id="confirmStop" value="Parar" style="display: none;">
+</div>
+</div>
+</div>
+<div id="page_container">
+<div class="white_content_security">
+<div class="sercurityNotice">
+<div class="sercurityNoticeMsg">
+<ul>
+<li id="LastIP"></li>
+<li id="LastCurrentTime"></li>
+</ul>
+</div>
+<div id="confirmBtnArea" style="display: block;">
+<input type="button" class="button" id="sercurityNoticeOK" value="OK">
+</div>
+</div>
+</div>
+<div id="page_header">
+<div id="banner">
+<div id="logo" class="logo clickable"></div>
+<div class="timeArea" id="timeArea" style="">
+Horário atual:<span id="_DevCurrTime">2026-05-29T21:35</span>
+</div>
+<div id="banner_switchArea">
+
+<div id="languageSwitch" style="">
+<span class="currentlang" id="Chinese" langvalue="Chinese">Português</span>&nbsp;&nbsp;|&nbsp;&nbsp;<span class="bannerswtch clickable" id="English" langvalue="English">English</span>
+</div>
+<div id="logOff" class="emColor">
+<div id="LogOffLnk" class="clickable" onclick="LogOff()"> Logout</div>
+<div id="logUser" class="logUser clickable" title="multipro">
+multipro
+</div>
+</div>
+</div>
+</div>
+<div id="mainNavigator">
+<div id="mn_first"></div>
+<div id="mn_li"><ul><li id="homeLi"><a href="javascript:void(0);" class="MenuItem" style="width:188px" menuclass="1" id="homePage" menupage="homePage">Home</a></li><li id=""><a href="javascript:void(0);" class="MenuItem" style="width:188px" menuclass="1" id="mmTopology" menupage="mmTopology">Topologia</a></li><li id=""><a href="javascript:void(0);" class="MenuItem" style="width:188px" menuclass="1" id="internet" menupage="ethWanStatus">Internet</a></li><li id=""><a href="javascript:void(0);" class="SelectMenuItem" style="width:188px" menuclass="1" id="localnet" menupage="localNetStatus">Rede local</a></li><li id=""><a href="javascript:void(0);" class="MenuItem" style="width:188px" menuclass="1" id="mgrAndDiag" menupage="statusMgr">Gerenciamento &amp; Diagnóstico</a></li></ul></div>
+<div id="mn_last"></div>
+</div>
+</div>
+<div id="page_content">
 <div id="commPageContainer" class="commPageContainer">
 <script type="text/javascript">
 
@@ -4263,3 +4352,351 @@ $(".collapBarWithDataTrans",FstHeadDIV).eq(0).click();
 </script>
 
 </div>
+<div id="sideShortCut" class="sideShortCut" style="display:none;">
+<a id="BackToTop" class="BackToTop" titile="TOP"></a>
+</div>
+<script type="text/javascript">
+var _MenuInfo = $("#_MenuInfo");
+var NowNextpage = $("#_NextPageInfo",_MenuInfo).text();
+var NowSupId = $("#_NowSupIdInfo",_MenuInfo).text();
+var NowMidId = $("#_NowMidIdInfo",_MenuInfo).text();
+var NowThdId = $("#_NowThdIdInfo",_MenuInfo).text();
+MenuShow("ClassAll", NowNextpage, NowSupId, NowMidId, NowThdId);
+$('#sideShortCut').click(function(){
+$(document).scrollTop(0);
+});
+function showTopAnchor()
+{
+var distanceFromTop = $(document).scrollTop();
+if( distanceFromTop > 135 )
+{
+if ("1"[0])
+{
+$('#sideShortCut').show();
+}
+}
+else
+{
+$('#sideShortCut').hide();
+}
+}
+$(window).scroll(function(){
+showTopAnchor();
+});
+</script>
+
+<div style="clear:left;height:1px;">&nbsp;</div>
+</div>
+<div id="page_footer">
+
+<span id="copyRight">©2008-2025 ZTE Corporation. Todos os direitos reservados</span>&nbsp;&nbsp;|&nbsp;&nbsp;
+<span id="pdtVer">ZXHN H3601P&nbsp;V9.0.0P9_MUL</span>
+
+</div>
+</div>
+<script type="text/javascript">
+function LanguageSwitch(nowLanguage, nowStatus, langChange)
+{
+var changeLanguage = langChange;
+showWaitTip(true);
+if (nowStatus == "showloginPage")
+{
+_sessionTmpToken = $("#_sessionTOKEN").val();
+}
+$.post( "/?_type=hiddenData&_tag=switchlang_entry", {IF_LanguageSwitch:changeLanguage,_sessionTOKEN:_sessionTmpToken}, undefined, "json" )
+.done(function( data ) {
+if ( data.need_refresh )
+{
+top.location.href = top.location.href;
+}
+else
+{
+alert("Essa página está expirada, por favor refresque e tente novamente.");
+showWaitTip(false);
+}
+});
+}
+function MenuModeSwitch(ModeNow)
+{
+var ChangeModeSwitch = "";
+if ( "Basic" == ModeNow )
+{
+ChangeModeSwitch = "Advanced";
+}
+else
+{
+ChangeModeSwitch = "Basic";
+}
+showWaitTip(true);
+$.post( "/?_type=loginData&_tag=modeswitch_entry", {IF_ModeSwitch:ChangeModeSwitch,_sessionTOKEN:_sessionTmpToken}, undefined, "json" )
+.done(function( data ) {
+if ( data.need_refresh )
+{
+top.location.href = top.location.href;
+}
+else
+{
+alert("Essa página está expirada, por favor refresque e tente novamente.");
+showWaitTip(false);
+}
+});
+}
+var UpdateTimeTimerID;
+function UpdateCurrTime()
+{
+var CurrTimeObj = $("#_DevCurrTime");
+var CurrTimeDiv = $("#timeArea");
+CurrTimeObj.succfunction = function(xml){
+if (CurrTimeDiv.hasError(xml,"_noExist") == 0)
+{
+var currTimeByXML = "";
+$(xml).find('ParaName').each(function(){
+var tmp = $(this);
+if ( tmp.text() == "CurrentLocalTime" )
+{
+currTimeByXML = tmp.next().text();
+return false;
+}
+});
+if(typeof(customTimeStyle) == "function")
+{
+customTimeStyle(CurrTimeObj, currTimeByXML, "template");
+}
+else
+{
+if ( currTimeByXML != "")
+{
+var SecTimeLocation = currTimeByXML.lastIndexOf(":");
+var currTimeNotSec = currTimeByXML.substring(0, SecTimeLocation);
+CurrTimeObj.text(currTimeNotSec);
+}
+}
+}
+};
+CurrTimeObj.failfunction = function(xml){
+};
+CurrTimeObj.dataTransfer("/?_type=hiddenData&_tag=sntp_data",
+"GET",
+CurrTimeObj.succfunction,
+CurrTimeObj.failfunction,
+false);
+if (!CurrTimeDiv.is(":hidden"))
+{
+UpdateTimeTimerID = setTimeout("UpdateCurrTime()", 60*1000);
+}
+else
+{
+clearTimeout(UpdateTimeTimerID);
+}
+}
+function BilingualFun(languageOBJ,NowStatus,languageButContent,langarray){
+languageOBJ.show();
+var languageEnglishOBJ = $("#English",languageOBJ);
+var languageChineseOBJ = $("#Chinese",languageOBJ);
+if ( languageButContent == "English" )
+{
+languageEnglishOBJ.attr("class","currentlang");
+languageChineseOBJ.attr("class", "bannerswtch clickable");
+}
+else
+{
+languageEnglishOBJ.attr("class", "bannerswtch clickable");
+languageChineseOBJ.attr("class","currentlang");
+}
+for (var i=0; i < langarray.length; i++)
+{
+var langid = "";
+if (langarray[i] == "English")
+{
+langid = "English";
+}
+else
+{
+langid = "Chinese";
+}
+$("#" + langid,languageOBJ).attr("langvalue", langarray[i]);
+}
+$("span", languageOBJ).each(function(){
+var LanguageModifyOBJ = $(this);
+LanguageModifyOBJ.click(function(){
+if ( ! $(this).hasClass("clickable") )
+{
+return;
+}
+var LangChange = $(this).attr("langvalue");
+var LanguageNow = "\x43\x68\x69\x6e\x65\x73\x65";
+LanguageSwitch(LanguageNow, NowStatus, LangChange);
+});
+});
+}
+function MultilingualFun(languageOBJ,NowStatus,languageButContent,langarray){
+var LangLuaIDArray = {
+English:"English",
+French:"Français",
+Spanish:"Español",
+Portuguese:"Português",
+German:"Deutsch",
+Russian:"Русский",
+Japanese:"日本",
+Turkey:"Türk",
+Snovak:"Slovensko",
+Czech:"Čeština",
+Italian:"Italiano",
+GermanH3A:"Deutsch",
+TurkeyTR:"Türk",
+Kazak:"Қазақ тілі"
+};
+languageOBJ.empty();
+languageOBJ.show();
+var selectStr = '<select id="moreLanguage" name="moreLanguage" class="selectNorm valid" style="width:80px;">';
+for (var i=0; i<langarray.length; i++)
+{
+if (LangLuaIDArray[langarray[i]] != undefined)
+{
+selectStr += "<option value='" + langarray[i] + "' title='" + LangLuaIDArray[langarray[i]] + "'>" + LangLuaIDArray[langarray[i]] + "</option>";
+}
+}
+selectStr += '</select>';
+languageOBJ.append(selectStr);
+var moreLanguageOBJ = $("#moreLanguage")
+moreLanguageOBJ.find("option[value='"+languageButContent+"']").attr("selected",true);
+moreLanguageOBJ.on('change',function(){
+var LangChange = $(this).val();
+var LanguageNow = "\x43\x68\x69\x6e\x65\x73\x65";
+LanguageSwitch(LanguageNow, NowStatus, LangChange);
+})
+}
+
+$(document).ready(function(){
+
+clearTimeout(UpdateTimeTimerID);
+var NowStatus = "\x73\x68\x6f\x77\x43\x6f\x6d\x6d\x6f\x6e\x50\x61\x67\x65";
+var IsShowTimeZone = {
+'showloginPage' : false,
+'showWizardPage' : true,
+'showCommonPage' : true
+};
+if ( !IsShowTimeZone[NowStatus] )
+{
+$("#timeArea").hide();
+}
+else
+{
+$("#timeArea").show();
+UpdateCurrTime();
+}
+var logoLink = "homePage";
+var IsShowlogOff = {
+'showloginPage' : false,
+'showWizardPage' : true,
+'showCommonPage' : true
+};
+if ( !IsShowlogOff[NowStatus] )
+{
+$("#logOff").hide();
+}
+else
+{
+var obj = $("#logo");
+obj.addClass("clickable");
+obj.click(function(){
+openLink(logoLink + "&Menu3Location=0");
+});
+initLogUserLnk();
+}
+var modeSwitchAction = {
+'showloginPage' : null,
+'showWizardPage' : null,
+'showCommonPage' : MenuModeSwitch
+};
+if ( 1 == 1 || 1 == 4)
+{
+modeSwitchAction.showCommonPage = null;
+}
+if(typeof(custom_modeSwitchAction) == "function")
+{
+modeSwitchAction = custom_modeSwitchAction(modeSwitchAction);
+}
+if ( modeSwitchAction[NowStatus] != null )
+{
+var modeSwitchButContent = "\x42\x61\x73\x69\x63";
+var modeOBJ = $("#modeSwitch");
+var modeBasic = $("#modeBisic",modeOBJ);
+var ModeAdvanced = $("#ModeAdvanced",modeOBJ);
+if ( modeSwitchButContent == "Basic" )
+{
+ModeAdvanced.attr("class", "emColor clickable");
+modeBasic.attr("class", "");
+}
+else if ( modeSwitchButContent == "Advanced" )
+{
+modeBasic.attr("class", "emColor clickable");
+ModeAdvanced.attr("class", "");
+}
+else
+{
+}
+}
+$("span", modeOBJ).each(function(){
+var tempOBJ = $(this);
+tempOBJ.click(function(){
+if ( ! $(this).hasClass("clickable")
+|| modeSwitchAction[NowStatus] == null)
+{
+return;
+}
+var ModeNow = "\x42\x61\x73\x69\x63";
+MenuModeSwitch(ModeNow);
+});
+});
+var availablelanguge = "\x45\x6e\x67\x6c\x69\x73\x68\x2c\x43\x68\x69\x6e\x65\x73\x65";
+var langarray = availablelanguge.split(',');
+var languageButContent = "\x43\x68\x69\x6e\x65\x73\x65";
+var languageOBJ = $("#languageSwitch");
+if( langarray.length <= 2 ){
+BilingualFun(languageOBJ,NowStatus,languageButContent,langarray);
+}else{
+MultilingualFun(languageOBJ,NowStatus,languageButContent,langarray);
+}
+
+$("#sercurityNoticeOK").click(function(){
+$(".white_content_security").hide();
+$.get("/?_type=hiddenData&_tag=security_data");
+});
+if (NowStatus == "showCommonPage")
+{
+var LastIP = "";
+var LastLoginTime = "";
+var IF_ShowSecurity = "";
+if (LastIP != "" && IF_ShowSecurity != "1")
+{
+$(".white_content_security").show();
+$("#LastIP").text("Último endereço IP de login: "+LastIP);
+if (LastLoginTime != "")
+{
+LastLoginTime = LastLoginTime.replace("T", " ");
+$("#LastCurrentTime").text("Tempo do último login:"+LastLoginTime);
+}
+}
+}
+if (typeof(pro_Template) == "function")
+{
+pro_Template();
+}
+});
+window.onresize = function()
+{
+if ($("#tipLayer").css("display") != "none")
+{
+reposition_box("tipLayer");
+consoleLog("window reseze!");
+}
+}
+
+$("#modeSwitch").remove();
+
+
+</script>
+
+
+<svg id="SvgjsSvg1001" width="2" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" focusable="false" style="overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0;"><defs id="SvgjsDefs1002"></defs><polyline id="SvgjsPolyline1003" points="0,0"></polyline><path id="SvgjsPath1004" d="M0 0 "></path></svg></body>
