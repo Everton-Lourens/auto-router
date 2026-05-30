@@ -460,11 +460,11 @@ async function wlanBasicPage() {
   await clickIfExistsBySelector('#wlanConfig');
   await wait(2500);
 
-  await setCollapsibleBarStateByText(page, 'Configuração WLAN On/Off', false);
+  await setCollapsibleBarStateByText(page, 'Configuração WLAN On/Off', true);
   await setCollapsibleBarStateByText(page, 'Configuração Global WLAN', true);
-  await setCollapsibleBarStateByText(page, '2.4GHz', false);
+  await setCollapsibleBarStateByText(page, '2.4GHz', true);
   await setCollapsibleBarStateByText(page, '5GHz', true);
-  await setCollapsibleBarStateByText(page, 'Configuração WLAN SSID', true);
+  await setCollapsibleBarStateByText(page, 'Configuração WLAN SSID', false);
 
   await wait(1200);
   await screenshot('05-WLAN-Basica.png');
