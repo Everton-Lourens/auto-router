@@ -369,9 +369,6 @@ async function clickIfExistsBySelector(selector) {
     return clicked;
   }
 
-
-  
-
 async function securityPage() {
     await wait(1500);
     await clickIfExistsBySelector('#security')
@@ -465,7 +462,8 @@ async function wlanBasicPage() {
 
   await setCollapsibleBarStateByText(page, 'Configuração WLAN On/Off', true);
   await setCollapsibleBarStateByText(page, 'Configuração Global WLAN', true);
-  // abrir 2g e 5g
+  await setCollapsibleBarStateByText(page, '2.4GHz', true);
+  await setCollapsibleBarStateByText(page, '5GHz', true);
   await setCollapsibleBarStateByText(page, 'Configuração WLAN SSID', false);
 
   await wait(1200);
@@ -525,7 +523,6 @@ async function wlanBasicPage() {
   }
 
 })();
-
 
 
 
