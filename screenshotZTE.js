@@ -62,6 +62,66 @@ async function screenshot(name) {
   }
 
 
+  
+async function setCollapsibleBarStateByText(page, barText, shouldOpen) {
+  console.log(`Ajustando ${barText} para ${shouldOpen ? 'aberto' : 'fechado'}...`);
+
+  const bars = await page.$$('h1.collapBarWithDataTrans, h1.collapsibleBarExp');
+
+  let target = null;
+  for (const bar of bars) {
+    const text = await bar.evaluate(node =>
+      (node.textContent || '').replace(/\s+/g, ' ').trim()
+    );
+    if (text === barText) {
+      target = bar;
+      break;
+    }
+  }
+
+  if (!target) {
+    console.log(`${barText} não encontrado.`);
+    return false;
+  }
+
+  const isOpen = await target.evaluate(node =>
+    node.classList.contains('collapsibleBarExp')
+  );
+
+  if (isOpen === shouldOpen) {
+    console.log(`${barText} já está ${shouldOpen ? 'aberto' : 'fechado'}.`);
+    return true;
+  }
+
+  await target.evaluate(node =>
+    node.scrollIntoView({ block: 'center', inline: 'center' })
+  );
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      await target.click({ delay: 50 });
+    } catch {
+      try {
+        await target.evaluate(node => node.click());
+      } catch {}
+    }
+
+    await wait(700);
+
+    const currentState = await target.evaluate(node =>
+      node.classList.contains('collapsibleBarExp')
+    ).catch(() => null);
+
+    if (currentState === shouldOpen) {
+      console.log(`${barText} foi ${shouldOpen ? 'aberto' : 'fechado'}.`);
+      return true;
+    }
+  }
+
+  console.log(`Não foi possível garantir o estado de ${barText}.`);
+  return false;
+}
+
 async function setCollapsibleBarState(page, selector, label, shouldOpen) {
   console.log(`Ajustando ${label} para ${shouldOpen ? 'aberto' : 'fechado'}...`);
 
@@ -320,6 +380,22 @@ async function securityPage() {
 }
 
  async function redeLocalPage() {
+
+   await upnpPage();
+     await wait(2000);
+   await lanPage();
+     await wait(2000);
+   await wlanBasicPage();
+
+   
+   
+ async function upnpPage() {
+   await clickIfExistsBySelector('#upnp');
+await wait(1200);
+  await screenshot('03-R-L-UPnP.png');
+ }
+   
+    async function lanPage() {
   await wait(2000);
   await clickIfExistsBySelector('#localnet');
   await wait(2000);
@@ -347,7 +423,26 @@ async function securityPage() {
   );
 
   await wait(1200);
-  await screenshot('03-LAN-IPv4-DHCP.png');
+  await screenshot('04-LAN-IPv4-DHCP.png');
+ }
+
+async function wlanBasicPage() {
+  await wait(2000);
+  await clickIfExistsBySelector('#localnet');
+  await wait(2000);
+  await clickIfExistsBySelector('#wlanConfig');
+  await wait(2500);
+
+  await setCollapsibleBarStateByText(page, 'Configuração WLAN On/Off', true);
+  await setCollapsibleBarStateByText(page, 'Configuração Global WLAN', true);
+  await setCollapsibleBarStateByText(page, '2.4GHz', true);
+  await setCollapsibleBarStateByText(page, '5GHz', true);
+  await setCollapsibleBarStateByText(page, 'Configuração WLAN SSID', false);
+
+  await wait(1200);
+  await screenshot('05-WLAN-Basica.png');
+}
+   
 }
   
 
