@@ -470,8 +470,8 @@ async function wlanBasicPage() {
     await wait(2000);
     await setCanalOnOff(page, '#WlanBasicAdConfBar', false);
     await wait(2000);
-    await setWLANSSIDConf(page, true);
-  //  await setSSIDOnOff(page, '#WLANSSIDConfBar', true);
+   ///////// await setWLANSSIDConf(page, true);
+    await setCanalOnOff(page, '#WLANSSIDConfBar', true);
     await wait(2000);
     await screenshot('06-SSID.png')
   }
@@ -488,30 +488,6 @@ async function wlanBasicPage() {
   if (open && !isOpen) {
     await page.click(selector);
   } else if (!open && isOpen) {
-    await page.click(selector);
-  }
-
-  return true;
-}
-
-async function setSSIDOnOff(page, selector, open) {
-  //const selector = '#WlanBasicAdOnOffBar';
-  //const selector = '#WlanBasicAdConfBar';
-  if (!page || !selector || open === undefined) {
-    throw new Error('@@@@@ Parâmetros inválidos: setSSIDOnOff @@@@@');
-  }
-
-  await page.waitForSelector(selector, { visible: true });
-
-  const isOpen = await page.$eval(selector, el =>
-    el.classList.contains('collapBarWithDataTrans')
-  );
-
-  if (open && !isOpen) {
-    await page.click(selector);
-  }
-
-  if (!open && isOpen) {
     await page.click(selector);
   }
 
