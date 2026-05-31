@@ -489,8 +489,56 @@ async function wlanBasicPage() {
 
 ///////////////////////////
 ///////////////////////////
-  
+
 async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
+  const templateSelector = `#template_WLANSSIDConf_${ssidIndex}`;
+  const barSelector = `${templateSelector} .collapsibleInst`;
+  const areaSelector = `${templateSelector} [id^='changeArea_WLANSIDConf']`;
+  const showPasswordSelector = `${templateSelector} [id^='Switch_KeyPassType']`;
+
+  const template = await page.waitForSelector(templateSelector, {
+    visible: true,
+    timeout: 3000
+  }).catch(() => null);
+
+  if (!template) {
+    console.log(`Template não encontrado: ${templateSelector}`);
+    return false;
+  }
+
+  const bar = await page.$(barSelector);
+  if (!bar) {
+    console.log(`Barra não encontrada: ${barSelector}`);
+    return false;
+  }
+
+  const isOpen = await page.$eval(areaSelector, el => {
+    return window.getComputedStyle(el).display !== 'none';
+  }).catch(() => false);
+
+  if (open !== isOpen) {
+    await bar.evaluate(el => {
+      el.scrollIntoView({ block: 'center', inline: 'center' });
+      el.click();
+    });
+    await wait(1000);
+  }
+
+  if (open) {
+    const checkbox = await page.$(showPasswordSelector);
+    if (checkbox) {
+      const checked = await page.$eval(showPasswordSelector, el => el.checked).catch(() => false);
+      if (!checked) {
+        await checkbox.evaluate(el => el.click());
+        await wait(1000);
+      }
+    }
+  }
+
+  return true;
+}
+  
+async function setSSID2G5GHzOnOff2222222(page, ssidIndex, open) {
   const templateSelector = `#template_WLANSSIDConf_${ssidIndex}`;
   const barSelector = `${templateSelector} .collapsibleInst`;
   const areaSelector = `${templateSelector} [id^='changeArea_WLANSSIDConf']`;
