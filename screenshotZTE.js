@@ -462,22 +462,28 @@ async function wlanBasicPage() {
   await clickIfExistsBySelector('#wlanConfig');
   await wait(2500);
 
-  await setCollapsibleBarStateByText(page, 'Configuração WLAN On/Off', true);
-  await wait(2000);
-  await setCollapsibleBarStateByText(page, 'Configuração Global WLAN', true);
+  //await setCollapsibleBarStateByText(page, 'Configuração WLAN On/Off', true);
+  //await wait(2000);
+  //await setCollapsibleBarStateByText(page, 'Configuração Global WLAN', true);
+  await setWlanOnOff(page, '#WlanBasicAdConfBar', true);
   await wait(2000);
   await setWlan5GHz(page, true);
   await wait(2000);
-  await setCollapsibleBarStateByText(page, 'Configuração WLAN SSID', false);
-  await wait(2000);
-  await clickFirstInternetItem(page);
-   await wait(1500);
+  //await setCollapsibleBarStateByText(page, 'Configuração WLAN SSID', false);
+  //await wait(2000);
+  //await clickFirstInternetItem(page);
+   //await wait(1500);
+
+  
   await screenshot('05-canal-2.4_5G.png')
 
 
-async function setWlanOnOff(page, open) {
-  //await setWlanOnOff(page, false);
-  const selector = '#WlanBasicAdOnOffBar';
+async function setWlanOnOff(page, selector, open) {
+  //const selector = '#WlanBasicAdOnOffBar';
+  //const selector = '#WlanBasicAdConfBar';
+  if (!page || !selector || open === undefined) {
+    throw new Error('@@@@@ Parâmetros inválidos: setWlanOnOff @@@@@');
+  }
 
   await page.waitForSelector(selector, { visible: true });
 
