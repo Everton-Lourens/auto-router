@@ -466,8 +466,6 @@ async function wlanBasicPage() {
   await printSSID();
 
 
-
-  ///////////////////////////
   
   async function printSSID() {
     await setCanalOnOff(page, '#WlanBasicAdOnOffBar', false);
@@ -476,17 +474,47 @@ async function wlanBasicPage() {
     await wait(2000);
    ///////// await setWLANSSIDConf(page, true);
     await setCanalOnOff(page, '#WLANSSIDConfBar', true);
+
+    
+        await wait(2000);
+    await screenshot('06-TESTEEEE.png')
+
     await wait(2000);
+    
+    await setSSID2G5GHzOnOff(page, false);
+await wait(2000);
     await screenshot('06-SSID.png')
   }
 
-  async function set5GHzOnOff(page, open) {
-  const selector = '#instName_WlanBasicAdConf\\:1';
+///////////////////////////
+async function setSSID2G5GHzOnOff(page, open) {
+  const barSelector = '#instName_WLANSSIDConf';
+  const areaSelector = '#changeArea_WLANSSIDConf';
+
+  await page.waitForSelector(barSelector, { visible: true });
+
+  const isOpen = await page.$eval(areaSelector, el => {
+    return window.getComputedStyle(el).display !== 'none';
+  });
+
+  if (open && !isOpen) {
+    await page.click(barSelector);
+  }
+
+  if (!open && isOpen) {
+    await page.click(barSelector);
+  }
+
+  return true;
+}
+  
+  async function setSSID2G5GHzOnOff2222(page, open) {
+  const selector = '#instName_WLANSSIDConf';
 
   await page.waitForSelector(selector, { visible: true });
 
   const isOpen = await page.$eval(selector, el =>
-    el.classList.contains('instNameExp')
+    el.classList.contains('collapsibleInst')
   );
 
   if (open && !isOpen) {
@@ -499,6 +527,7 @@ async function wlanBasicPage() {
 
   return true;
 }
+  
    }
  }
   ///////////////////////////
@@ -507,7 +536,6 @@ async function wlanBasicPage() {
   async function print2GHz_5GHz() {
     await setCanalOnOff(page, '#WlanBasicAdConfBar', true);
     await wait(2000);
-    await screenshot('05-TESTEEE.png')
     await set5GHzOnOff(page, true);
     await wait(2000);
     await screenshot('05-canal-2.4_5G.png')
