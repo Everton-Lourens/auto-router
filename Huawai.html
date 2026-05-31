@@ -1,0 +1,180 @@
+<body onload="loadframe();">
+	<div id="mainWrapper">
+		<div class="alertBackgroud" id="alertBackgroud" style="display: none;">
+			<div class="alertBox">
+				<div id="houpTable" style="display: flex;justify-content: center;margin-top: 30px;">
+					<div id="houpBox" style="width: 530px;">
+						<div style="height: 50px;line-height: 50px;font-size: 18px;margin: 26px 0;" bindtext="frame033">Configure Automatic Upgrade</div>
+						<input id="chekHoup" type="checkbox" checked="">
+						<span style="font-size: 14px;" bindtext="frame032">Enable the automatic upgrade.</span>
+						<div style="display: flex;justify-content: center;">
+							<div id="houpEnable" style="width: 85px;height: 30px;line-height: 30px;background: #2eadf6;margin-top: 36px;color: white;cursor: pointer;" onclick="clickhoupEnable()" bindtext="frame034">Apply</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="headWrapper" class="headWrapper">
+			<div class="headMain">
+				<div class="brandLog" style="background-image: url(&quot;/images/hwlog.jpg&quot;);"></div>
+				<div class="productTitleWrapper">      
+					<span id="productTitle">
+						<script>
+                            if (ProductName.length > 9) {
+                                document.write('<div id="ProductName" class="ProductName" style="width: 200px; background-size: 100% 100%">' + ProductName + '</div>');
+                            } else {
+
+                                document.write('<div id="ProductName" class="ProductName">' + ProductName + '</div>');
+                            }
+						</script><div id="ProductName" class="ProductName">K562e-10</div>
+					</span> 
+				</div>				
+				<div class="headRightMenu" onclick="logoutfunc()">
+					<span id="logoutBtn" class="logoutBtn" bindtext="frame017">Logout</span>
+				</div>
+				<div id="fidnaSwitchModeMenuId" class="fidnaSwitchModeMenu" style="margin-right: -50px; display: none;">
+							<select id="fidna_wan_mode" class="fidna_wan_mode" onchange="FidnaWanModeChanged(this.value)">
+							<option value="Route">
+								<script>document.write(framedesinfo['frame030a']);</script>Route Mode
+							</option>
+							<option value="Bridge">
+								<script>document.write(framedesinfo['frame031a']);</script>Bridge Mode
+							</option>
+						</select>
+					</div>
+					<div id="fidna_hw_logo" style="background-image: url('/images/hwlog.jpg');float:right;width: 159px; height: 45px; background-repeat: no-repeat; background-position: center; margin-right: 15px; display: none;"></div>
+				<script>
+                    if ((isVDFAP == "1") && (curUserType == "1") && (isPortalEnd != "0")) {
+                        document.write('<div id="configguide" class="headguide"><span id="guidebtn" class="guidebtn" onclick="goToPortGuide();">Guide</span></div>');
+                        $(".headguide").hover(function() {
+                            $("#guidebtn").css("color","#2fabf6");
+                        },function() {
+                            $("#guidebtn").css("color","");
+                        });
+                    }
+					if ('ICELANDVDFAP' == CfgMode.toUpperCase()) {
+						$(".headRightMenu").hover(function() {
+						$(this).css("background-image","url(/images/logout_hover.jpg)");
+						$("#logoutBtn").css("color","#E60000");
+						},function() {
+						$(this).css("background-image","");
+						$("#logoutBtn").css("color","");
+						});
+					} else {
+						$(".headRightMenu").hover(function() {
+						$(this).css("background-image","url(/images/logout_hover.jpg)");
+						$("#logoutBtn").css("color","#2fabf6");
+						},function() {
+							$(this).css("background-image","");
+							$("#logoutBtn").css("color","");
+						});
+					}
+
+					if (Language == "finnish") {
+						$(".headRightMenu").css("padding-left","140px");
+					}
+
+				</script>
+			</div>
+		</div>
+		<div class="menu">
+			<div class="menuDetail">
+				<div id="indexPage" class="menudisplay RTMode" onclick="onIndexChange();" style="">
+					<p id="indexTitle" class="indexTitle" bindtext="frame013">Homepage</p>
+					<button id="indexPageBtn" class="indexPageBtn menuBtnLogo indexBiglogo"></button>
+				</div>
+				<div id="internetPage" class="menudisplay RTMode" onclick="onInternetChange();" style="">
+					<p id="internetTitle" class="internetTitle" bindtext="frame019">Internet Access</p>
+					<button id="internetPageBtn" class="internetPageBtn menuBtnLogo"></button>
+				</div>
+				<div id="wifiPage" class="menudisplay RTMode" onclick="onWifiChange();" style="">
+					<p id="wifiTitle" class="wifiTitle" bindtext="frame014">My Wi-Fi</p>
+					<button id="wifiPageBtn" class="wifiPageBtn menuBtnLogo"></button>
+				</div>
+				<div id="terminalPage" class="menudisplay RTMode" onclick="onTerminalChange();" style="">
+					<p id="terminalTitle" class="terminalTitle" bindtext="frame020">Terminal</p>
+					<button id="terminalPageBtn" class="terminalPageBtn menuBtnLogo"></button>
+				</div>
+				<div id="modeChangePage" class="menudisplay RTMode" onclick="onModeChange();" style="display:none;">
+					<p id="modeChangeTitle" class="modeChangeTitle" bindtext="frame025ap"></p>
+					<button id="modeChangePageBtn" class="internetPageBtn menuBtnLogo"></button>
+				</div>
+				<div id="moreFunctionPage" class="menudisplay RTMode" onclick="onMoreChange();" style="">
+					<p id="moreFunctionTitle" class="moreFunctionTitle" bindtext="frame015">More</p>
+					<button id="moreFunctionPageBtn" class="moreFunctionPageBtn menuBtnLogo"></button>
+				</div>
+			</div>
+		</div>
+		
+		<script>
+			if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) { 
+				document.write('<div class="scroll-wrapper">');
+				document.write('<iframe id="functioncontent" frameborder="0" marginheight="0" marginwidth="0" height="600px" width="100%" src="" scrolling="no" style="background:#f0f2f5;"></iframe>');
+				document.write('</div>');
+			} else if (/(Android)/i.test(navigator.userAgent)) {
+				document.write('<iframe id="functioncontent" frameborder="0" marginheight="0" marginwidth="0" height="600px" width="100%" src="" scrolling="no" style="background:#f0f2f5;"></iframe>');
+			} else {
+				document.write('<iframe id="functioncontent" frameborder="0" marginheight="0" marginwidth="0" height="600px" width="100%" src="" scrolling="no" style="background:#f0f2f5;"></iframe>');
+			};
+
+            if (CfgMode === 'DESKAPASTRO') {
+                $("#functioncontent").css("background", "#ffffff");
+                document.body.style.backgroundColor = '#ffffff';
+                $("#indexTitle").attr("BindText","frame013_astro");
+                $("#internetTitle").attr("BindText","frame019_astro");
+                $("#wifiTitle").attr("BindText","frame014_astro");
+            }
+		</script><iframe id="functioncontent" frameborder="0" marginheight="0" marginwidth="0" height="600px" width="100%" src="/html/bbsp/maintop/MainTopAP.asp" scrolling="no" style="background: rgb(240, 242, 245); height: 595.756px; width: 100%;"></iframe>
+		
+		<div align="center" id="copyright" class="copyright">
+			<div id="copyrighttext" align="center"><span id="footer" bindtext="frame018">Copyright © 2025 Huawei Technologies Co., Ltd. All rights reserved.</span></div>
+			<div id="rebootlogo" class="rebootlogo" align="center">
+				<div class="rebootback">
+					<div class="reboot_bg">
+						<button id="reboot" class="reboot" onclick="onReboot();">&nbsp;</button>
+						<input type="hidden" name="onttoken" id="hwonttoken" value="e24e44349316017820a9f62fa62258000e8102eacf916e9ccf0ddc40c1d9a759">	 
+					</div> 
+				</div>
+				<div id="rebootinfo" class="hide">
+					<span bindtext="frame016">Restart</span>
+				</div>
+			</div>
+			<script>
+				var rebootactiveUrl = "url('images/reboot_active.jpg')";
+				var rebootUrl = "url('images/reboot.jpg')";
+				if (CfgMode === 'DESKAPASTRO') { 
+					rebootactiveUrl = "url('images/rebootastro_active.jpg')";
+					rebootUrl = "url('images/rebootastro.jpg')";
+					$("#footer").attr("BindText","frame018_astro");
+				}
+
+				getId("rebootlogo").onmouseover = function()
+				{
+					getId("rebootinfo").style.display        = "block";
+					getId("reboot").style.backgroundImage    = rebootactiveUrl;
+					getId("reboot").style.backgroundRepeat   = "no-repeat";
+					getId("reboot").style.backgroundPosition = "center";
+				}
+				getId("rebootlogo").onmouseout = function()
+				{
+					getId("rebootinfo").style.display        = "none";
+					getId("reboot").style.backgroundImage    = rebootUrl;
+					getId("reboot").style.backgroundRepeat   = "no-repeat";
+					getId("reboot").style.backgroundPosition = "center";
+				}
+			</script>
+		</div>
+<div id="fresh" class="hide"> 
+ <iframe frameborder="0" height="100%" marginheight="0" marginwidth="0" scrolling="no" src="/refresh.asp" width="100%"></iframe> 
+</div> 
+	</div>
+	<script>
+		ParseBindTextByTagName(framedesinfo, "span", 1);
+		ParseBindTextByTagName(framedesinfo, "p", 1);
+		ParseBindTextByTagName(framedesinfo, "button", 1);
+		ParseBindTextByTagName(framedesinfo, "div", 1);
+	</script>
+<script language="javascript" src="/html/bbsp/common/getWanDynamicData.asp"></script>
+
+
+</body>
