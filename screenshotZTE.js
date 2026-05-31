@@ -462,21 +462,52 @@ async function wlanBasicPage() {
   await clickIfExistsBySelector('#wlanConfig');
   await wait(2500);
 
-  //await setCollapsibleBarStateByText(page, 'Configuração WLAN On/Off', true);
-  //await wait(2000);
-  //await setCollapsibleBarStateByText(page, 'Configuração Global WLAN', true);
-  await setWlanOnOff(page, '#WlanBasicAdConfBar', true);
-  await wait(2000);
-  await setWlan5GHz(page, true);
-  await wait(2000);
-  //await setCollapsibleBarStateByText(page, 'Configuração WLAN SSID', false);
-  //await wait(2000);
-  //await clickFirstInternetItem(page);
-   //await wait(1500);
+  await print2GHz_5GHz();
+  await printSSID();
 
+  await printSSID() {
+    await setCanalOnOff(page, '#WlanBasicAdOnOffBar', false);
+    await wait(2000);
+    await setCanalOnOff(page, '#WlanBasicAdConfBar', false);
+    await wait(2000);
+    await setSSIDOnOff(page, '#WLANSSIDConfBar', true);
+    await wait(2000);
+    await screenshot('06-SSID.png')
+  }
+
+
+async function setSSIDOnOff(page, selector, open) {
+  //const selector = '#WlanBasicAdOnOffBar';
+  //const selector = '#WlanBasicAdConfBar';
+  if (!page || !selector || open === undefined) {
+    throw new Error('@@@@@ Parâmetros inválidos: setSSIDOnOff @@@@@');
+  }
+
+  await page.waitForSelector(selector, { visible: true });
+
+  const isOpen = await page.$eval(selector, el =>
+    el.classList.contains('collapBarWithDataTrans')
+  );
+
+  if (open && !isOpen) {
+    await page.click(selector);
+  }
+
+  if (!open && isOpen) {
+    await page.click(selector);
+  }
+
+  return true;
+}
   
-  await screenshot('05-canal-2.4_5G.png')
-
+  
+  async function print2GHz_5GHz() {
+    await setCanalOnOff(page, '#WlanBasicAdConfBar', true);
+    await wait(2000);
+    await setWlan5GHzOnOff(page, true);
+    await wait(2000);
+    await screenshot('05-canal-2.4_5G.png')
+  }
 
 async function setWlanOnOff(page, selector, open) {
   //const selector = '#WlanBasicAdOnOffBar';
@@ -502,7 +533,7 @@ async function setWlanOnOff(page, selector, open) {
   return true;
 }
   
-  async function setWlan5GHz(page, open) {
+  async function setWlan5GHzOnOff(page, open) {
   const selector = '#instName_WlanBasicAdConf\\:1';
 
   await page.waitForSelector(selector, { visible: true });
