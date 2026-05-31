@@ -481,17 +481,20 @@ async function wlanBasicPage() {
 
     await wait(2000);
     
-    await setSSID2G5GHzOnOff(page, false);
+    await setSSID2G5GHzOnOff(page, 2, true);
 await wait(2000);
     await screenshot('06-SSID.png')
   }
 
 ///////////////////////////
-async function setSSID2G5GHzOnOff(page, open) {
-  const barSelector = '#instName_WLANSSIDConf';
-  const areaSelector = '#changeArea_WLANSSIDConf';
+async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
+  const templateSelector = `#template_WLANSSIDConf_${ssidIndex}`;
+  const barSelector = `${templateSelector} .collapsibleInst`;
+  const areaSelector = `${templateSelector} [id^='changeArea_WLANSSIDConf']`;
 
+  await page.waitForSelector(templateSelector, { visible: true });
   await page.waitForSelector(barSelector, { visible: true });
+  await page.waitForSelector(areaSelector);
 
   const isOpen = await page.$eval(areaSelector, el => {
     return window.getComputedStyle(el).display !== 'none';
@@ -508,27 +511,6 @@ async function setSSID2G5GHzOnOff(page, open) {
   return true;
 }
   
-  async function setSSID2G5GHzOnOff2222(page, open) {
-  const selector = '#instName_WLANSSIDConf';
-
-  await page.waitForSelector(selector, { visible: true });
-
-  const isOpen = await page.$eval(selector, el =>
-    el.classList.contains('collapsibleInst')
-  );
-
-  if (open && !isOpen) {
-    await page.click(selector);
-  }
-
-  if (!open && isOpen) {
-    await page.click(selector);
-  }
-
-  return true;
-}
-  
-   
  
   ///////////////////////////
 
