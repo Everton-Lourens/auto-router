@@ -488,10 +488,15 @@ await wait(2000);
   }
 
 ///////////////////////////
+///////////////////////////
+  
 async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
   const templateSelector = `#template_WLANSSIDConf_${ssidIndex}`;
   const barSelector = `${templateSelector} .collapsibleInst`;
   const areaSelector = `${templateSelector} [id^='changeArea_WLANSSIDConf']`;
+
+  // Ajuste este seletor se o ID do checkbox for diferente
+  const showPasswordSelector = `${templateSelector} [id^='Switch_KeyPassType']`;
 
   await page.waitForSelector(templateSelector, { visible: true });
   await page.waitForSelector(barSelector, { visible: true });
@@ -503,16 +508,30 @@ async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
 
   if (open && !isOpen) {
     await page.click(barSelector);
+    await page.waitForTimeout(300);
   }
 
   if (!open && isOpen) {
     await page.click(barSelector);
+    return true;
+  }
+
+  // Quando abrir, marca "mostrar senha"
+  if (open) {
+    const checkbox = await page.$(showPasswordSelector);
+    if (checkbox) {
+      const checked = await page.$eval(showPasswordSelector, el => el.checked);
+      if (!checked) {
+        await page.click(showPasswordSelector);
+        await page.waitForTimeout(200);
+      }
+    }
   }
 
   return true;
 }
   
- 
+ ///////////////////////////
   ///////////////////////////
 
   
