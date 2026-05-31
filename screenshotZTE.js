@@ -47,7 +47,7 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
   
 
 async function screenshot(name) {
-
+await wait(2000);
     const path = `${SAVE_DIR}/${name}`;
 
     console.log(`Screenshot: ${path}`);
@@ -468,22 +468,29 @@ async function wlanBasicPage() {
 
   
   async function printSSID() {
+    await screenshot('01-TESTEE.png')
     await setCanalOnOff(page, '#WlanBasicAdOnOffBar', false);
     await wait(2000);
+    await screenshot('02-TESTEE.png')
     await setCanalOnOff(page, '#WlanBasicAdConfBar', false);
     await wait(2000);
+    await screenshot('03-TESTEE.png')
    ///////// await setWLANSSIDConf(page, true);
     await setCanalOnOff(page, '#WLANSSIDConfBar', true);
-await screenshot('05-TESTEE.png')
+    await wait(2000);
+    
+    await screenshot('04-TESTEE.png')
     await wait(2000);
     await setSSID2G5GHzOnOff(page, 0, false);
     await wait(2000);
+    await screenshot('05-TESTEE.png')
     await setSSID2G5GHzOnOff(page, 1, true);
     await wait(2000);
+    await screenshot('05-TESTEE.png')
     await setSSID2G5GHzOnOff(page, 1, true);
     await wait(2000);
     
-    await wait(2000);
+    
     await screenshot('06-SSID.png')
   }
 
