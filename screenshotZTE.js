@@ -504,16 +504,16 @@ async function setSSIDOnOff(page, selector, open) {
   async function print2GHz_5GHz() {
     await setCanalOnOff(page, '#WlanBasicAdConfBar', true);
     await wait(2000);
-    await setWlan5GHzOnOff(page, true);
+    await set5GHzOnOff(page, true);
     await wait(2000);
     await screenshot('05-canal-2.4_5G.png')
   }
 
-async function setWlanOnOff(page, selector, open) {
+async function setCanalOnOff(page, selector, open) {
   //const selector = '#WlanBasicAdOnOffBar';
   //const selector = '#WlanBasicAdConfBar';
   if (!page || !selector || open === undefined) {
-    throw new Error('@@@@@ Parâmetros inválidos: setWlanOnOff @@@@@');
+    throw new Error('@@@@@ Parâmetros inválidos: setCanalOnOff @@@@@');
   }
 
   await page.waitForSelector(selector, { visible: true });
@@ -533,7 +533,7 @@ async function setWlanOnOff(page, selector, open) {
   return true;
 }
   
-  async function setWlan5GHzOnOff(page, open) {
+  async function set5GHzOnOff(page, open) {
   const selector = '#instName_WlanBasicAdConf\\:1';
 
   await page.waitForSelector(selector, { visible: true });
