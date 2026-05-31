@@ -465,7 +465,7 @@ async function wlanBasicPage() {
   await print2GHz_5GHz();
   await printSSID();
 
-  await printSSID() {
+  async function printSSID() {
     await setCanalOnOff(page, '#WlanBasicAdOnOffBar', false);
     await wait(2000);
     await setCanalOnOff(page, '#WlanBasicAdConfBar', false);
