@@ -504,6 +504,7 @@ async function setSSIDOnOff(page, selector, open) {
   async function print2GHz_5GHz() {
     await setCanalOnOff(page, '#WlanBasicAdConfBar', true);
     await wait(2000);
+    await screenshot('05-TESTEEE.png')
     await set5GHzOnOff(page, true);
     await wait(2000);
     await screenshot('05-canal-2.4_5G.png')
