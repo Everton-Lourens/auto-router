@@ -651,7 +651,7 @@ async function setCanalOnOff2222222(page, selector, open) {
 
 
 
-  async function set5GHzOnOff(page, open) {
+  async function set5GHzOnOff3333333333(page, open) {
   const selector = '#instName_WlanBasicAdConf\\:1';
 
   const el = await page.waitForSelector(selector, {
@@ -661,7 +661,7 @@ async function setCanalOnOff2222222(page, selector, open) {
 
   if (!el) {
     console.log('5GHz não encontrado');
-    return false;
+    
   }
 
   await el.evaluate(node => {
@@ -684,7 +684,7 @@ async function setCanalOnOff2222222(page, selector, open) {
   return true;
 }
   
-  async function set5GHzOnOff22222222222222(page, open) {
+  async function set5GHzOnOff(page, open) {
   const selector = '#instName_WlanBasicAdConf\\:1';
 
   try {
