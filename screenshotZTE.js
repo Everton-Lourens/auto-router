@@ -602,7 +602,7 @@ async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
   }
 
 
-async function setCanalOnOff(page, selector, open) {
+async function setCanalOnOff3333333333(page, selector, open) {
   if (!page || !selector || typeof open !== 'boolean') {
     throw new Error('@@@@@ Parâmetros inválidos: setCanalOnOff @@@@@');
   }
@@ -623,7 +623,7 @@ async function setCanalOnOff(page, selector, open) {
 }
   
 
-async function setCanalOnOff2222222(page, selector, open) {
+async function setCanalOnOff(page, selector, open) {
   //const selector = '#WlanBasicAdOnOffBar';
   //const selector = '#WlanBasicAdConfBar';
   if (!page || !selector || open === undefined) {
