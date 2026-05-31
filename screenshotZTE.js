@@ -596,28 +596,54 @@ async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
   }
 
 
-async function setCanalOnOff3333333333(page, selector, open) {
-  if (!page || !selector || typeof open !== 'boolean') {
+async function setCanalOnOff(page, selector, open) {
+  if (!page || !selector || open === undefined) {
     throw new Error('@@@@@ Parâmetros inválidos: setCanalOnOff @@@@@');
   }
 
   console.log(selector);
 
-  await page.waitForSelector(selector, { visible: true });
+  await wait(2000);
+  await screenshot(selector + '-011111-CanalOnOff.png');
+  await wait(2000);
 
-  const isOpen = await page.$eval(selector, el =>
+  await page.waitForSelector(selector, { visible: true, timeout: 10000 });
+
+  const isOpenBefore = await page.$eval(selector, el =>
     el.classList.contains('collapsibleBarExp')
   );
 
-  if (open !== isOpen) {
+  if (open && !isOpenBefore) {
     await page.click(selector);
   }
+
+  if (!open && isOpenBefore) {
+    await page.click(selector);
+  }
+
+  await wait(1000);
+
+  const isOpenAfter = await page.$eval(selector, el =>
+    el.classList.contains('collapsibleBarExp')
+  );
+
+  if (open && !isOpenAfter) {
+    throw new Error(`@@@@@ Não abriu o canal em ${selector} @@@@@`);
+  }
+
+  if (!open && isOpenAfter) {
+    throw new Error(`@@@@@ Não fechou o canal em ${selector} @@@@@`);
+  }
+
+  await wait(2000);
+  await screenshot(selector + '-02222-CanalOnOff.png');
+  await wait(2000);
 
   return true;
 }
   
 
-async function setCanalOnOff(page, selector, open) {
+async function setCanalOnOff11111111(page, selector, open) {
   await wait(2000)
   await screenshot(selector+'011111-CanalOnOff.png')
 await wait(2000)
