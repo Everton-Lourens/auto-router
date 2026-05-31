@@ -475,13 +475,14 @@ async function wlanBasicPage() {
    ///////// await setWLANSSIDConf(page, true);
     await setCanalOnOff(page, '#WLANSSIDConfBar', true);
 
-    
-        await wait(2000);
-    await screenshot('06-TESTEEEE.png')
-
+    await wait(2000);
+    await setSSID2G5GHzOnOff(page, 0, false);
+    await wait(2000);
+    await setSSID2G5GHzOnOff(page, 1, true);
+    await wait(2000);
+    await setSSID2G5GHzOnOff(page, 1, true);
     await wait(2000);
     
-    await setSSID2G5GHzOnOff(page, 2, true);
 await wait(2000);
     await screenshot('06-SSID.png')
   }
