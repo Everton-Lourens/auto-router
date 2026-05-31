@@ -570,8 +570,19 @@ async function setCanalOnOff(page, selector, open) {
   async function set5GHzOnOff(page, open) {
   const selector = '#instName_WlanBasicAdConf\\:1';
 
-  await page.waitForSelector(selector, { visible: true });
-
+  try {
+  await page.waitForSelector(selector, { visible: true, timeout: 3000 });
+} catch (e) {
+  await wait(2000);
+    const el = await page.$(selector);
+  if (el) {
+console.log('seletor 5GHz deu falha, porém foi corrigido...');
+  } else {
+    console.log('@@@@ 5GHz não encontrado');
+    console.log('@@@@ Selector não apareceu:', selector);
+    console.log('@@@@@ Fluxo não interrompido continuando...');
+  }
+}
   const isOpen = await page.$eval(selector, el =>
     el.classList.contains('instNameExp')
   );
