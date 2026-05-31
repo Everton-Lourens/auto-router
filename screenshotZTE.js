@@ -474,7 +474,7 @@ async function wlanBasicPage() {
     await wait(2000);
    ///////// await setWLANSSIDConf(page, true);
     await setCanalOnOff(page, '#WLANSSIDConfBar', true);
-
+await screenshot('05-TESTEE.png')
     await wait(2000);
     await setSSID2G5GHzOnOff(page, 0, false);
     await wait(2000);
@@ -584,7 +584,6 @@ async function setSSID2G5GHzOnOff2222222(page, ssidIndex, open) {
 
   
   async function print2GHz_5GHz() {
-    await screenshot('05-TESTEE.png')
     await setCanalOnOff(page, '#WlanBasicAdConfBar', true);
     await wait(2000);
     await set5GHzOnOff(page, true);
