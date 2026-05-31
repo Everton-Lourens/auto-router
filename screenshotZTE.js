@@ -624,7 +624,7 @@ async function setCanalOnOff3333333333(page, selector, open) {
   
 
 async function setCanalOnOff(page, selector, open) {
-  await screenshot(selector+'01-CanalOnOff.png')
+  await screenshot(selector+'011111-CanalOnOff.png')
 
   //const selector = '#WlanBasicAdOnOffBar';
   //const selector = '#WlanBasicAdConfBar';
@@ -649,7 +649,7 @@ async function setCanalOnOff(page, selector, open) {
   }
 
   return true;
-  await screenshot(selector+'02-CanalOnOff.png')
+  await screenshot(selector+'02222-CanalOnOff.png')
 
 }
 
