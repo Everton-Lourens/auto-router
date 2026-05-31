@@ -490,7 +490,7 @@ await screenshot('05-TESTEE.png')
 ///////////////////////////
 ///////////////////////////
 
-async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
+async function setSSID2G5GHzOnOff333333(page, ssidIndex, open) {
   const templateSelector = `#template_WLANSSIDConf_${ssidIndex}`;
   const barSelector = `${templateSelector} .collapsibleInst`;
   const areaSelector = `${templateSelector} [id^='changeArea_WLANSIDConf']`;
@@ -538,7 +538,7 @@ async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
   return true;
 }
   
-async function setSSID2G5GHzOnOff2222222(page, ssidIndex, open) {
+async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
   const templateSelector = `#template_WLANSSIDConf_${ssidIndex}`;
   const barSelector = `${templateSelector} .collapsibleInst`;
   const areaSelector = `${templateSelector} [id^='changeArea_WLANSSIDConf']`;
