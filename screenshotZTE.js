@@ -483,7 +483,7 @@ async function wlanBasicPage() {
     await setSSID2G5GHzOnOff(page, 1, true);
     await wait(2000);
     
-await wait(2000);
+    await wait(2000);
     await screenshot('06-SSID.png')
   }
 
@@ -508,7 +508,7 @@ async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
 
   if (open && !isOpen) {
     await page.click(barSelector);
-    await page.waitForTimeout(300);
+    await wait(1000);
   }
 
   if (!open && isOpen) {
