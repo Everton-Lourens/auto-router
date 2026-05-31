@@ -384,10 +384,10 @@ async function securityPage() {
 
  async function redeLocalPage() {
 
-   //await upnpPage();
-     //await wait(2000);
- //  await lanPage();
-     await wait(2000);
+   await upnpPage();
+   await wait(2000);
+   await lanPage();
+   await wait(2000);
    await wlanBasicPage();
 
    
@@ -475,9 +475,7 @@ async function wlanBasicPage() {
     await wait(2000);
    ///////// await setWLANSSIDConf(page, true);
     await setCanalOnOff(page, '#WLANSSIDConfBar', true);
-    await wait(2000);
 
-    await screenshot('01-TESTEE-SSID.png')
     await wait(2000);
     await setSSID2G5GHzOnOff(page, 0, false);
     await wait(2000);
@@ -601,12 +599,7 @@ async function setCanalOnOff(page, selector, open) {
     throw new Error('@@@@@ Parâmetros inválidos: setCanalOnOff @@@@@');
   }
 
-  console.log(selector);
-
   await wait(2000);
-  await screenshot(selector + '-011111-CanalOnOff.png');
-  await wait(2000);
-
   await page.waitForSelector(selector, { visible: true, timeout: 10000 });
 
   const isOpenBefore = await page.$eval(selector, el =>
@@ -636,17 +629,12 @@ async function setCanalOnOff(page, selector, open) {
   }
 
   await wait(2000);
-  await screenshot(selector + '-02222-CanalOnOff.png');
-  await wait(2000);
-
   return true;
 }
   
 
 async function setCanalOnOff11111111(page, selector, open) {
   await wait(2000)
-  await screenshot(selector+'011111-CanalOnOff.png')
-await wait(2000)
   //const selector = '#WlanBasicAdOnOffBar';
   //const selector = '#WlanBasicAdConfBar';
   if (!page || !selector || open === undefined) {
@@ -669,8 +657,6 @@ await wait(2000)
     await page.click(selector);
   }
   
-  await wait(2000)
-  await screenshot(selector+'02222-CanalOnOff.png')
   await wait(2000)
   return true;
 }
