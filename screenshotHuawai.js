@@ -275,7 +275,8 @@ async function clickIfExistsBySelector(selector) {
 
   await wait(2000);
 
-      await clickIfExistsBySelector('#moreFunctionPageBtn');
+      await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
+await page.click('#moreFunctionPage');
     
     await wait(2000)
 
