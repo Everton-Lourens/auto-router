@@ -584,6 +584,7 @@ async function setSSID2G5GHzOnOff2222222(page, ssidIndex, open) {
 
   
   async function print2GHz_5GHz() {
+    await screenshot('05-TESTEE.png')
     await setCanalOnOff(page, '#WlanBasicAdConfBar', true);
     await wait(2000);
     await set5GHzOnOff(page, true);
@@ -597,6 +598,8 @@ async function setCanalOnOff(page, selector, open) {
   if (!page || !selector || open === undefined) {
     throw new Error('@@@@@ Parâmetros inválidos: setCanalOnOff @@@@@');
   }
+
+  console.log(selector);
 
   await page.waitForSelector(selector, { visible: true });
 
