@@ -593,7 +593,80 @@ async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
   }
 
 
+
 async function setCanalOnOff(page, selector, open) {
+  if (!page || !selector || open === undefined) {
+    throw new Error('@@@@@ Parâmetros inválidos: setCanalOnOff @@@@@');
+  }
+
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+  async function getState() {
+    return await page.$eval(selector, el =>
+      el.classList.contains('collapsibleBarExp')
+    );
+  }
+
+  async function tryClick() {
+    const el = await page.$(selector);
+    if (!el) throw new Error(`@@@@@ Elemento não encontrado: ${selector} @@@@@`);
+
+    await el.evaluate(node => node.scrollIntoView({ block: 'center', inline: 'center' }));
+    await delay(300);
+
+    try {
+      await el.click({ delay: 80 });
+    } catch (_) {
+      await page.evaluate(sel => {
+        const node = document.querySelector(sel);
+        if (node) node.click();
+      }, selector);
+    }
+  }
+
+  // aguarda o elemento existir
+  await page.waitForSelector(selector, { visible: true, timeout: 10000 });
+
+  // tenta até 4 vezes
+  for (let tentativa = 1; tentativa <= 4; tentativa++) {
+    const isOpenBefore = await getState();
+
+    if ((open && isOpenBefore) || (!open && !isOpenBefore)) {
+      return true;
+    }
+
+    await tryClick();
+
+    // espera o estado mudar de verdade
+    try {
+      await page.waitForFunction(
+        (sel, desiredOpen) => {
+          const el = document.querySelector(sel);
+          if (!el) return false;
+          return el.classList.contains('collapsibleBarExp') === desiredOpen;
+        },
+        { timeout: 3000 },
+        selector,
+        open
+      );
+    } catch (_) {
+      // segue para nova tentativa
+    }
+
+    const isOpenAfter = await getState();
+    if ((open && isOpenAfter) || (!open && !isOpenAfter)) {
+      await delay(500);
+      return true;
+    }
+
+    await delay(800);
+  }
+
+  throw new Error(`@@@@@ Não ${open ? 'abriu' : 'fechou'} o canal em ${selector} @@@@@`);
+}
+  
+
+async function setCanalOnOff2222222(page, selector, open) {
   if (!page || !selector || open === undefined) {
     throw new Error('@@@@@ Parâmetros inválidos: setCanalOnOff @@@@@');
   }
