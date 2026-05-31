@@ -566,8 +566,43 @@ async function setCanalOnOff(page, selector, open) {
 
   return true;
 }
-  
+
+
+
   async function set5GHzOnOff(page, open) {
+  const selector = '#instName_WlanBasicAdConf\\:1';
+
+  const el = await page.waitForSelector(selector, {
+    visible: true,
+    timeout: 3000
+  }).catch(() => null);
+
+  if (!el) {
+    console.log('5GHz não encontrado');
+    return false;
+  }
+
+  await el.evaluate(node => {
+    node.scrollIntoView({ block: 'center', inline: 'center' });
+  });
+
+  const isOpen = await el.evaluate(node =>
+    node.classList.contains('instNameExp')
+  );
+
+  if (open !== isOpen) {
+    try {
+      await el.evaluate(node => node.click());
+    } catch (e) {
+      console.log('Falha no clique DOM:', e.message);
+      return false;
+    }
+  }
+
+  return true;
+}
+  
+  async function set5GHzOnOff22222222222222(page, open) {
   const selector = '#instName_WlanBasicAdConf\\:1';
 
   try {
