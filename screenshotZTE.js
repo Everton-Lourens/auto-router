@@ -36,9 +36,8 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
   
   await loginPage();
-  //await wanPage();
-  //await securityPage();
-
+  await wanPage();
+  await securityPage();
   await redeLocalPage();
   
   await browser.close();
