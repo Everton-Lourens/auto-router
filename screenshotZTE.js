@@ -591,7 +591,29 @@ async function setSSID2G5GHzOnOff2222222(page, ssidIndex, open) {
     await screenshot('05-canal-2.4_5G.png')
   }
 
+
 async function setCanalOnOff(page, selector, open) {
+  if (!page || !selector || typeof open !== 'boolean') {
+    throw new Error('@@@@@ Parâmetros inválidos: setCanalOnOff @@@@@');
+  }
+
+  console.log(selector);
+
+  await page.waitForSelector(selector, { visible: true });
+
+  const isOpen = await page.$eval(selector, el =>
+    el.classList.contains('collapsibleBarExp')
+  );
+
+  if (open !== isOpen) {
+    await page.click(selector);
+  }
+
+  return true;
+}
+  
+
+async function setCanalOnOff2222222(page, selector, open) {
   //const selector = '#WlanBasicAdOnOffBar';
   //const selector = '#WlanBasicAdConfBar';
   if (!page || !selector || open === undefined) {
