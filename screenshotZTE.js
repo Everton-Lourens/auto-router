@@ -647,10 +647,9 @@ async function setCanalOnOff(page, selector, open) {
   if (!open && isOpen) {
     await page.click(selector);
   }
-
-  return true;
+  
   await screenshot(selector+'02222-CanalOnOff.png')
-
+  return true;
 }
 
 
