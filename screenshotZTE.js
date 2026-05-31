@@ -468,26 +468,22 @@ async function wlanBasicPage() {
 
   
   async function printSSID() {
-    await screenshot('01-TESTEE.png')
+    
     await setCanalOnOff(page, '#WlanBasicAdOnOffBar', false);
     await wait(2000);
-    await screenshot('02-TESTEE.png')
     await setCanalOnOff(page, '#WlanBasicAdConfBar', false);
     await wait(2000);
-    await screenshot('03-TESTEE.png')
    ///////// await setWLANSSIDConf(page, true);
     await setCanalOnOff(page, '#WLANSSIDConfBar', true);
     await wait(2000);
-    
-    await screenshot('04-TESTEE.png')
+
+    await screenshot('01-TESTEE-SSID.png')
     await wait(2000);
     await setSSID2G5GHzOnOff(page, 0, false);
     await wait(2000);
-    await screenshot('05-TESTEE.png')
     await setSSID2G5GHzOnOff(page, 1, true);
     await wait(2000);
-    await screenshot('05-TESTEE.png')
-    await setSSID2G5GHzOnOff(page, 1, true);
+    await setSSID2G5GHzOnOff(page, 5, true);
     await wait(2000);
     
     
@@ -591,13 +587,11 @@ async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
 
   
   async function print2GHz_5GHz() {
-    await screenshot('01-TESTANDO.png')
+    await wait(2000);
     await setCanalOnOff(page, '#WlanBasicAdConfBar', true);
     await wait(2000);
-    await screenshot('02-TESTANDO.png')
     await set5GHzOnOff(page, true);
     await wait(2000);
-    await screenshot('01-TESTANDO.png')
     await screenshot('05-canal-2.4_5G.png')
   }
 
