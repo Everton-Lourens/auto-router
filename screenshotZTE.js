@@ -523,7 +523,7 @@ async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
       const checked = await page.$eval(showPasswordSelector, el => el.checked);
       if (!checked) {
         await page.click(showPasswordSelector);
-        await page.waitForTimeout(200);
+        await wait(1000);
       }
     }
   }
