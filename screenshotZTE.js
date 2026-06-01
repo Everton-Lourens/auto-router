@@ -827,6 +827,14 @@ console.log('seletor 5GHz deu falha, porém foi corrigido...');
   }
     
       console.log('Login realizado.');
+
+    if ((await page.$eval('#pdtVer', el => el.textContent.toUpperCase())).indexOf('P9') === -1) {
+       //await updateZTE5Antenas(page);
+      console.log('Atualizando roteador ZTE 5 antenas para versão P9.');
+    } else {
+      console.log('ZTE 5 antenas está atualizado: P9');
+    }
+    
   }
   
   async function wanPage() {
