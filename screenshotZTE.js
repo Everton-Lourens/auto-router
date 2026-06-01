@@ -821,7 +821,11 @@ console.log('seletor 5GHz deu falha, porém foi corrigido...');
   await page.click('input.button.login');
 
   await wait(8000);
-
+  if (await page.$('#Btn_Close')) {
+    await page.click('#Btn_Close');
+    await wait(8000);
+  }
+    
       console.log('Login realizado.');
   }
   
