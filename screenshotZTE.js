@@ -850,6 +850,11 @@ console.log('seletor 5GHz deu falha, porém foi corrigido...');
       
       await wait(2000);
 
+      
+      await clickIfExistsBySelector('#FirmwareUpgrBar')
+
+      await wait(2000);
+
 
       
 await page.waitForSelector('#VersionUpload');
