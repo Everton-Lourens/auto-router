@@ -1,180 +1,454 @@
-<body onload="loadframe();">
-	<div id="mainWrapper">
-		<div class="alertBackgroud" id="alertBackgroud" style="display: none;">
-			<div class="alertBox">
-				<div id="houpTable" style="display: flex;justify-content: center;margin-top: 30px;">
-					<div id="houpBox" style="width: 530px;">
-						<div style="height: 50px;line-height: 50px;font-size: 18px;margin: 26px 0;" bindtext="frame033">Configure Automatic Upgrade</div>
-						<input id="chekHoup" type="checkbox" checked="">
-						<span style="font-size: 14px;" bindtext="frame032">Enable the automatic upgrade.</span>
-						<div style="display: flex;justify-content: center;">
-							<div id="houpEnable" style="width: 85px;height: 30px;line-height: 30px;background: #2eadf6;margin-top: 36px;color: white;cursor: pointer;" onclick="clickhoupEnable()" bindtext="frame034">Apply</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div id="headWrapper" class="headWrapper">
-			<div class="headMain">
-				<div class="brandLog" style="background-image: url(&quot;/images/hwlog.jpg&quot;);"></div>
-				<div class="productTitleWrapper">      
-					<span id="productTitle">
-						<script>
-                            if (ProductName.length > 9) {
-                                document.write('<div id="ProductName" class="ProductName" style="width: 200px; background-size: 100% 100%">' + ProductName + '</div>');
-                            } else {
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Pragma" content="no-cache">
+<link href="/Cuscss/english/frame.css?2024122000464368553184798" rel="stylesheet" type="text/css">
+<link href="/Cuscss/english/index.css?2024122000464368553184798" rel="stylesheet" type="text/css">
+<script src="/resource/common/jquery.min.js?2024122000464368553184798" type="text/javascript"></script>
+<script src="/resource/common/util.js?2024122000464368553184798" type="text/javascript"></script>
+<script src="/frameaspdes/english/ssmpdes.js?2024122000464368553184798" language="JavaScript"></script>
+<script src="/Cusjs/frame.asp?2024122000464368553184798" type="text/javascript"></script>
 
-                                document.write('<div id="ProductName" class="ProductName">' + ProductName + '</div>');
-                            }
-						</script><div id="ProductName" class="ProductName">K562e-10</div>
-					</span> 
-				</div>				
-				<div class="headRightMenu" onclick="logoutfunc()">
-					<span id="logoutBtn" class="logoutBtn" bindtext="frame017">Logout</span>
-				</div>
-				<div id="fidnaSwitchModeMenuId" class="fidnaSwitchModeMenu" style="margin-right: -50px; display: none;">
-							<select id="fidna_wan_mode" class="fidna_wan_mode" onchange="FidnaWanModeChanged(this.value)">
-							<option value="Route">
-								<script>document.write(framedesinfo['frame030a']);</script>Route Mode
-							</option>
-							<option value="Bridge">
-								<script>document.write(framedesinfo['frame031a']);</script>Bridge Mode
-							</option>
-						</select>
-					</div>
-					<div id="fidna_hw_logo" style="background-image: url('/images/hwlog.jpg');float:right;width: 159px; height: 45px; background-repeat: no-repeat; background-position: center; margin-right: 15px; display: none;"></div>
-				<script>
-                    if ((isVDFAP == "1") && (curUserType == "1") && (isPortalEnd != "0")) {
-                        document.write('<div id="configguide" class="headguide"><span id="guidebtn" class="guidebtn" onclick="goToPortGuide();">Guide</span></div>');
-                        $(".headguide").hover(function() {
-                            $("#guidebtn").css("color","#2fabf6");
-                        },function() {
-                            $("#guidebtn").css("color","");
-                        });
-                    }
-					if ('ICELANDVDFAP' == CfgMode.toUpperCase()) {
-						$(".headRightMenu").hover(function() {
-						$(this).css("background-image","url(/images/logout_hover.jpg)");
-						$("#logoutBtn").css("color","#E60000");
-						},function() {
-						$(this).css("background-image","");
-						$("#logoutBtn").css("color","");
-						});
-					} else {
-						$(".headRightMenu").hover(function() {
-						$(this).css("background-image","url(/images/logout_hover.jpg)");
-						$("#logoutBtn").css("color","#2fabf6");
-						},function() {
-							$(this).css("background-image","");
-							$("#logoutBtn").css("color","");
-						});
-					}
+<script language="JavaScript" type="text/javascript">
+var Language = 'english';
+var curCfgMode ='EBGBR'.toUpperCase();
 
-					if (Language == "finnish") {
-						$(".headRightMenu").css("padding-left","140px");
-					}
+function loadCSS() {
+    var getWidthRef = function(languange) {
+        if (curCfgMode === 'DESKAPASTRO') {
+            return ['1045px', '784px'];
+        }
 
-				</script>
-			</div>
-		</div>
-		<div class="menu">
-			<div class="menuDetail">
-				<div id="indexPage" class="menudisplay RTMode" onclick="onIndexChange();" style="">
-					<p id="indexTitle" class="indexTitle" bindtext="frame013">Homepage</p>
-					<button id="indexPageBtn" class="indexPageBtn menuBtnLogo"></button>
-				</div>
-				<div id="internetPage" class="menudisplay RTMode" onclick="onInternetChange();" style="">
-					<p id="internetTitle" class="internetTitle" bindtext="frame019">Internet Access</p>
-					<button id="internetPageBtn" class="internetPageBtn menuBtnLogo"></button>
-				</div>
-				<div id="wifiPage" class="menudisplay RTMode" onclick="onWifiChange();" style="">
-					<p id="wifiTitle" class="wifiTitle" bindtext="frame014">My Wi-Fi</p>
-					<button id="wifiPageBtn" class="wifiPageBtn menuBtnLogo"></button>
-				</div>
-				<div id="terminalPage" class="menudisplay RTMode" onclick="onTerminalChange();" style="">
-					<p id="terminalTitle" class="terminalTitle" bindtext="frame020">Terminal</p>
-					<button id="terminalPageBtn" class="terminalPageBtn menuBtnLogo"></button>
-				</div>
-				<div id="modeChangePage" class="menudisplay RTMode" onclick="onModeChange();" style="display:none;">
-					<p id="modeChangeTitle" class="modeChangeTitle" bindtext="frame025ap"></p>
-					<button id="modeChangePageBtn" class="internetPageBtn menuBtnLogo"></button>
-				</div>
-				<div id="moreFunctionPage" class="menudisplay RTMode" onclick="onMoreChange();" style="">
-					<p id="moreFunctionTitle" class="moreFunctionTitle" bindtext="frame015">More</p>
-					<button id="moreFunctionPageBtn" class="moreFunctionPageBtn menuBtnLogo moreBiglogo"></button>
-				</div>
-			</div>
-		</div>
-		
-		<script>
-			if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) { 
-				document.write('<div class="scroll-wrapper">');
-				document.write('<iframe id="functioncontent" frameborder="0" marginheight="0" marginwidth="0" height="600px" width="100%" src="" scrolling="no" style="background:#f0f2f5;"></iframe>');
-				document.write('</div>');
-			} else if (/(Android)/i.test(navigator.userAgent)) {
-				document.write('<iframe id="functioncontent" frameborder="0" marginheight="0" marginwidth="0" height="600px" width="100%" src="" scrolling="no" style="background:#f0f2f5;"></iframe>');
-			} else {
-				document.write('<iframe id="functioncontent" frameborder="0" marginheight="0" marginwidth="0" height="600px" width="100%" src="" scrolling="no" style="background:#f0f2f5;"></iframe>');
-			};
+        if(['english', 'finnish', 'polish', 'turkish', 'bulgarian'].indexOf(languange) != -1) {
+            return ['1040px', '784px'];
+        }
 
-            if (CfgMode === 'DESKAPASTRO') {
-                $("#functioncontent").css("background", "#ffffff");
-                document.body.style.backgroundColor = '#ffffff';
-                $("#indexTitle").attr("BindText","frame013_astro");
-                $("#internetTitle").attr("BindText","frame019_astro");
-                $("#wifiTitle").attr("BindText","frame014_astro");
+        if (languange === 'arabic') {
+            return ['1074px', '800px'];
+        }
+
+        return ['1040px', '800px'];
+    }
+
+        if ((navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|wOSBrowser|BrowserNG|WebOS)/i))) {
+                if ((Language == "english") || (Language == "turkish")) {
+                        document.write('<style>div#indexpage div#maincenter{width: 960px;}.AspWidth{width:702px;}</style>');
+                } else {
+                        document.write('<style>div#indexpage div#maincenter{width: 960px;}.AspWidth{width:700px;}</style>');
+                }
+        }
+        else {
+      var widthRef = getWidthRef(Language);
+      document.write('<style>div#indexpage div#maincenter{width: ' + widthRef[0] + ';}.AspWidth{width:' + widthRef[1] + ';}</style>');
+        }
+}
+loadCSS();
+</script><style>div#indexpage div#maincenter{width: 1040px;}.AspWidth{width:784px;}</style>
+
+<script language="JavaScript" type="text/javascript">
+var FirstMenuStr = "";
+var MenuList = [];
+var menuJsonData;
+var curLanguage = 'english';
+var UpgradeHeigthHandle = setInterval("setIframeHeight('functioncontent');", 200);
+var FirstMenuIDList = [];
+
+function GetMenuJsonData()
+{
+        $.ajax({
+                type : "POST",
+                async : false,
+                cache : false,
+                url : "asp/getMenuArray.asp",
+                success : function(data) {
+                         menuJsonData  = dealDataWithFun(data);
+                }
+        });
+}
+
+function ifCanChangeMenu()
+{
+    if (top.UpgradeFlag == 1) {
+        if(confirm(framedesinfo["mainpage016"])) {
+            top.UpgradeFlag = 0;
+            return true;
+        } else {
+            return false;
+        }
+    } else if (top.UpgradeFlag == 2) {
+        if(confirm(framedesinfo["mainpage017"])) {
+            top.UpgradeFlag = 0;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function stMenuData(id, path, level, defico, clickico, url, defchild)
+{
+        this.id         = id;
+        this.path       = ((path == '') ? '' : (path + '.')) + id;
+        this.level      = level;
+        this.defico     = defico;
+        this.clickico   = clickico;
+        this.url        = url;
+        this.defchild   = defchild;
+        this.hasChild   = false;
+}
+
+function stFirstMenuInfo(id, secondid, secondurl, hasChild)
+{
+        this.id = id;
+        this.secondid = secondid;
+        this.secondurl = secondurl;
+        this.hasChild   = hasChild;
+}
+
+function setIframeHeight(iframeid)
+{
+    try{
+                var iframe = document.getElementById(iframeid);
+
+        if(iframe.attachEvent)
+                {
+                        try{
+                                var doc = iframe.contentDocument || iframe.document;
+                                var newheigth = iframe.contentWindow.document.documentElement.scrollHeight;
+                                var Bodyheigth = document.body.clientHeight;
+                        }catch(e){
+                        var newheigth = 370;
+                        return;
+                        }
+
+                        newheigth = newheigth > 370 ? newheigth : 370;
+                        newheigth = Bodyheigth < 370 ? 370 : newheigth;
+
+            iframe.attachEvent("onload", function(){
+                iframe.height =  newheigth;
+                                return;
+            });
+
+
+                        iframe.height =  newheigth;
+            return;
+        }
+                else
+                {
+                        try{
+                                var newheigth = iframe.contentDocument.body.scrollHeight;
+                                var doc = iframe.contentDocument || iframe.document;
+                                var Bodyheigth = document.body.clientHeight;
+                                newheigth = newheigth > 370 ? newheigth : 370;
+                                newheigth = Bodyheigth < 370 ? 370 : newheigth;
+                        }catch(e){
+                                return ;
+                        }
+
+            iframe.onload = function(){
+                iframe.height = newheigth;
+                                return;
+            };
+
+                        iframe.height = newheigth;
+            return;
+        }
+    }catch(e){
+                return;
+    }
+}
+
+function onSecondMenuChange(id)
+{
+    if (!ifCanChangeMenu()) {
+        return;
+    } else {
+                if (top.ajaxInfo) {
+                        top.ajaxInfo.abort()
+                }
+        }
+
+    top.pingTestFlag = 0;
+    top.tracerouteTestFlag = 0;
+
+        for(var IndexID in MenuList)
+        {
+                $("#" + IndexID).removeClass("secondActive");
+        }
+
+        $("#" + id).addClass("secondActive");
+        $("#functioncontent").attr("src", MenuList[id].url);
+        $("#functioncontent").css("height", "100%");
+}
+
+function onFirstMenuChange(id)
+{
+
+    if (!ifCanChangeMenu()) {
+        return;
+    } else {
+                if (top.ajaxInfo) {
+                        top.ajaxInfo.abort()
+                }
+        }
+
+    top.pingTestFlag = 0;
+    top.tracerouteTestFlag = 0;
+
+        $("#functioncontent").css("height", "100%");
+        for(var IndexID in MenuList)
+        {
+                $("#" + IndexID).removeClass("secondActive");
+        }
+
+        for(var IndexID in FirstMenuIDList)
+        {
+                if (id == IndexID)
+                {
+                        $("#" + id).addClass("active");
+
+                        if (FirstMenuIDList[IndexID].hasChild == true)
+                        {
+                                document.getElementById(FirstMenuIDList[IndexID].id).style.display="block";
+                                $("#" + FirstMenuIDList[IndexID].secondid).addClass("secondActive");
+                                $("#icon_" + IndexID).removeClass("icon");
+                                $("#icon_" + IndexID).addClass("iconactive");
+                        }
+
+                        $("#functioncontent").attr("src", FirstMenuIDList[IndexID].secondurl);
+                        continue;
+                }
+
+                if (FirstMenuIDList[IndexID].hasChild == true)
+                {
+                        document.getElementById(FirstMenuIDList[IndexID].id).style.display="none";
+                        $("#icon_" + IndexID).removeClass("iconactive");
+                        $("#icon_" + IndexID).addClass("icon");
+                }
+
+                $("#" + IndexID).removeClass("active");
+        }
+}
+
+function onMenuChange(id)
+{
+   var menu = MenuList[id];
+
+    if (menu == null)
+    {
+        return null;
+    }
+
+    switch(id)
+    {
+        case "userconfig":
+            onFirstMenuChange("systool");
+            onSecondMenuChange(id);
+            break;
+        case "wlanconfig":
+            onFirstMenuChange(id);
+            break;
+        default:
+            break;
+    }
+}
+
+function CreateSecondMenu(parentId, parentPath, subMenus)
+{
+        FirstMenuStr +='<ul id=menu_' + parentId + '>';
+
+    var getFontSize = function() {
+        if (curCfgMode === 'DESKAPASTRO') {
+          return '14px';
+        }
+
+        return '15px';
+    }
+
+        for (var i in subMenus)
+        {
+                var id = subMenus[i].id;
+                var contenttitle ='<h3 id="title_'+ id + '" class="text-up">'+ subMenus[i].name + '</h3>';
+                var fontsize = getFontSize();
+                if(Language == "arabic") {
+                        FirstMenuStr +='<li class="menuStyle" style="display:block;cursor:pointer;text-align:right;padding-top:18px;padding-bottom:18px;font-size:15px;padding-right:48px;" id="' + id + '"' + GetMenuTitle(subMenus[i].name, "first") +' onclick="onSecondMenuChange(this.id);">'+ GetMenuStr(subMenus[i].name, "second")+'</li>';
+                } else {
+                        FirstMenuStr +='<li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:' + fontsize + ';padding-left:48px;" id="' + id + '"' + GetMenuTitle(subMenus[i].name, "first") +' onclick="onSecondMenuChange(this.id);">'+ GetMenuStr(subMenus[i].name, "second")+'</li>';
+                }
+                MenuList[id] = new stMenuData(id, parentPath, 2,
+                                                                       subMenus[i].deficon,
+                                                                       subMenus[i].clickicon,
+                                                                       subMenus[i].url, id);
+        }
+
+        FirstMenuStr +="</ul>";
+}
+
+
+function getMenuStrDefLen(level)
+{
+        var length = 0;
+
+        if (curLanguage.toUpperCase() == "CHINESE")
+        {
+                length = 8;
+        }
+        else
+        {
+                if (level == "first" )
+                {
+                        length = 22;
+                }
+                else
+                {
+                        length = 18;
+                }
+        }
+
+        return length;
+}
+
+function GetMenuStr(datastr, level)
+{
+        var length = getMenuStrDefLen(level);
+        var MenuName = GetStringContentForTitle(datastr, length);
+        return MenuName;
+}
+
+function GetMenuTitle(datastr, level, element)
+{
+        var length = getMenuStrDefLen(level);
+        var titlestr = "";
+        if (datastr.length > length)
+        {
+                titlestr = ' title="' + datastr + '" ';
+                if (element != null)
+                        element.setAttribute("title", datastr);
+        }
+        return titlestr;
+}
+
+function GetIdByUrl(Type, BaseUrl)
+{
+        var NewId = Type+"_";
+        var MarkEnd="";
+        try{
+                var lastindex = BaseUrl.lastIndexOf('/');
+                if( lastindex > -1 )
+                {
+                        NewId += BaseUrl.substring(lastindex+1, BaseUrl.length);
+                }
+                else
+                {
+                        NewId += BaseUrl;
+                }
+
+                if(NewId.indexOf("?") > -1)
+                {
+                        MarkEnd = NewId.split("?")[1];
+                }
+
+                NewId = NewId.split(".")[0]+MarkEnd;
+
+        }catch(e){
+                NewId += Math.round(Math.random() * 10000);
+        }
+        return NewId;
+}
+
+
+function AnalyzeMeun()
+{
+        GetMenuJsonData();
+        for(var FirstMenuIndex in menuJsonData)
+        {
+                var m1namesr = GetIdByUrl("m1div",menuJsonData[FirstMenuIndex].url);
+                var id = menuJsonData[FirstMenuIndex].id;
+                FirstMenuStr += '<li><span class="item spanStyle" id="' + id + '" name="' + m1namesr + '" onclick="onFirstMenuChange(this.id);">' + GetMenuStr(menuJsonData[FirstMenuIndex].name, "first") +'</span>';
+                MenuList[id] = new stMenuData(id, '', 1,
+                                                                       menuJsonData[FirstMenuIndex].deficon,
+                                                                       menuJsonData[FirstMenuIndex].clickicon,
+                                                                       menuJsonData[FirstMenuIndex].url, id);
+
+                FirstMenuIDList[id] = new stFirstMenuInfo('menu_' + id, '', menuJsonData[FirstMenuIndex].url, false);
+                if(undefined != menuJsonData[FirstMenuIndex].subMenus)
+                {
+                        FirstMenuStr += '<span id="icon_' + id + '" class="icon">&nbsp;</span>';
+                        CreateSecondMenu(id, MenuList[id].path, menuJsonData[FirstMenuIndex].subMenus);
+                        MenuList[id].hasChild = true;
+                        FirstMenuIDList[id].secondid = menuJsonData[FirstMenuIndex].subMenus[0].id;
+                        FirstMenuIDList[id].secondurl = menuJsonData[FirstMenuIndex].subMenus[0].url
+                        FirstMenuIDList[id].hasChild = true;
+                }
+        }
+
+        $("#MenuInfo").append(FirstMenuStr);
+
+        ParseBindTextByTagName(framedesinfo, "span", 1);
+        ParseBindTextByTagName(framedesinfo, "div",  1);
+
+        var FirstclickExpansion = menuJsonData[0].id;
+        $("#" + FirstclickExpansion).trigger("click");
+}
+
+function adjustParentHeight()
+{
+        var h = $("body").outerHeight(true);
+        window.parent.document.getElementById("functioncontent").style.height = h + 'px';
+}
+function loadframe()
+{
+    var changeBackGroundCol = function() {
+        if (curCfgMode === 'DESKAPASTRO') {
+          $("#functioncontent").css("background", "#f6f6f8");
+          $("#functioncontent").css("border-radius", "15px");
+          return '#ffffff';
             }
-		</script><iframe id="functioncontent" frameborder="0" marginheight="0" marginwidth="0" height="1140px" width="100%" src="configindex.asp" scrolling="no" style="background: rgb(240, 242, 245); height: 1140px; width: 100%;"></iframe>
-		
-		<div align="center" id="copyright" class="copyright" style="border-top-width: medium; border-top-style: none; border-top-color: currentcolor;">
-			<div id="copyrighttext" align="center" style="margin-top: 80px;"><span id="footer" bindtext="frame018">Copyright © 2025 Huawei Technologies Co., Ltd. All rights reserved.</span></div>
-			<div id="rebootlogo" class="rebootlogo" align="center" style="display: none;">
-				<div class="rebootback">
-					<div class="reboot_bg">
-						<button id="reboot" class="reboot" onclick="onReboot();">&nbsp;</button>
-						<input type="hidden" name="onttoken" id="hwonttoken" value="709eee43d3a74a5d83602aaad48e02e2fdfedf96dbe459f4b8274a9b70b91e69">	 
-					</div> 
-				</div>
-				<div id="rebootinfo" class="hide">
-					<span bindtext="frame016">Restart</span>
-				</div>
-			</div>
-			<script>
-				var rebootactiveUrl = "url('images/reboot_active.jpg')";
-				var rebootUrl = "url('images/reboot.jpg')";
-				if (CfgMode === 'DESKAPASTRO') { 
-					rebootactiveUrl = "url('images/rebootastro_active.jpg')";
-					rebootUrl = "url('images/rebootastro.jpg')";
-					$("#footer").attr("BindText","frame018_astro");
-				}
 
-				getId("rebootlogo").onmouseover = function()
-				{
-					getId("rebootinfo").style.display        = "block";
-					getId("reboot").style.backgroundImage    = rebootactiveUrl;
-					getId("reboot").style.backgroundRepeat   = "no-repeat";
-					getId("reboot").style.backgroundPosition = "center";
-				}
-				getId("rebootlogo").onmouseout = function()
-				{
-					getId("rebootinfo").style.display        = "none";
-					getId("reboot").style.backgroundImage    = rebootUrl;
-					getId("reboot").style.backgroundRepeat   = "no-repeat";
-					getId("reboot").style.backgroundPosition = "center";
-				}
-			</script>
-		</div>
-<div id="fresh" class="hide"> 
- <iframe frameborder="0" height="100%" marginheight="0" marginwidth="0" scrolling="no" src="/refresh.asp" width="100%"></iframe> 
-</div> 
-	</div>
-	<script>
-		ParseBindTextByTagName(framedesinfo, "span", 1);
-		ParseBindTextByTagName(framedesinfo, "p", 1);
-		ParseBindTextByTagName(framedesinfo, "button", 1);
-		ParseBindTextByTagName(framedesinfo, "div", 1);
-	</script>
-<script language="javascript" src="/html/bbsp/common/getWanDynamicData.asp"></script>
+        return '#f0f2f5';
+    }
 
+        window.parent.cleancontentborder();
+        $("#AppDiv").css("display", "block");
+        window.parent.document.getElementById("functioncontent").style.height = '1140px';
+        document.body.style.backgroundColor = changeBackGroundCol();
+}
 
-</body>
+</script>
+</head>
+<body onload="loadframe();" style="margin-top: 32px; min-height: 650px; overflow: hidden; background-color: rgb(240, 242, 245);" marginwidth="0" marginheight="0">
+<div id="indexpage" style="height:1110px;">
+<div id="maincenter" style="overflow:hidden;">
+<div id="MenuInfo" class="MenuInfo"><li><span class="item spanStyle active" id="Systeminfo" name="m1div_deviceinfo_ap" onclick="onFirstMenuChange(this.id);">System&nbsp;Info</span><span id="icon_Systeminfo" class="iconactive">&nbsp;</span><ul id="menu_Systeminfo" style="display: block;"><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="deviceinfo" onclick="onSecondMenuChange(this.id);" class="secondActive">Device&nbsp;Information</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="wlaninfo" onclick="onSecondMenuChange(this.id);">WLAN&nbsp;Information</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="wlancoverinfo" title="Home Network Information" onclick="onSecondMenuChange(this.id);">Home&nbsp;Network&nbsp;Infor...</li></ul></li><li><span class="item spanStyle" id="wlanconfig" name="m1div_wlanadvanceDestAP" onclick="onFirstMenuChange(this.id);">WLAN</span><span id="icon_wlanconfig" class="icon">&nbsp;</span><ul id="menu_wlanconfig" style="display: none;"><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="wlanadvance" title="Wi-Fi Advanced Network Settings" onclick="onSecondMenuChange(this.id);">Wi-Fi&nbsp;Advanced&nbsp;Net...</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="wificover" title="Wi-Fi Coverage Management" onclick="onSecondMenuChange(this.id);">Wi-Fi&nbsp;Coverage&nbsp;Man...</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="wlanschedule" title="Automatic Wi-Fi Shutdown" onclick="onSecondMenuChange(this.id);">Automatic&nbsp;Wi-Fi&nbsp;Sh...</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="easymesh" onclick="onSecondMenuChange(this.id);">Multi-AP&nbsp;Role&nbsp;Sett...</li></ul></li><li><span class="item spanStyle" id="application" name="m1div_landhcp_ap" onclick="onFirstMenuChange(this.id);">Network&nbsp;Configuration</span><span id="icon_application" class="icon">&nbsp;</span><ul id="menu_application" style="display: none;"><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="land_dhcp" onclick="onSecondMenuChange(this.id);">LAN&nbsp;Settings</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="IPv6" onclick="onSecondMenuChange(this.id);">IPv6</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="ddns" onclick="onSecondMenuChange(this.id);">DDNS&nbsp;Function</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="upnp" onclick="onSecondMenuChange(this.id);">UPnP&nbsp;Function</li></ul></li><li><span class="item spanStyle" id="securityconfig" name="m1div_wlanmacfilter" onclick="onFirstMenuChange(this.id);">Security&nbsp;Configuration</span><span id="icon_securityconfig" class="icon">&nbsp;</span><ul id="menu_securityconfig" style="display: none;"><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="wlanmacfilter" title="Wi-Fi MAC Address Filtering" onclick="onSecondMenuChange(this.id);">Wi-Fi&nbsp;MAC&nbsp;Address&nbsp;...</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="firewallap" onclick="onSecondMenuChange(this.id);">Firewall&nbsp;Configura...</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="parentalctrl" onclick="onSecondMenuChange(this.id);">Parental&nbsp;Control</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="dmz" onclick="onSecondMenuChange(this.id);">DMZ&nbsp;Function</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="portmapping" onclick="onSecondMenuChange(this.id);">IPv4&nbsp;Port&nbsp;Mapping</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="porttrigger" title="Port Trigger Configuration" onclick="onSecondMenuChange(this.id);">Port&nbsp;Trigger&nbsp;Confi...</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="ontaccess" onclick="onSecondMenuChange(this.id);">Device&nbsp;Access&nbsp;Cont...</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="pskprotect" onclick="onSecondMenuChange(this.id);">PSK&nbsp;Crack&nbsp;Defense</li></ul></li><li><span class="item spanStyle" id="systool" name="m1div_upporttypecfg" onclick="onFirstMenuChange(this.id);">System&nbsp;Management</span><span id="icon_systool" class="icon">&nbsp;</span><ul id="menu_systool" style="display: none;"><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="upporttypeconfig" title="Upstream Network Port Settings" onclick="onSecondMenuChange(this.id);">Upstream&nbsp;Network&nbsp;P...</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="tr069config" onclick="onSecondMenuChange(this.id);">TR-069</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="fireware" onclick="onSecondMenuChange(this.id);">Software&nbsp;Upgrade</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="userconfig" onclick="onSecondMenuChange(this.id);">Account&nbsp;Management</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="sntpmngt" onclick="onSecondMenuChange(this.id);">Time&nbsp;Setting</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="cfgconfig" onclick="onSecondMenuChange(this.id);">Backup&nbsp;And&nbsp;Recover...</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="noticeinfo" title="Open Source Software Notice" onclick="onSecondMenuChange(this.id);">Open&nbsp;Source&nbsp;Softwa...</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="indicator" title="Indicator Status Management" onclick="onSecondMenuChange(this.id);">Indicator&nbsp;Status&nbsp;M...</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="securitycheck" onclick="onSecondMenuChange(this.id);">Security&nbsp;Self-Chec...</li></ul></li><li><span class="item spanStyle" id="maintaininfo" name="m1div_diagnosecommon" onclick="onFirstMenuChange(this.id);">Maintenance&nbsp;Diagnosis</span><span id="icon_maintaininfo" class="icon">&nbsp;</span><ul id="menu_maintaininfo" style="display: none;"><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="maintainconfig" onclick="onSecondMenuChange(this.id);">Maintenance</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="userlog" onclick="onSecondMenuChange(this.id);">User&nbsp;Log</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="aplog" onclick="onSecondMenuChange(this.id);">AP&nbsp;Log</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="firewalllog" onclick="onSecondMenuChange(this.id);">Firewall&nbsp;Log</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="debuglog" onclick="onSecondMenuChange(this.id);">Debug&nbsp;Log</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="instrusionlog" onclick="onSecondMenuChange(this.id);">Instrusion&nbsp;Detect&nbsp;...</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="collectconfig" onclick="onSecondMenuChange(this.id);">Fault&nbsp;Info&nbsp;Collect</li><li style="display:block;cursor:pointer;text-align:left;padding-top:18px;padding-bottom:18px;font-size:15px;padding-left:48px;" id="remotepktmirror" onclick="onSecondMenuChange(this.id);">Remote&nbsp;Mirror</li></ul></li></div>
+<div id="SecondMenuInfo" class="Menuhide"></div>
+
+<script>
+        if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) {
+                document.write('<div id="content" style="background:#fff;overflow-y:scroll;-webkit-overflow-scrolling:touch;">');
+                document.write('<iframe id="functioncontent" frameborder="0" width="100%" height="100%" marginheight="0" marginwidth="0" class="AspWidth" overflow="hidden" style="background:#fff;"></iframe>');
+                document.write('</div>');
+        } else if (/(Android)/i.test(navigator.userAgent)) {
+                document.write('<div id="content" style="background:#fff;overflow:hidden;-webkit-overflow-scrolling:touch;">');
+                document.write('<iframe id="functioncontent" frameborder="0" width="100%" height="100%" marginheight="0" marginwidth="0" class="AspWidth" overflow="hidden" style="background:#fff;"></iframe>');
+                document.write('</div>');
+        } else {
+                document.write('<div id="content" style="background:#fff;overflow:hidden;-webkit-overflow-scrolling:touch;">');
+                document.write('<iframe id="functioncontent" frameborder="0" width="100%" height="100%" marginheight="0" marginwidth="0" class="AspWidth" overflow="hidden" style="background:#fff;"></iframe>');
+                document.write('</div>');
+        };
+</script><div id="content" style="background:#fff;overflow:hidden;-webkit-overflow-scrolling:touch;"><iframe id="functioncontent" frameborder="0" width="100%" height="758" marginheight="0" marginwidth="0" class="AspWidth" overflow="hidden" style="background: rgb(255, 255, 255); height: 100%;" src="html/ssmp/deviceinfo/deviceinfo_ap.asp"></iframe></div>
+
+</div>
+
+<div id="fresh">
+<iframe frameborder="0" width="100%" height="100%" marginheight="0" marginwidth="0" scrolling="no" src="refresh.asp"></iframe>
+</div>
+</div>
+
+<script type="text/javascript">
+        AnalyzeMeun();
+</script>
+
+</body></html>
