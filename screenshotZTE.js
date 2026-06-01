@@ -801,6 +801,13 @@ console.log('seletor 5GHz deu falha, porém foi corrigido...');
    }
  }
 
+
+
+  async function updateZTE5Antenas(page) {
+
+  }
+  
+
   async function loginPage(login = 'multipro', password = '@62474b3745JR') {
   
   console.log('Abrindo roteador...');
