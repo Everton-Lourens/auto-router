@@ -865,7 +865,10 @@ await page.waitForSelector('#VersionUpload');
 
 const input = await page.$('#VersionUpload');
 await input.uploadFile('/storage/emulated/0/Download/router/update.bin');
+await wait(2000);
+await screenshot('01-upgrade-antes.png')
 
+      await wait(2000);
 console.log(
   await page.$eval(
     '#VersionUpload',
@@ -874,8 +877,10 @@ console.log(
       : '❌ Nenhum arquivo selecionado'
   )
 );
+      await wait(2000);
+await screenshot('01-upgrade-depois.png')
 
-      
+      await wait(2000);
     } else {
       console.log('ZTE 5 antenas está atualizado: P9');
     }
