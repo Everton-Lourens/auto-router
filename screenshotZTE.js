@@ -850,8 +850,12 @@ console.log('seletor 5GHz deu falha, porém foi corrigido...');
       
       await wait(2000);
 
+
+      await page.evaluate(() => {
+  document.querySelector('#firmwareUpgr').click();
+});
       
-      await clickIfExistsBySelector('#FirmwareUpgrBar')
+      //await clickIfExistsBySelector('#FirmwareUpgrBar')
 
       await wait(2000);
 
