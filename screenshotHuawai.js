@@ -278,11 +278,20 @@ async function clickIfExistsBySelector(selector) {
       await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
 await page.click('#moreFunctionPage');
     
-    await wait(2000)
+    await wait(5000)
 
    await screenshot('02-moreButton.png')
+    
+      console.log('@@@@@@@@@@@@@@@@@@@@@@@@');
 
-      console.log('botão clicado.');
+await wait(8000)
+    const frame = page.frames().find(f => f.name() === 'functioncontent' || f.url().includes('configindex.asp'));
+
+if (!frame) throw new Error('Iframe não encontrado');
+
+const html = await frame.content();
+console.log(html);
+    
   }
 
   async function wanPage() {
