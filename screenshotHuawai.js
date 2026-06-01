@@ -285,12 +285,110 @@ await page.click('#moreFunctionPage');
       console.log('@@@@@@@@@@@@@@@@@@@@@@@@');
 
 await wait(8000)
-    const frame = page.frames().find(f => f.name() === 'functioncontent' || f.url().includes('configindex.asp'));
+    //const frame = page.frames().find(f => f.name() === 'functioncontent' || f.url().includes('configindex.asp'));
 
-if (!frame) throw new Error('Iframe não encontrado');
+//if (!frame) throw new Error('Iframe não encontrado');
 
-const html = await frame.content();
-console.log(html);
+//const html = await frame.content();
+//console.log(html);
+
+    /////////////////////
+    /////////////////////
+
+const UPDATED_FILE = '/storage/emulated/0/Download/router/UPDATED.html';
+
+async function restoreHuaweiConfig(page) {
+  const timeout = 20000;
+
+  const getFunctionFrame = () =>
+    page.frames().find(f =>
+      f.name() === 'functioncontent' ||
+      /configindex\.asp|cfgconfig|backup|recover/i.test(f.url())
+    );
+
+  let frame = getFunctionFrame();
+  if (!frame) throw new Error('Iframe functioncontent não encontrado');
+
+  // Garante que o menu lateral está disponível
+  await frame.waitForSelector('#cfgconfig', { visible: true, timeout });
+
+  // Clica no menu Backup And Recovery e aguarda a navegação do iframe
+  const oldUrl = frame.url();
+
+  await Promise.all([
+    frame.waitForNavigation({ waitUntil: 'domcontentloaded', timeout }).catch(() => {}),
+    frame.click('#cfgconfig')
+  ]);
+
+  // Reobtém o frame após a troca de src
+  await page.waitForFunction(
+    (prevUrl) => {
+      const f = [...window.frames].find(() => false);
+      return true;
+    },
+    { timeout: 1000 },
+    oldUrl
+  ).catch(() => {});
+
+  frame = getFunctionFrame() || frame;
+
+  // Espera a tela de importação aparecer
+  await frame.waitForFunction(() =>
+    document.body && document.body.innerText.includes('Import Configuration File'),
+    { timeout }
+  );
+
+  // Tenta achar um input file direto
+  let fileInput = await frame.$('input[type="file"]');
+
+  if (!fileInput) {
+    // fallback: abre o Browse... e usa o file chooser
+    const browseXPath =
+      "//button[contains(normalize-space(.), 'Browse')]" +
+      " | //input[@type='button' and contains(@value, 'Browse')]" +
+      " | //input[@type='submit' and contains(@value, 'Browse')]";
+
+    const [browseBtn] = await frame.$x(browseXPath);
+
+    if (!browseBtn) {
+      throw new Error('Botão Browse... não encontrado');
+    }
+
+    const [chooser] = await Promise.all([
+      page.waitForFileChooser({ timeout }),
+      browseBtn.click()
+    ]);
+
+    await chooser.accept([UPDATED_FILE]);
+
+  } else {
+    await fileInput.uploadFile(UPDATED_FILE);
+  }
+
+  // Aguarda o arquivo ser reconhecido
+  await frame.waitForTimeout(500);
+
+  // Clica em Import Configuration File
+  const importXPath =
+    "//button[contains(normalize-space(.), 'Import Configuration File')]" +
+    " | //input[@type='button' and contains(@value, 'Import Configuration File')]" +
+    " | //input[@type='submit' and contains(@value, 'Import Configuration File')]";
+
+  const [importBtn] = await frame.$x(importXPath);
+
+  if (!importBtn) {
+    throw new Error('Botão Import Configuration File não encontrado');
+  }
+
+  await importBtn.click();
+}
+
+// uso
+await restoreHuaweiConfig(page);
+
+    
+    /////////////////////
+    /////////////////////
     
   }
 
