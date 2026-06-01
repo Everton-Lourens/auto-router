@@ -300,75 +300,49 @@ const UPDATED_FILE = '/storage/emulated/0/Download/router/UPDATED.html';
 async function restoreHuaweiConfig(page) {
   const timeout = 30000;
 
-  const getMainFrame = () =>
+  const getFrame = () =>
     page.frames().find(f =>
-      f.name() === 'functioncontent' ||
-      /deviceinfo_ap\.asp|configindex\.asp|backup|recover/i.test(f.url())
+      f.name() === 'functioncontent' || /configindex\.asp/i.test(f.url())
     );
 
-  const waitForFrameText = async (frame, text) => {
-    await frame.waitForFunction(
-      (t) => document.body && document.body.innerText.includes(t),
-      { timeout },
-      text
-    );
-  };
+  const frame = getFrame();
+  if (!frame) throw new Error('Iframe functioncontent não encontrado');
 
-  let frame = getMainFrame();
-  if (!frame) {
-    throw new Error('Iframe principal não encontrado');
-  }
+  // 1) garante que o menu lateral já foi carregado
+  await frame.waitForSelector('#systool', { visible: true, timeout });
 
-  // Se ainda estiver na tela inicial, abre o menu "More" primeiro.
-  // Ajuste o seletor se no seu caso o botão tiver outro ID.
-  const currentHtml = await frame.content();
-  if (!/Backup\s*And\s*Recover/i.test(currentHtml)) {
-    const mainMenuBtn = await page.$('#moreFunctionPage, #moreFunctionPageBtn');
-    if (mainMenuBtn) {
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout }).catch(() => {}),
-        mainMenuBtn.click()
-      ]);
-    }
-  }
+  // 2) abre "System Management"
+  await frame.click('#systool');
 
-  // Re-obtem o frame depois da navegação
-  frame = getMainFrame() || frame;
+  // 3) espera o submenu ficar visível
+  await frame.waitForFunction(() => {
+    const el = document.querySelector('#menu_systool');
+    if (!el) return false;
+    const style = window.getComputedStyle(el);
+    return style.display !== 'none' && style.visibility !== 'hidden';
+  }, { timeout, polling: 200 });
 
-  // Espera o menu "Backup And Recover" existir no DOM
+  // 4) agora sim o item aparece e pode ser clicado
   await frame.waitForSelector('#cfgconfig', { visible: true, timeout });
+  await frame.click('#cfgconfig');
 
-  // Clica no item do menu
-  await Promise.all([
-    frame.waitForNavigation({ waitUntil: 'domcontentloaded', timeout }).catch(() => {}),
-    frame.click('#cfgconfig')
-  ]);
+  // 5) espera a tela de backup/importação carregar
+  await frame.waitForFunction(() => {
+    return document.body && /Import Configuration File/i.test(document.body.innerText);
+  }, { timeout, polling: 250 });
 
-  // Re-obtem o frame da tela de backup/recovery
-  frame = page.frames().find(f =>
-    f.name() === 'functioncontent' ||
-    /configbackup|backup|recover/i.test(f.url())
-  ) || frame;
-
-  // Aguarda a tela certa carregar
-  await waitForFrameText(frame, 'Import Configuration File');
-
-  // Tenta localizar input file direto
+  // 6) upload do arquivo
   const fileInput = await frame.$('input[type="file"]');
 
   if (fileInput) {
     await fileInput.uploadFile(UPDATED_FILE);
   } else {
-    // Fallback: clique no Browse... e use file chooser
-    const browseBtn = await frame.$x(
-      "//button[contains(., 'Browse')]" +
-      " | //input[@type='button' and contains(@value, 'Browse')]" +
-      " | //input[@type='submit' and contains(@value, 'Browse')]"
-    ).then(arr => arr[0] || null);
+    const [browseBtn] = await frame.$x(
+      "//button[contains(normalize-space(.), 'Browse')] | " +
+      "//input[contains(@value, 'Browse')]"
+    );
 
-    if (!browseBtn) {
-      throw new Error('Botão Browse... não encontrado');
-    }
+    if (!browseBtn) throw new Error('Botão Browse... não encontrado');
 
     const [chooser] = await Promise.all([
       page.waitForFileChooser({ timeout }),
@@ -378,25 +352,21 @@ async function restoreHuaweiConfig(page) {
     await chooser.accept([UPDATED_FILE]);
   }
 
-  await frame.waitForTimeout(800);
-
-  const importBtn = await frame.$x(
-    "//button[contains(., 'Import Configuration File')]" +
-    " | //input[@type='button' and contains(@value, 'Import Configuration File')]" +
-    " | //input[@type='submit' and contains(@value, 'Import Configuration File')]"
-  ).then(arr => arr[0] || null);
+  // 7) clica no botão de importação
+  const [importBtn] = await frame.$x(
+    "//button[contains(normalize-space(.), 'Import Configuration File')] | " +
+    "//input[contains(@value, 'Import Configuration File')]"
+  );
 
   if (!importBtn) {
     throw new Error('Botão Import Configuration File não encontrado');
   }
-await wait(1500);
-   await screenshot('ANTES')
-    await wait(1500);
-  await importBtn.click();
-
   await wait(1500);
-   await screenshot('DEPOIS')
-    await wait(1500);
+   await screenshot('ANTES.png')
+  await wait(1500);
+  await importBtn.click();
+  await wait(1500);
+  await screenshot('DepiisS.png')
 }
 
     
