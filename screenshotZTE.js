@@ -827,7 +827,9 @@ console.log('seletor 5GHz deu falha, porém foi corrigido...');
   await page.type('input[type="password"]', `${password}`);
 
   console.log('Clicando login...');
-  await page.click('input.button.login');
+  //await page.click('input.button.login');
+
+      await page.click('#LoginId');
 
   await wait(8000);
 
