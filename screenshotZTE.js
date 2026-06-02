@@ -849,7 +849,7 @@ if (!frame) {
 
 const softwareBox = await frame.evaluate(() => {
   const target = [...document.querySelectorAll('*')].find(el =>
-    el.textContent?.replace(/\s+/g, ' ').trim().toUpperCase() === 'SOFTWARE VERSION'
+    el.textContent?.replace(/\s+/g, ' ').trim().toUpperCase() === 'THE DEVICE WILL REBOOT AFTER UPGRADING'
   );
 
   if (!target) return null;
