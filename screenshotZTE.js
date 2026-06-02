@@ -878,6 +878,16 @@ console.log(
   )
 );
       await wait(2000);
+
+await page.waitForSelector('#Btn_Upload', {
+  visible: true,
+  timeout: 10000
+});
+
+await page.click('#Btn_Upload');
+
+      await wait(5000);
+      
 await screenshot('01-upgrade-depois.png')
 
       await wait(2000);
