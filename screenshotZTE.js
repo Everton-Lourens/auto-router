@@ -835,9 +835,18 @@ console.log('seletor 5GHz deu falha, porém foi corrigido...');
     
       console.log('Login realizado.');
 
-    if (true || (await page.$eval('#pdtVer', el => el.textContent.toUpperCase())).indexOf('P9') === -1) {
-       //await updateZTE5Antenas(page);
-      console.log('Atualizando roteador ZTE 5 antenas para versão P9.');
+    if ((await page.$eval('#pdtVer', el => el.textContent.toUpperCase())).indexOf('P9') === -1) {
+       await updateZTE5Antenas(page);
+      
+    } else {
+      console.log('ZTE 5 antenas está atualizado: P9');
+    }
+    
+  }
+
+  async function updateZTE5Antenas(page) {
+
+    console.log('Atualizando roteador ZTE 5 antenas para versão P9.');
      
 
       await wait(2000);
@@ -877,24 +886,31 @@ console.log(
       : '❌ Nenhum arquivo selecionado'
   )
 );
+      
+
       await wait(2000);
 
-await page.waitForSelector('#Btn_Upload', {
+      await page.waitForSelector('#Btn_Upload', {
   visible: true,
   timeout: 10000
 });
 
 await page.click('#Btn_Upload');
 
+      await wait(2000);
+
+await page.waitForSelector('#confirmOK', {
+  visible: true,
+  timeout: 10000
+});
+
+await page.click('#confirmOK');
+
       await wait(5000);
       
 await screenshot('01-upgrade-depois.png')
 
       await wait(2000);
-    } else {
-      console.log('ZTE 5 antenas está atualizado: P9');
-    }
-    
   }
   
   async function wanPage() {
