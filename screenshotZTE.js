@@ -834,36 +834,41 @@ console.log('seletor 5GHz deu falha, porém foi corrigido...');
   await wait(8000);
 
 
+      ////////////
+
 // Aguarda iframe principal
-  await page.waitForSelector('#mainFrame', {
-    timeout: 15000
-  });
+await page.waitForSelector('#mainFrame', {
+  timeout: 15000
+});
 
-  const frame = page.frames().find(f => f.name() === 'mainFrame');
+const frame = page.frames().find(f => f.name() === 'mainFrame');
 
-  if (!frame) {
-    throw new Error('mainFrame não encontrado');
+if (!frame) {
+  throw new Error('mainFrame não encontrado');
+}
+
+const softwareBox = await frame.evaluate(() => {
+  const target = [...document.querySelectorAll('*')].find(el =>
+    el.textContent?.replace(/\s+/g, ' ').trim().toUpperCase() === 'SOFTWARE VERSION'
+  );
+
+  if (!target) return null;
+
+  let el = target;
+  while (el && !el.id) {
+    el = el.parentElement;
   }
 
-  const softwareVersion = await frame.evaluate(() => {
-    const texto = document.body.innerText;
+  return el ? { id: el.id, tag: el.tagName, html: el.outerHTML } : null;
+});
 
-    const linhas = texto.split('\n');
+console.log(softwareBox);
 
-    for (let i = 0; i < linhas.length; i++) {
-      if (linhas[i].toUpperCase().includes('SOFTWARE VERSION')) {
-        return linhas[i + 1]?.trim() || null;
-      }
-    }
-
-    return null;
-  });
-
-  console.log('Software Version:', softwareVersion);
-
-      return true;
+return true;
 
 
+///////////////
+      
       
   if (await page.$('#Btn_Close')) {
     await page.click('#Btn_Close');
