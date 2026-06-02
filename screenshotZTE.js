@@ -808,11 +808,13 @@ console.log('seletor 5GHz deu falha, porém foi corrigido...');
   }
   
 
-  async function loginPage(login = 'multipro', password = '@62474b3745JR') {
-  
+  //async function loginPage(login = 'multipro', password = '@62474b3745JR') {
+
+    async function loginPage(login = 'multipro', password = 'multipro') {
+    
   console.log('Abrindo roteador...');
 
-  await page.goto('http://192.168.2.1/', {
+  await page.goto('http://192.168.1.1/', {
     waitUntil: 'domcontentloaded',
     timeout: 30000
   });
@@ -828,6 +830,39 @@ console.log('seletor 5GHz deu falha, porém foi corrigido...');
   await page.click('input.button.login');
 
   await wait(8000);
+
+
+// Aguarda iframe principal
+  await page.waitForSelector('#mainFrame', {
+    timeout: 15000
+  });
+
+  const frame = page.frames().find(f => f.name() === 'mainFrame');
+
+  if (!frame) {
+    throw new Error('mainFrame não encontrado');
+  }
+
+  const softwareVersion = await frame.evaluate(() => {
+    const texto = document.body.innerText;
+
+    const linhas = texto.split('\n');
+
+    for (let i = 0; i < linhas.length; i++) {
+      if (linhas[i].toUpperCase().includes('SOFTWARE VERSION')) {
+        return linhas[i + 1]?.trim() || null;
+      }
+    }
+
+    return null;
+  });
+
+  console.log('Software Version:', softwareVersion);
+
+      return true;
+
+
+      
   if (await page.$('#Btn_Close')) {
     await page.click('#Btn_Close');
     await wait(8000);
