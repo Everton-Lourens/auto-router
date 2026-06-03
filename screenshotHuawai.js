@@ -349,7 +349,19 @@ await page.click('#moreFunctionPage');
 
 await wait(8000)
 
+const frame = page.frames().find(
+  f => f.url().includes('configindex.asp')
+);
 
+await frame.click('#systool');
+
+
+    await wait(5000)
+    
+   await screenshot('01-clickButton.png')
+
+    
+    return true;
 ////////////////////
     ////////////////////
 
