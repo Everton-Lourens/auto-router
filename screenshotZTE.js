@@ -488,55 +488,7 @@ async function wlanBasicPage() {
   }
 
 ///////////////////////////
-///////////////////////////
 
-async function setSSID2G5GHzOnOff333333(page, ssidIndex, open) {
-  const templateSelector = `#template_WLANSSIDConf_${ssidIndex}`;
-  const barSelector = `${templateSelector} .collapsibleInst`;
-  const areaSelector = `${templateSelector} [id^='changeArea_WLANSIDConf']`;
-  const showPasswordSelector = `${templateSelector} [id^='Switch_KeyPassType']`;
-
-  const template = await page.waitForSelector(templateSelector, {
-    visible: true,
-    timeout: 3000
-  }).catch(() => null);
-
-  if (!template) {
-    console.log(`Template não encontrado: ${templateSelector}`);
-    return false;
-  }
-
-  const bar = await page.$(barSelector);
-  if (!bar) {
-    console.log(`Barra não encontrada: ${barSelector}`);
-    return false;
-  }
-
-  const isOpen = await page.$eval(areaSelector, el => {
-    return window.getComputedStyle(el).display !== 'none';
-  }).catch(() => false);
-
-  if (open !== isOpen) {
-    await bar.evaluate(el => {
-      el.scrollIntoView({ block: 'center', inline: 'center' });
-      el.click();
-    });
-    await wait(1000);
-  }
-
-  if (open) {
-    const checkbox = await page.$(showPasswordSelector);
-    if (checkbox) {
-      const checked = await page.$eval(showPasswordSelector, el => el.checked).catch(() => false);
-      if (!checked) {
-        await checkbox.evaluate(el => el.click());
-        await wait(1000);
-      }
-    }
-  }
-
-  return true;
-}
   
 async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
   const templateSelector = `#template_WLANSSIDConf_${ssidIndex}`;
@@ -666,108 +618,7 @@ async function setCanalOnOff(page, selector, open) {
 }
   
 
-async function setCanalOnOff2222222(page, selector, open) {
-  if (!page || !selector || open === undefined) {
-    throw new Error('@@@@@ Parâmetros inválidos: setCanalOnOff @@@@@');
-  }
 
-  await wait(2000);
-  await page.waitForSelector(selector, { visible: true, timeout: 10000 });
-
-  const isOpenBefore = await page.$eval(selector, el =>
-    el.classList.contains('collapsibleBarExp')
-  );
-
-  if (open && !isOpenBefore) {
-    await page.click(selector);
-  }
-
-  if (!open && isOpenBefore) {
-    await page.click(selector);
-  }
-
-  await wait(1000);
-
-  const isOpenAfter = await page.$eval(selector, el =>
-    el.classList.contains('collapsibleBarExp')
-  );
-
-  if (open && !isOpenAfter) {
-    throw new Error(`@@@@@ Não abriu o canal em ${selector} @@@@@`);
-  }
-
-  if (!open && isOpenAfter) {
-    throw new Error(`@@@@@ Não fechou o canal em ${selector} @@@@@`);
-  }
-
-  await wait(2000);
-  return true;
-}
-  
-
-async function setCanalOnOff11111111(page, selector, open) {
-  await wait(2000)
-  //const selector = '#WlanBasicAdOnOffBar';
-  //const selector = '#WlanBasicAdConfBar';
-  if (!page || !selector || open === undefined) {
-    throw new Error('@@@@@ Parâmetros inválidos: setCanalOnOff @@@@@');
-  }
-
-  console.log(selector);
-
-  await page.waitForSelector(selector, { visible: true });
-
-  const isOpen = await page.$eval(selector, el =>
-    el.classList.contains('collapsibleBarExp')
-  );
-
-  if (open && !isOpen) {
-    await page.click(selector);
-  }
-
-  if (!open && isOpen) {
-    await page.click(selector);
-  }
-  
-  await wait(2000)
-  return true;
-}
-
-
-
-  async function set5GHzOnOff3333333333(page, open) {
-  const selector = '#instName_WlanBasicAdConf\\:1';
-
-  const el = await page.waitForSelector(selector, {
-    visible: true,
-    timeout: 3000
-  }).catch(() => null);
-
-  if (!el) {
-    console.log('5GHz não encontrado');
-    
-  }
-
-  await el.evaluate(node => {
-    node.scrollIntoView({ block: 'center', inline: 'center' });
-  });
-
-  const isOpen = await el.evaluate(node =>
-    node.classList.contains('instNameExp')
-  );
-
-  if (open !== isOpen) {
-    try {
-      await el.evaluate(node => node.click());
-    } catch (e) {
-      console.log('Falha no clique DOM:', e.message);
-      return false;
-    }
-  }
-
-  return true;
-}
-  
   async function set5GHzOnOff(page, open) {
   const selector = '#instName_WlanBasicAdConf\\:1';
 
@@ -802,89 +653,6 @@ console.log('seletor 5GHz deu falha, porém foi corrigido...');
  }
 
 
-
-  async function updateZTE5Antenas(page) {
-
-  }
-  
-
-  //async function loginPage(login = 'multipro', password = '@62474b3745JR') {
-
-    async function loginPage(login = 'multipro', password = 'multipro') {
-    
-  console.log('Abrindo roteador...');
-
-  await page.goto('http://192.168.1.1/', {
-    waitUntil: 'domcontentloaded',
-    timeout: 30000
-  });
-
-  await wait(3000);
-
-  console.log('Preenchendo login...');
-
-  await page.type('input[type="text"]', `${login}`);
-  await page.type('input[type="password"]', `${password}`);
-
-  console.log('Clicando login...');
-  //await page.click('input.button.login');
-
-      await page.click('#LoginId');
-
-  await wait(8000);
-
-
-      ////////////
-
-// Aguarda iframe principal
-await page.waitForSelector('#mainFrame', {
-  timeout: 15000
-});
-
-const frame = page.frames().find(f => f.name() === 'mainFrame');
-
-if (!frame) {
-  throw new Error('mainFrame não encontrado');
-}
-
-const softwareBox = await frame.evaluate(() => {
-  const target = [...document.querySelectorAll('*')].find(el =>
-    el.textContent?.replace(/\s+/g, ' ').trim().toUpperCase() === 'THE DEVICE WILL REBOOT AFTER UPGRADING'
-  );
-
-  if (!target) return null;
-
-  let el = target;
-  while (el && !el.id) {
-    el = el.parentElement;
-  }
-
-  return el ? { id: el.id, tag: el.tagName, html: el.outerHTML } : null;
-});
-
-console.log(softwareBox);
-
-return true;
-
-
-///////////////
-      
-      
-  if (await page.$('#Btn_Close')) {
-    await page.click('#Btn_Close');
-    await wait(8000);
-  }
-    
-      console.log('Login realizado.');
-
-    if ((await page.$eval('#pdtVer', el => el.textContent.toUpperCase())).indexOf('P9') === -1) {
-       await updateZTE5Antenas(page);
-      
-    } else {
-      console.log('ZTE 5 antenas está atualizado: P9');
-    }
-    
-  }
 
   async function updateZTE5Antenas(page) {
 
@@ -954,6 +722,114 @@ await screenshot('01-upgrade-depois.png')
 
       await wait(2000);
   }
+  
+
+  async function loginPage(login = 'multipro', password = '@62474b3745JR') {
+    
+  console.log('Abrindo roteador ZTE...');
+
+    await page.goto('http://192.168.2.1/', {
+    waitUntil: 'domcontentloaded',
+    timeout: 30000
+  });
+
+  await wait(3000);
+
+  console.log('Preenchendo login...');
+
+  await page.type('input[type="text"]', `${login}`);
+  await page.type('input[type="password"]', `${password}`);
+
+  console.log('Clicando login...');
+  await page.click('input.button.login');
+
+  await wait(8000);
+      
+  if (await page.$('#Btn_Close')) {
+    await page.click('#Btn_Close');
+    await wait(8000);
+  }
+    
+      console.log('Login realizado.');
+
+    if ((await page.$eval('#pdtVer', el => el.textContent.toUpperCase())).indexOf('P9') === -1) {
+       await updateZTE5Antenas(page);
+      
+    } else {
+      console.log('ZTE 5 antenas está atualizado: P9');
+    }
+    
+  }
+
+
+    async function loginONU(login = 'multipro', password = 'multipro') {
+    
+  console.log('Abrindo ONU...');
+   await page.goto('http://192.168.1.1/', {
+    waitUntil: 'domcontentloaded',
+    timeout: 30000
+  });
+
+  await wait(3000);
+
+  console.log('Preenchendo login...');
+
+  await page.type('input[type="text"]', `${login}`);
+  await page.type('input[type="password"]', `${password}`);
+
+  console.log('Clicando login...');
+      await page.click('#LoginId');
+
+  await wait(8000);
+    
+      console.log('Login realizado.');
+    
+    ////////////
+
+// Aguarda iframe principal
+await page.waitForSelector('#mainFrame', {
+  timeout: 15000
+});
+
+const frame = page.frames().find(f => f.name() === 'mainFrame');
+
+if (!frame) {
+  throw new Error('mainFrame não encontrado');
+}
+
+const softwareBox = await frame.evaluate(() => {
+  const target = [...document.querySelectorAll('*')].find(el =>
+    el.textContent?.replace(/\s+/g, ' ').trim().toUpperCase() === 'THE DEVICE WILL REBOOT AFTER UPGRADING'
+  );
+
+  if (!target) return null;
+
+  let el = target;
+  while (el && !el.id) {
+    el = el.parentElement;
+  }
+
+  return el ? { id: el.id, tag: el.tagName, html: el.outerHTML } : null;
+});
+
+if (false) {
+//if ((await page.$eval('#pdtVer', el => el.textContent.toUpperCase())).indexOf('P9') === -1) {
+       await updateZTE5Antenas(page);
+      
+    } else {
+      //console.log('ZTE 5 antenas está atualizado: P9');
+    }
+
+console.log(softwareBox);
+
+return true;
+
+
+///////////////
+
+
+  }
+
   
   async function wanPage() {
 
