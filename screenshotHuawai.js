@@ -368,20 +368,22 @@ await wait(2000)
 await wait(3000);
 
 const uploadFrame = page.frames().find(f =>
-  f.url().toLowerCase().includes('cfgfile')
+  f.url().includes('cfgfile')
 );
 
-console.log(
-  page.frames().map(f => f.url())
-);
+const fileInput = await uploadFrame.$('input[type="file"]');
 
-    await uploadFrame.waitForSelector('#f_file');
+if (!fileInput) {
+  throw new Error('input[type=file] não encontrado');
+}
 
-const input = await uploadFrame.$('#f_file');
-
-await input.uploadFile(
+await fileInput.uploadFile(
   '/storage/emulated/0/Download/router/updated.html'
 );
+
+await wait(2000);
+
+//await uploadFrame.click('#btnSubmit');
 
 
 
