@@ -352,6 +352,60 @@ await wait(8000)
 
 ////////////////////
     ////////////////////
+await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
+await page.click('#moreFunctionPage');
+
+await wait(5000);
+
+await screenshot('02-moreButton.png');
+
+// Localiza "System Management", mostra o pai e clica
+const systemManagementInfo = await page.evaluate(() => {
+  const target = [...document.querySelectorAll('*')].find(el =>
+    el.textContent?.replace(/\s+/g, ' ').trim().toLowerCase() === 'system management'
+  );
+
+  if (!target) return null;
+
+  let parent = target.parentElement;
+  while (parent && !parent.id) {
+    parent = parent.parentElement;
+  }
+
+  return {
+    targetTag: target.tagName,
+    targetId: target.id || null,
+    targetClass: target.className || null,
+    parentTag: parent ? parent.tagName : null,
+    parentId: parent ? parent.id || null : null,
+    parentClass: parent ? parent.className || null : null,
+    parentHtml: parent ? parent.outerHTML : null
+  };
+});
+
+console.log('System Management:', systemManagementInfo);
+
+if (!systemManagementInfo) {
+  throw new Error('System Management não encontrado');
+}
+
+await page.evaluate((id) => {
+  const el = document.getElementById(id);
+  if (!el) throw new Error(`Elemento não encontrado: ${id}`);
+
+  el.scrollIntoView({ block: 'center' });
+
+  el.dispatchEvent(new MouseEvent('click', {
+    bubbles: true,
+    cancelable: true,
+    view: window
+  }));
+}, systemManagementInfo.targetId);
+
+await wait(4000);
+await screenshot('03-system-management.png');
+
+    return true;
     
 const frame = page.frames().find(f =>
     f.name() === 'mainFrame' || f.name() === 'functioncontent'
