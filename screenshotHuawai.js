@@ -357,8 +357,115 @@ await frame.click('#systool');
 
 
     await wait(5000)
+
+
+    const path = require('path');
+
+const FILE_PATH = '/storage/emulated/0/Download/router/updated.html';
+
+function normalizeText(s) {
+  return (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+async function clickByText(frame, texts) {
+  const list = Array.isArray(texts) ? texts : [texts];
+
+  await frame.evaluate((texts) => {
+    const norm = (s) => (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+    const candidates = [
+      ...document.querySelectorAll('a, button, span, div, li, td, label, input')
+    ];
+
+    const match = candidates.find((el) => {
+      const text = norm(el.textContent || el.value || '');
+      const title = norm(el.getAttribute('title') || '');
+      return texts.some((t) => {
+        const needle = norm(t);
+        return text.includes(needle) || title.includes(needle);
+      });
+    });
+
+    if (!match) {
+      throw new Error(`Elemento não encontrado: ${texts.join(' | ')}`);
+    }
+
+    match.scrollIntoView({ block: 'center', inline: 'center' });
+    match.click();
+  }, list);
+}
+
+async function getContentFrame(page) {
+  const iframeHandle = await page.waitForSelector('#functioncontent', { timeout: 15000 });
+  const frame = await iframeHandle.contentFrame();
+  if (!frame) throw new Error('Não consegui acessar o iframe #functioncontent');
+  return frame;
+}
+
+async function uploadFileInFrame(frame, filePath) {
+  const absolute = path.resolve(filePath);
+
+  const input = await frame.$('input[type="file"]');
+  if (input) {
+    await input.uploadFile(absolute);
+    return true;
+  }
+
+  return false;
+}
+
+async function run(page) {
+  const mainFrame = page.frames().find(f => f.url().includes('configindex.asp'));
+  if (!mainFrame) throw new Error('Frame configindex.asp não encontrado');
+
+  // Se aparecer confirmação ao importar, aceita automaticamente
+  page.on('dialog', async (dialog) => {
+    await dialog.accept().catch(() => {});
+  });
+
+  // 1) Abre System Management / System Tool
+  await mainFrame.click('#systool');
+
+  // 2) Clica no submenu Backup And Recover...
+  await clickByText(mainFrame, [
+    'Backup And Recover',
+    'Backup And Recovery',
+    'Backup And Recover...',
+    'Backup And Recover…',
+    'Backup'
+  ]);
+
+  // 3) Espera o iframe carregar a página de backup
+  await page.waitForTimeout(1500);
+
+  const backupFrame = await getContentFrame(page);
+
+  // 4) Tenta preencher o input file diretamente
+  const uploaded = await uploadFileInFrame(backupFrame, FILE_PATH);
+
+  if (!uploaded) {
+    // Fallback: abre o seletor e tenta pelo botão Browse
+    const chooserPromise = page.waitForFileChooser({ timeout: 10000 });
+    await clickByText(backupFrame, ['Browse', 'Procurar', 'Choose File', 'Selecionar arquivo']);
+    const chooser = await chooserPromise;
+    await chooser.accept([path.resolve(FILE_PATH)]);
+  }
+
+  // 5) Clica em Import
+  await wait(1500)
+
+  await screenshot('import.png')
+
+  //await clickByText(backupFrame, ['Import', 'Importar']);
+
+  console.log('Arquivo enviado e importação acionada.');
+}
+await wait(1500)
+await screenshot('import22.png')
     
-   await screenshot('01-clickButton.png')
+await run(page);
+    
+   await screenshot('01-clickBut77777.png')
 
     
     return true;
@@ -367,54 +474,7 @@ await frame.click('#systool');
 
 
     
-const frame = page.frames().find(f =>
-    f.name() === 'mainFrame' || f.name() === 'functioncontent'
-  );
 
-  if (!frame) {
-    throw new Error('Frame principal não encontrado');
-  }
-
-  const systemManagementInfo = await frame.evaluate(() => {
-    const target = [...document.querySelectorAll('*')].find(el =>
-      el.textContent?.replace(/\s+/g, ' ').trim().toLowerCase() === 'system management'
-    );
-
-    if (!target) return null;
-
-    let parent = target.parentElement;
-
-    while (parent && parent.tagName !== 'DIV') {
-      parent = parent.parentElement;
-    }
-
-    return {
-      targetTag: target.tagName,
-      targetId: target.id || null,
-      targetClass: target.className || null,
-      parentTag: parent ? parent.tagName : null,
-      parentId: parent ? parent.id || null : null,
-      parentClass: parent ? parent.className || null : null,
-      parentHtml: parent ? parent.outerHTML : null
-    };
-  });
-
-  console.log('System Management:', systemManagementInfo);
-
-if (!systemManagementInfo || !systemManagementInfo.targetId) {
-  throw new Error('System Management não encontrado');
-}
-
-await page.evaluate((id) => {
-  const el = document.getElementById(id);
-  if (!el) throw new Error(`Elemento não encontrado: ${id}`);
-
-  el.scrollIntoView({ block: 'center' });
-  el.click();
-}, systemManagementInfo.targetId);
-
-await wait(4000);
-await screenshot('03-system-management.png');
 
 return true;
     ////////////////////
@@ -431,78 +491,8 @@ return true;
     /////////////////////
     /////////////////////
 
-const UPDATED_FILE = '/storage/emulated/0/Download/router/UPDATED.html';
+const UPDATED_FILE2 = '/storage/emulated/0/Download/router/UPDATED.html';
 
-async function restoreHuaweiConfig(page) {
-  const timeout = 30000;
-
-  const getFrame = () =>
-    page.frames().find(f =>
-      f.name() === 'functioncontent' || /configindex\.asp/i.test(f.url())
-    );
-
-  const frame = getFrame();
-  if (!frame) throw new Error('Iframe functioncontent não encontrado');
-
-  // 1) garante que o menu lateral já foi carregado
-  await frame.waitForSelector('#systool', { visible: true, timeout });
-
-  // 2) abre "System Management"
-  await frame.click('#systool');
-
-  // 3) espera o submenu ficar visível
-  await frame.waitForFunction(() => {
-    const el = document.querySelector('#menu_systool');
-    if (!el) return false;
-    const style = window.getComputedStyle(el);
-    return style.display !== 'none' && style.visibility !== 'hidden';
-  }, { timeout, polling: 200 });
-
-  // 4) agora sim o item aparece e pode ser clicado
-  await frame.waitForSelector('#cfgconfig', { visible: true, timeout });
-  await frame.click('#cfgconfig');
-
-  // 5) espera a tela de backup/importação carregar
-  await frame.waitForFunction(() => {
-    return document.body && /Import Configuration File/i.test(document.body.innerText);
-  }, { timeout, polling: 250 });
-
-  // 6) upload do arquivo
-  const fileInput = await frame.$('input[type="file"]');
-
-  if (fileInput) {
-    await fileInput.uploadFile(UPDATED_FILE);
-  } else {
-    const [browseBtn] = await frame.$x(
-      "//button[contains(normalize-space(.), 'Browse')] | " +
-      "//input[contains(@value, 'Browse')]"
-    );
-
-    if (!browseBtn) throw new Error('Botão Browse... não encontrado');
-
-    const [chooser] = await Promise.all([
-      page.waitForFileChooser({ timeout }),
-      browseBtn.click()
-    ]);
-
-    await chooser.accept([UPDATED_FILE]);
-  }
-
-  // 7) clica no botão de importação
-  const [importBtn] = await frame.$x(
-    "//button[contains(normalize-space(.), 'Import Configuration File')] | " +
-    "//input[contains(@value, 'Import Configuration File')]"
-  );
-
-  if (!importBtn) {
-    throw new Error('Botão Import Configuration File não encontrado');
-  }
-  await wait(1500);
-   await screenshot('ANTES.png')
-  await wait(1500);
-  await importBtn.click();
-  await wait(1500);
-  await screenshot('DepiisS.png')
 }
 
     
