@@ -363,10 +363,25 @@ await wait(2000)
 await frame.click('#cfgconfig');
 
     await wait(2000)
-       await screenshot('04-openBackReco.png')
-await wait(2000)
+const arquivo = '/storage/emulated/0/Download/router/updated.html';
 
-    return true
+// Forma mais estável: envia direto para o input file
+await frame.$eval('#f_file', (el, path) => {
+  el.value = '';
+}, arquivo);
+
+const inputFile = await frame.$('#f_file');
+await inputFile.uploadFile(arquivo);
+
+// Se houver botão de envio depois do upload
+await wait(1000);
+//await frame.click('#btnSubmit');
+
+await wait(2000);
+await screenshot('05-uploadDone.png');
+
+return true;
+
 
 
     
