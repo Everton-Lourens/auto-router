@@ -1,0 +1,643 @@
+[
+  {
+    "id": "mainWrapper",
+    "tag": "DIV",
+    "text": "Configure Automatic Upgrade Enable the automatic upgrade. Apply if (ProductName.length > 9) { document.write('<div id=\"ProductName\" class=\"ProductName\" style=\"width: 200px; background-size: 100% 100%\">' + ProductName + '</div>'); } else { document.write('<div id=\"ProductName\" class=\"ProductName\">' + ProductName + '</div>'); } K562e-10 Logout document.write(framedesinfo['frame030a']);Route Mode document.write(framedesinfo['frame031a']);Bridge Mode if ((isVDFAP == \"1\") && (curUserType == \"1\") && (isPortalEnd != \"0\")) { document.write('<div id=\"configguide\" class=\"headguide\"><span id=\"guidebtn\" class=\"guidebtn\" onclick=\"goToPortGuide();\">Guide</span></div>'); $(\".headguide\").hover(function() { $(\"#guidebtn\").css(\"color\",\"#2fabf6\"); },function() { $(\"#guidebtn\").css(\"color\",\"\"); }); } if ('ICELANDVDFAP' == CfgMode.toUpperCase()) { $(\".headRightMenu\").hover(function() { $(this).css(\"background-image\",\"url(/images/logout_hover.jpg)\"); $(\"#logoutBtn\").css(\"color\",\"#E60000\"); },function() { $(this).css(\"background-image\",\"\"); $(\"#logoutBtn\").css(\"color\",\"\"); }); } else { $(\".headRightMenu\").hover(function() { $(this).css(\"background-image\",\"url(/images/logout_hover.jpg)\"); $(\"#logoutBtn\").css(\"color\",\"#2fabf6\"); },function() { $(this).css(\"background-image\",\"\"); $(\"#logoutBtn\").css(\"color\",\"\"); }); } if (Language == \"finnish\") { $(\".headRightMenu\").css(\"padding-left\",\"140px\"); } Homepage Internet Access My Wi-Fi Terminal More if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) { document.write('<div class=\"scroll-wrapper\">'); document.write('<iframe id=\"functioncontent\" frameborder=\"0\" marginheight=\"0\" marginwidth=\"0\" height=\"600px\" width=\"100%\" src=\"\" scrolling=\"no\" style=\"background:#f0f2f5;\"></iframe>'); document.write('</div>'); } else if (/(Android)/i.test(navigator.userAgent)) { document.write('<iframe id=\"functioncontent\" frameborder=\"0\" marginheight=\"0\" marginwidth=\"0\" height=\"600px\" width=\"100%\" src=\"\" scrolling=\"no\" style=\"background:#f0f2f5;\"></iframe>'); } else { document.write('<iframe id=\"functioncontent\" frameborder=\"0\" marginheight=\"0\" marginwidth=\"0\" height=\"600px\" width=\"100%\" src=\"\" scrolling=\"no\" style=\"background:#f0f2f5;\"></iframe>'); }; if (CfgMode === 'DESKAPASTRO') { $(\"#functioncontent\").css(\"background\", \"#ffffff\"); document.body.style.backgroundColor = '#ffffff'; $(\"#indexTitle\").attr(\"BindText\",\"frame013_astro\"); $(\"#internetTitle\").attr(\"BindText\",\"frame019_astro\"); $(\"#wifiTitle\").attr(\"BindText\",\"frame014_astro\"); } Copyright © 2025 Huawei Technologies Co., Ltd. All rights reserved. Restart var rebootactiveUrl = \"url('images/reboot_active.jpg')\"; var rebootUrl = \"url('images/reboot.jpg')\"; if (CfgMode === 'DESKAPASTRO') { rebootactiveUrl = \"url('images/rebootastro_active.jpg')\"; rebootUrl = \"url('images/rebootastro.jpg')\"; $(\"#footer\").attr(\"BindText\",\"frame018_astro\"); } getId(\"rebootlogo\").onmouseover = function() { getId(\"rebootinfo\").style.display = \"block\"; getId(\"reboot\").style.backgroundImage = rebootactiveUrl; getId(\"reboot\").style.backgroundRepeat = \"no-repeat\"; getId(\"reboot\").style.backgroundPosition = \"center\"; } getId(\"rebootlogo\").onmouseout = function() { getId(\"rebootinfo\").style.display = \"none\"; getId(\"reboot\").style.backgroundImage = rebootUrl; getId(\"reboot\").style.backgroundRepeat = \"no-repeat\"; getId(\"reboot\").style.backgroundPosition = \"center\"; }",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#mainWrapper",
+    "where": "top"
+  },
+  {
+    "id": "headWrapper",
+    "tag": "DIV",
+    "text": "if (ProductName.length > 9) { document.write('<div id=\"ProductName\" class=\"ProductName\" style=\"width: 200px; background-size: 100% 100%\">' + ProductName + '</div>'); } else { document.write('<div id=\"ProductName\" class=\"ProductName\">' + ProductName + '</div>'); } K562e-10 Logout document.write(framedesinfo['frame030a']);Route Mode document.write(framedesinfo['frame031a']);Bridge Mode if ((isVDFAP == \"1\") && (curUserType == \"1\") && (isPortalEnd != \"0\")) { document.write('<div id=\"configguide\" class=\"headguide\"><span id=\"guidebtn\" class=\"guidebtn\" onclick=\"goToPortGuide();\">Guide</span></div>'); $(\".headguide\").hover(function() { $(\"#guidebtn\").css(\"color\",\"#2fabf6\"); },function() { $(\"#guidebtn\").css(\"color\",\"\"); }); } if ('ICELANDVDFAP' == CfgMode.toUpperCase()) { $(\".headRightMenu\").hover(function() { $(this).css(\"background-image\",\"url(/images/logout_hover.jpg)\"); $(\"#logoutBtn\").css(\"color\",\"#E60000\"); },function() { $(this).css(\"background-image\",\"\"); $(\"#logoutBtn\").css(\"color\",\"\"); }); } else { $(\".headRightMenu\").hover(function() { $(this).css(\"background-image\",\"url(/images/logout_hover.jpg)\"); $(\"#logoutBtn\").css(\"color\",\"#2fabf6\"); },function() { $(this).css(\"background-image\",\"\"); $(\"#logoutBtn\").css(\"color\",\"\"); }); } if (Language == \"finnish\") { $(\".headRightMenu\").css(\"padding-left\",\"140px\"); }",
+    "title": "",
+    "className": "headWrapper",
+    "onclick": "",
+    "selector": "#headWrapper",
+    "where": "top"
+  },
+  {
+    "id": "productTitle",
+    "tag": "SPAN",
+    "text": "if (ProductName.length > 9) { document.write('<div id=\"ProductName\" class=\"ProductName\" style=\"width: 200px; background-size: 100% 100%\">' + ProductName + '</div>'); } else { document.write('<div id=\"ProductName\" class=\"ProductName\">' + ProductName + '</div>'); } K562e-10",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#productTitle",
+    "where": "top"
+  },
+  {
+    "id": "ProductName",
+    "tag": "DIV",
+    "text": "K562e-10",
+    "title": "",
+    "className": "ProductName",
+    "onclick": "",
+    "selector": "#ProductName",
+    "where": "top"
+  },
+  {
+    "id": "logoutBtn",
+    "tag": "SPAN",
+    "text": "Logout",
+    "title": "",
+    "className": "logoutBtn",
+    "onclick": "",
+    "selector": "#logoutBtn",
+    "where": "top"
+  },
+  {
+    "id": "indexPage",
+    "tag": "DIV",
+    "text": "Homepage",
+    "title": "",
+    "className": "menudisplay RTMode",
+    "onclick": "onIndexChange();",
+    "selector": "#indexPage",
+    "where": "top"
+  },
+  {
+    "id": "indexTitle",
+    "tag": "P",
+    "text": "Homepage",
+    "title": "",
+    "className": "indexTitle",
+    "onclick": "",
+    "selector": "#indexTitle",
+    "where": "top"
+  },
+  {
+    "id": "indexPageBtn",
+    "tag": "BUTTON",
+    "text": "",
+    "title": "",
+    "className": "indexPageBtn menuBtnLogo",
+    "onclick": "",
+    "selector": "#indexPageBtn",
+    "where": "top"
+  },
+  {
+    "id": "internetPage",
+    "tag": "DIV",
+    "text": "Internet Access",
+    "title": "",
+    "className": "menudisplay RTMode",
+    "onclick": "onInternetChange();",
+    "selector": "#internetPage",
+    "where": "top"
+  },
+  {
+    "id": "internetTitle",
+    "tag": "P",
+    "text": "Internet Access",
+    "title": "",
+    "className": "internetTitle",
+    "onclick": "",
+    "selector": "#internetTitle",
+    "where": "top"
+  },
+  {
+    "id": "internetPageBtn",
+    "tag": "BUTTON",
+    "text": "",
+    "title": "",
+    "className": "internetPageBtn menuBtnLogo",
+    "onclick": "",
+    "selector": "#internetPageBtn",
+    "where": "top"
+  },
+  {
+    "id": "wifiPage",
+    "tag": "DIV",
+    "text": "My Wi-Fi",
+    "title": "",
+    "className": "menudisplay RTMode",
+    "onclick": "onWifiChange();",
+    "selector": "#wifiPage",
+    "where": "top"
+  },
+  {
+    "id": "wifiTitle",
+    "tag": "P",
+    "text": "My Wi-Fi",
+    "title": "",
+    "className": "wifiTitle",
+    "onclick": "",
+    "selector": "#wifiTitle",
+    "where": "top"
+  },
+  {
+    "id": "wifiPageBtn",
+    "tag": "BUTTON",
+    "text": "",
+    "title": "",
+    "className": "wifiPageBtn menuBtnLogo",
+    "onclick": "",
+    "selector": "#wifiPageBtn",
+    "where": "top"
+  },
+  {
+    "id": "terminalPage",
+    "tag": "DIV",
+    "text": "Terminal",
+    "title": "",
+    "className": "menudisplay RTMode",
+    "onclick": "onTerminalChange();",
+    "selector": "#terminalPage",
+    "where": "top"
+  },
+  {
+    "id": "terminalTitle",
+    "tag": "P",
+    "text": "Terminal",
+    "title": "",
+    "className": "terminalTitle",
+    "onclick": "",
+    "selector": "#terminalTitle",
+    "where": "top"
+  },
+  {
+    "id": "terminalPageBtn",
+    "tag": "BUTTON",
+    "text": "",
+    "title": "",
+    "className": "terminalPageBtn menuBtnLogo",
+    "onclick": "",
+    "selector": "#terminalPageBtn",
+    "where": "top"
+  },
+  {
+    "id": "moreFunctionPage",
+    "tag": "DIV",
+    "text": "More",
+    "title": "",
+    "className": "menudisplay RTMode",
+    "onclick": "onMoreChange();",
+    "selector": "#moreFunctionPage",
+    "where": "top"
+  },
+  {
+    "id": "moreFunctionTitle",
+    "tag": "P",
+    "text": "More",
+    "title": "",
+    "className": "moreFunctionTitle",
+    "onclick": "",
+    "selector": "#moreFunctionTitle",
+    "where": "top"
+  },
+  {
+    "id": "moreFunctionPageBtn",
+    "tag": "BUTTON",
+    "text": "",
+    "title": "",
+    "className": "moreFunctionPageBtn menuBtnLogo moreBiglogo",
+    "onclick": "",
+    "selector": "#moreFunctionPageBtn",
+    "where": "top"
+  },
+  {
+    "id": "functioncontent",
+    "tag": "IFRAME",
+    "text": "",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#functioncontent",
+    "where": "top"
+  },
+  {
+    "id": "copyright",
+    "tag": "DIV",
+    "text": "Copyright © 2025 Huawei Technologies Co., Ltd. All rights reserved. Restart var rebootactiveUrl = \"url('images/reboot_active.jpg')\"; var rebootUrl = \"url('images/reboot.jpg')\"; if (CfgMode === 'DESKAPASTRO') { rebootactiveUrl = \"url('images/rebootastro_active.jpg')\"; rebootUrl = \"url('images/rebootastro.jpg')\"; $(\"#footer\").attr(\"BindText\",\"frame018_astro\"); } getId(\"rebootlogo\").onmouseover = function() { getId(\"rebootinfo\").style.display = \"block\"; getId(\"reboot\").style.backgroundImage = rebootactiveUrl; getId(\"reboot\").style.backgroundRepeat = \"no-repeat\"; getId(\"reboot\").style.backgroundPosition = \"center\"; } getId(\"rebootlogo\").onmouseout = function() { getId(\"rebootinfo\").style.display = \"none\"; getId(\"reboot\").style.backgroundImage = rebootUrl; getId(\"reboot\").style.backgroundRepeat = \"no-repeat\"; getId(\"reboot\").style.backgroundPosition = \"center\"; }",
+    "title": "",
+    "className": "copyright",
+    "onclick": "",
+    "selector": "#copyright",
+    "where": "top"
+  },
+  {
+    "id": "copyrighttext",
+    "tag": "DIV",
+    "text": "Copyright © 2025 Huawei Technologies Co., Ltd. All rights reserved.",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#copyrighttext",
+    "where": "top"
+  },
+  {
+    "id": "footer",
+    "tag": "SPAN",
+    "text": "Copyright © 2025 Huawei Technologies Co., Ltd. All rights reserved.",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#footer",
+    "where": "top"
+  },
+  {
+    "id": "indexpage",
+    "tag": "DIV",
+    "text": "System Info Device InformationWAN InformationWLAN InformationHome Network Infor...WLAN Wi-Fi Advanced Net...Wi-Fi Coverage Man...Automatic Wi-Fi Sh...Multi-AP Role Sett...Network Configuration LAN SettingsIPv6DDNS FunctionUPnP FunctionSecurity Configuration Wi-Fi MAC Address ...Firewall Configura...Parental ControlDMZ FunctionIPv4 Port MappingPort Trigger Confi...Device Access Cont...PSK Crack DefenseSystem Management Upstream Network P...TR-069Software UpgradeAccount ManagementTime SettingBackup And Recover...Open Source Softwa...Indicator Status M...Security Self-Chec...Maintenance Diagnosis Bulk Transfer Conf...MaintenanceUser LogAP LogFirewall LogDebug LogInstrusion Detect ...Fault Info CollectRemote Mirror if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) { document.write('<div id=\"content\" style=\"background:#fff;overflow-y:scroll;-webkit-overflow-scrolling:touch;\">'); document.write('<iframe id=\"functioncontent\" frameborder=\"0\" width=\"100%\" height=\"100%\" marginheight=\"0\" marginwidth=\"0\" class=\"AspWidth\" overflow=\"hidden\" style=\"background:#fff;\"></iframe>'); document.write('</div>'); } else if (/(Android)/i.test(navigator.userAgent)) { document.write('<div id=\"content\" style=\"background:#fff;overflow:hidden;-webkit-overflow-scrolling:touch;\">'); document.write('<iframe id=\"functioncontent\" frameborder=\"0\" width=\"100%\" height=\"100%\" marginheight=\"0\" marginwidth=\"0\" class=\"AspWidth\" overflow=\"hidden\" style=\"background:#fff;\"></iframe>'); document.write('</div>'); } else { document.write('<div id=\"content\" style=\"background:#fff;overflow:hidden;-webkit-overflow-scrolling:touch;\">'); document.write('<iframe id=\"functioncontent\" frameborder=\"0\" width=\"100%\" height=\"100%\" marginheight=\"0\" marginwidth=\"0\" class=\"AspWidth\" overflow=\"hidden\" style=\"background:#fff;\"></iframe>'); document.write('</div>'); };",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#indexpage",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "maincenter",
+    "tag": "DIV",
+    "text": "System Info Device InformationWAN InformationWLAN InformationHome Network Infor...WLAN Wi-Fi Advanced Net...Wi-Fi Coverage Man...Automatic Wi-Fi Sh...Multi-AP Role Sett...Network Configuration LAN SettingsIPv6DDNS FunctionUPnP FunctionSecurity Configuration Wi-Fi MAC Address ...Firewall Configura...Parental ControlDMZ FunctionIPv4 Port MappingPort Trigger Confi...Device Access Cont...PSK Crack DefenseSystem Management Upstream Network P...TR-069Software UpgradeAccount ManagementTime SettingBackup And Recover...Open Source Softwa...Indicator Status M...Security Self-Chec...Maintenance Diagnosis Bulk Transfer Conf...MaintenanceUser LogAP LogFirewall LogDebug LogInstrusion Detect ...Fault Info CollectRemote Mirror if (/(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent)) { document.write('<div id=\"content\" style=\"background:#fff;overflow-y:scroll;-webkit-overflow-scrolling:touch;\">'); document.write('<iframe id=\"functioncontent\" frameborder=\"0\" width=\"100%\" height=\"100%\" marginheight=\"0\" marginwidth=\"0\" class=\"AspWidth\" overflow=\"hidden\" style=\"background:#fff;\"></iframe>'); document.write('</div>'); } else if (/(Android)/i.test(navigator.userAgent)) { document.write('<div id=\"content\" style=\"background:#fff;overflow:hidden;-webkit-overflow-scrolling:touch;\">'); document.write('<iframe id=\"functioncontent\" frameborder=\"0\" width=\"100%\" height=\"100%\" marginheight=\"0\" marginwidth=\"0\" class=\"AspWidth\" overflow=\"hidden\" style=\"background:#fff;\"></iframe>'); document.write('</div>'); } else { document.write('<div id=\"content\" style=\"background:#fff;overflow:hidden;-webkit-overflow-scrolling:touch;\">'); document.write('<iframe id=\"functioncontent\" frameborder=\"0\" width=\"100%\" height=\"100%\" marginheight=\"0\" marginwidth=\"0\" class=\"AspWidth\" overflow=\"hidden\" style=\"background:#fff;\"></iframe>'); document.write('</div>'); };",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#maincenter",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "MenuInfo",
+    "tag": "DIV",
+    "text": "System Info Device InformationWAN InformationWLAN InformationHome Network Infor...WLAN Wi-Fi Advanced Net...Wi-Fi Coverage Man...Automatic Wi-Fi Sh...Multi-AP Role Sett...Network Configuration LAN SettingsIPv6DDNS FunctionUPnP FunctionSecurity Configuration Wi-Fi MAC Address ...Firewall Configura...Parental ControlDMZ FunctionIPv4 Port MappingPort Trigger Confi...Device Access Cont...PSK Crack DefenseSystem Management Upstream Network P...TR-069Software UpgradeAccount ManagementTime SettingBackup And Recover...Open Source Softwa...Indicator Status M...Security Self-Chec...Maintenance Diagnosis Bulk Transfer Conf...MaintenanceUser LogAP LogFirewall LogDebug LogInstrusion Detect ...Fault Info CollectRemote Mirror",
+    "title": "",
+    "className": "MenuInfo",
+    "onclick": "",
+    "selector": "#MenuInfo",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "Systeminfo",
+    "tag": "SPAN",
+    "text": "System Info",
+    "title": "",
+    "className": "item spanStyle",
+    "onclick": "onFirstMenuChange(this.id);",
+    "selector": "#Systeminfo",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "icon_Systeminfo",
+    "tag": "SPAN",
+    "text": "",
+    "title": "",
+    "className": "icon",
+    "onclick": "",
+    "selector": "#icon_Systeminfo",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "wlanconfig",
+    "tag": "SPAN",
+    "text": "WLAN",
+    "title": "",
+    "className": "item spanStyle",
+    "onclick": "onFirstMenuChange(this.id);",
+    "selector": "#wlanconfig",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "icon_wlanconfig",
+    "tag": "SPAN",
+    "text": "",
+    "title": "",
+    "className": "icon",
+    "onclick": "",
+    "selector": "#icon_wlanconfig",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "application",
+    "tag": "SPAN",
+    "text": "Network Configuration",
+    "title": "",
+    "className": "item spanStyle",
+    "onclick": "onFirstMenuChange(this.id);",
+    "selector": "#application",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "icon_application",
+    "tag": "SPAN",
+    "text": "",
+    "title": "",
+    "className": "icon",
+    "onclick": "",
+    "selector": "#icon_application",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "securityconfig",
+    "tag": "SPAN",
+    "text": "Security Configuration",
+    "title": "",
+    "className": "item spanStyle",
+    "onclick": "onFirstMenuChange(this.id);",
+    "selector": "#securityconfig",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "icon_securityconfig",
+    "tag": "SPAN",
+    "text": "",
+    "title": "",
+    "className": "icon",
+    "onclick": "",
+    "selector": "#icon_securityconfig",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "systool",
+    "tag": "SPAN",
+    "text": "System Management",
+    "title": "",
+    "className": "item spanStyle active",
+    "onclick": "onFirstMenuChange(this.id);",
+    "selector": "#systool",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "icon_systool",
+    "tag": "SPAN",
+    "text": "",
+    "title": "",
+    "className": "iconactive",
+    "onclick": "",
+    "selector": "#icon_systool",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "menu_systool",
+    "tag": "UL",
+    "text": "Upstream Network P...TR-069Software UpgradeAccount ManagementTime SettingBackup And Recover...Open Source Softwa...Indicator Status M...Security Self-Chec...",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#menu_systool",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "upporttypeconfig",
+    "tag": "LI",
+    "text": "Upstream Network P...",
+    "title": "Upstream Network Port Settings",
+    "className": "",
+    "onclick": "onSecondMenuChange(this.id);",
+    "selector": "#upporttypeconfig",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "tr069config",
+    "tag": "LI",
+    "text": "TR-069",
+    "title": "",
+    "className": "",
+    "onclick": "onSecondMenuChange(this.id);",
+    "selector": "#tr069config",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "fireware",
+    "tag": "LI",
+    "text": "Software Upgrade",
+    "title": "",
+    "className": "",
+    "onclick": "onSecondMenuChange(this.id);",
+    "selector": "#fireware",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "userconfig",
+    "tag": "LI",
+    "text": "Account Management",
+    "title": "",
+    "className": "",
+    "onclick": "onSecondMenuChange(this.id);",
+    "selector": "#userconfig",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "sntpmngt",
+    "tag": "LI",
+    "text": "Time Setting",
+    "title": "",
+    "className": "",
+    "onclick": "onSecondMenuChange(this.id);",
+    "selector": "#sntpmngt",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "cfgconfig",
+    "tag": "LI",
+    "text": "Backup And Recover...",
+    "title": "",
+    "className": "secondActive",
+    "onclick": "onSecondMenuChange(this.id);",
+    "selector": "#cfgconfig",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "noticeinfo",
+    "tag": "LI",
+    "text": "Open Source Softwa...",
+    "title": "Open Source Software Notice",
+    "className": "",
+    "onclick": "onSecondMenuChange(this.id);",
+    "selector": "#noticeinfo",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "indicator",
+    "tag": "LI",
+    "text": "Indicator Status M...",
+    "title": "Indicator Status Management",
+    "className": "",
+    "onclick": "onSecondMenuChange(this.id);",
+    "selector": "#indicator",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "securitycheck",
+    "tag": "LI",
+    "text": "Security Self-Chec...",
+    "title": "",
+    "className": "",
+    "onclick": "onSecondMenuChange(this.id);",
+    "selector": "#securitycheck",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "maintaininfo",
+    "tag": "SPAN",
+    "text": "Maintenance Diagnosis",
+    "title": "",
+    "className": "item spanStyle",
+    "onclick": "onFirstMenuChange(this.id);",
+    "selector": "#maintaininfo",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "icon_maintaininfo",
+    "tag": "SPAN",
+    "text": "",
+    "title": "",
+    "className": "icon",
+    "onclick": "",
+    "selector": "#icon_maintaininfo",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "content",
+    "tag": "DIV",
+    "text": "",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#content",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "cfgfiletitle",
+    "tag": "DIV",
+    "text": "Backup And Recovery",
+    "title": "",
+    "className": "PageTitle_title",
+    "onclick": "",
+    "selector": "#cfgfiletitle",
+    "where": "top.frame[0].frame[0]"
+  },
+  {
+    "id": "cfgfile_content",
+    "tag": "DIV",
+    "text": "On this page, you can export, import, and restore factory configuration operations.",
+    "title": "",
+    "className": "PageTitle_content",
+    "onclick": "",
+    "selector": "#cfgfile_content",
+    "where": "top.frame[0].frame[0]"
+  },
+  {
+    "id": "funcspreadid01",
+    "tag": "DIV",
+    "text": "",
+    "title": "",
+    "className": "func_spread",
+    "onclick": "",
+    "selector": "#funcspreadid01",
+    "where": "top.frame[0].frame[0]"
+  },
+  {
+    "id": "downloadConfig",
+    "tag": "DIV",
+    "text": "Export Configuration File if (showCfgKeyOption === 'on') { dispEncryptOptions(); } if (showCfgKeyOption === 'on') { document.write('<td class=\"filetitle\"> </td>') }",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#downloadConfig",
+    "where": "top.frame[0].frame[0]"
+  },
+  {
+    "id": "downloadconfigbutton",
+    "tag": "INPUT",
+    "text": "",
+    "title": "",
+    "className": "ApplyButtoncss buttonwidth_150px_250px",
+    "onclick": "backupSetting()",
+    "selector": "#downloadconfigbutton",
+    "where": "top.frame[0].frame[0]"
+  },
+  {
+    "id": "funcspreadid02",
+    "tag": "DIV",
+    "text": "",
+    "title": "",
+    "className": "func_spread",
+    "onclick": "",
+    "selector": "#funcspreadid02",
+    "where": "top.frame[0].frame[0]"
+  },
+  {
+    "id": "uploadConfig",
+    "tag": "DIV",
+    "text": "Import Configuration File Configuration File: Decryption Key: document.write(CfgfileLgeDes['s0718']); Use Last Saved Key",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#uploadConfig",
+    "where": "top.frame[0].frame[0]"
+  },
+  {
+    "id": "f_file",
+    "tag": "INPUT",
+    "text": "",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#f_file",
+    "where": "top.frame[0].frame[0]"
+  },
+  {
+    "id": "btnBrowse",
+    "tag": "INPUT",
+    "text": "",
+    "title": "",
+    "className": "CancleButtonCss filebuttonwidth_100px",
+    "onclick": "",
+    "selector": "#btnBrowse",
+    "where": "top.frame[0].frame[0]"
+  },
+  {
+    "id": "btnSubmit",
+    "tag": "INPUT",
+    "text": "",
+    "title": "",
+    "className": "CancleButtonCss filebuttonwidth_150px_250px",
+    "onclick": "uploadSetting();",
+    "selector": "#btnSubmit",
+    "where": "top.frame[0].frame[0]"
+  },
+  {
+    "id": "funcspreadid03",
+    "tag": "DIV",
+    "text": "",
+    "title": "",
+    "className": "func_spread",
+    "onclick": "",
+    "selector": "#funcspreadid03",
+    "where": "top.frame[0].frame[0]"
+  },
+  {
+    "id": "titlespreadid",
+    "tag": "DIV",
+    "text": "",
+    "title": "",
+    "className": "title_spread",
+    "onclick": "",
+    "selector": "#titlespreadid",
+    "where": "top.frame[0].frame[0]"
+  },
+  {
+    "id": "functitleid",
+    "tag": "DIV",
+    "text": "Restoring Factory Settings",
+    "title": "",
+    "className": "func_title",
+    "onclick": "",
+    "selector": "#functitleid",
+    "where": "top.frame[0].frame[0]"
+  },
+  {
+    "id": "btnRestoreDftCfg",
+    "tag": "INPUT",
+    "text": "",
+    "title": "",
+    "className": "ApplyButtoncss buttonwidth_150px_250px",
+    "onclick": "RestoreDefaultCfg()",
+    "selector": "#btnRestoreDftCfg",
+    "where": "top.frame[0].frame[0]"
+  }
+]
+http://100.68.12.253/index.asp:675
