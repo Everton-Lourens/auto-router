@@ -1,3 +1,4 @@
+
 const puppeteer = require('puppeteer-core');
 const fs = require('fs');
 
@@ -5,264 +6,288 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
 (async () => {
 
-if (!fs.existsSync(SAVE_DIR)) {
-fs.mkdirSync(SAVE_DIR, { recursive: true });
-}
+  if (!fs.existsSync(SAVE_DIR)) {
+    fs.mkdirSync(SAVE_DIR, { recursive: true });
+  }
 
-const browser = await puppeteer.launch({
-executablePath: '/data/data/com.termux/files/usr/lib/chromium/chrome',
-headless: true,
-args: [
-'--headless=new',
-'--no-sandbox',
-'--disable-setuid-sandbox',
-'--disable-dev-shm-usage',
-'--disable-gpu',
-'--single-process',
-'--no-zygote',
-'--disable-software-rasterizer',
-'--disable-extensions',
-'--disable-background-networking'
-]
-});
+  const browser = await puppeteer.launch({
+    executablePath: '/data/data/com.termux/files/usr/lib/chromium/chrome',
+    headless: true,
+    args: [
+      '--headless=new',
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--single-process',
+      '--no-zygote',
+      '--disable-software-rasterizer',
+      '--disable-extensions',
+      '--disable-background-networking'
+    ]
+  });
 
-const page = await browser.newPage();
+  const page = await browser.newPage();
 
-await page.setViewport({
-width: 1280,
-height: 720
-});
+  await page.setViewport({
+    width: 1280,
+    height: 720
+  });
 
-await loginPage();
-await wanPage();
-await securityPage();
-await redeLocalPage();
+  
+  await loginPage();
+  await wanPage();
+  await securityPage();
+  await redeLocalPage();
+  
+  await browser.close();
 
-await browser.close();
+  
+  
 
 async function screenshot(name) {
 await wait(2000);
-const path = `${SAVE_DIR}/${name}`;
+    const path = `${SAVE_DIR}/${name}`;
 
-console.log(`Screenshot: ${path}`);
+    console.log(`Screenshot: ${path}`);
 
-await page.screenshot({
-path,
-fullPage: true
-});
-}
+    await page.screenshot({
+      path,
+      fullPage: true
+    });
+  }
+  
 
-async function wait(time) {
-await new Promise(resolve => setTimeout(resolve, time));
-}
+  async function wait(time) {
+    await new Promise(resolve => setTimeout(resolve, time));
+  }
 
+
+  
 async function setCollapsibleBarStateByText(page, barText, shouldOpen) {
-console.log(`Ajustando ${barText} para ${shouldOpen ? 'aberto' : 'fechado'}...`);
+  console.log(`Ajustando ${barText} para ${shouldOpen ? 'aberto' : 'fechado'}...`);
 
-const bars = await page.$$('h1.collapBarWithDataTrans, h1.collapsibleBarExp');
+  const bars = await page.$$('h1.collapBarWithDataTrans, h1.collapsibleBarExp');
 
-let target = null;
-for (const bar of bars) {
-const text = await bar.evaluate(node =>
-(node.textContent || '').replace(/\s+/g, ' ').trim()
-);
-if (text === barText) {
-target = bar;
-break;
-}
-}
-
-if (!target) {
-console.log(`${barText} não encontrado.`);
-return false;
-}
-
-const isOpen = await target.evaluate(node =>
-node.classList.contains('collapsibleBarExp')
-);
-
-if (isOpen === shouldOpen) {
-console.log(`${barText} já está ${shouldOpen ? 'aberto' : 'fechado'}.`);
-return true;
-}
-
-await target.evaluate(node =>
-node.scrollIntoView({ block: 'center', inline: 'center' })
-);
-
-for (let attempt = 1; attempt <= 3; attempt++) { try { await target.click({ delay: 50 }); } catch { try { await target.evaluate(node=> node.click());
-  } catch {}
+  let target = null;
+  for (const bar of bars) {
+    const text = await bar.evaluate(node =>
+      (node.textContent || '').replace(/\s+/g, ' ').trim()
+    );
+    if (text === barText) {
+      target = bar;
+      break;
+    }
   }
 
-  await wait(700);
-
-  const currentState = await target.evaluate(node =>
-  node.classList.contains('collapsibleBarExp')
-  ).catch(() => null);
-
-  if (currentState === shouldOpen) {
-  console.log(`${barText} foi ${shouldOpen ? 'aberto' : 'fechado'}.`);
-  return true;
+  if (!target) {
+    console.log(`${barText} não encontrado.`);
+    return false;
   }
+
+  const isOpen = await target.evaluate(node =>
+    node.classList.contains('collapsibleBarExp')
+  );
+
+  if (isOpen === shouldOpen) {
+    console.log(`${barText} já está ${shouldOpen ? 'aberto' : 'fechado'}.`);
+    return true;
+  }
+
+  await target.evaluate(node =>
+    node.scrollIntoView({ block: 'center', inline: 'center' })
+  );
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      await target.click({ delay: 50 });
+    } catch {
+      try {
+        await target.evaluate(node => node.click());
+      } catch {}
+    }
+
+    await wait(700);
+
+    const currentState = await target.evaluate(node =>
+      node.classList.contains('collapsibleBarExp')
+    ).catch(() => null);
+
+    if (currentState === shouldOpen) {
+      console.log(`${barText} foi ${shouldOpen ? 'aberto' : 'fechado'}.`);
+      return true;
+    }
   }
 
   console.log(`Não foi possível garantir o estado de ${barText}.`);
   return false;
-  }
+}
 
-  async function setCollapsibleBarState(page, selector, label, shouldOpen) {
+async function setCollapsibleBarState(page, selector, label, shouldOpen) {
   console.log(`Ajustando ${label} para ${shouldOpen ? 'aberto' : 'fechado'}...`);
 
   const el = await page.waitForSelector(selector, {
-  visible: true,
-  timeout: 15000
+    visible: true,
+    timeout: 15000
   }).catch(() => null);
 
   if (!el) {
-  console.log(`${label} não encontrado.`);
-  return false;
+    console.log(`${label} não encontrado.`);
+    return false;
   }
 
   const isOpen = async () => {
-  return await el.evaluate(node => node.classList.contains('collapsibleBarExp'));
+    return await el.evaluate(node => node.classList.contains('collapsibleBarExp'));
   };
 
   let currentState = await isOpen();
   if (currentState === shouldOpen) {
-  console.log(`${label} já está ${shouldOpen ? 'aberto' : 'fechado'}.`);
-  return true;
+    console.log(`${label} já está ${shouldOpen ? 'aberto' : 'fechado'}.`);
+    return true;
   }
 
   await el.evaluate(node =>
-  node.scrollIntoView({ block: 'center', inline: 'center' })
+    node.scrollIntoView({ block: 'center', inline: 'center' })
   );
 
-  for (let attempt = 1; attempt <= 3; attempt++) { try { await el.click({ delay: 50 }); } catch { try { await page.click(selector, { delay: 50 }); } catch {} } await wait(700); currentState=await page.$eval(selector, node=>
-    node.classList.contains('collapsibleBarExp')
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      await el.click({ delay: 50 });
+    } catch {
+      try {
+        await page.click(selector, { delay: 50 });
+      } catch {}
+    }
+
+    await wait(700);
+    currentState = await page.$eval(selector, node =>
+      node.classList.contains('collapsibleBarExp')
     ).catch(() => null);
 
     if (currentState === shouldOpen) {
-    console.log(`${label} foi ${shouldOpen ? 'aberto' : 'fechado'}.`);
-    return true;
+      console.log(`${label} foi ${shouldOpen ? 'aberto' : 'fechado'}.`);
+      return true;
     }
-    }
+  }
 
-    console.log(`Não foi possível garantir o estado de ${label}.`);
-    return false;
-    }
+  console.log(`Não foi possível garantir o estado de ${label}.`);
+  return false;
+}
+  
+async function clickFirstInternetItem(page) {
+  console.log('Procurando o primeiro item visível...');
 
-    async function clickFirstInternetItem(page) {
-    console.log('Procurando o primeiro item visível...');
+  await page.waitForSelector('#Internet_container .instName.collapsibleInst');
 
-    await page.waitForSelector('#Internet_container .instName.collapsibleInst');
+  const items = await page.$$('#Internet_container .instName.collapsibleInst');
 
-    const items = await page.$$('#Internet_container .instName.collapsibleInst');
-
-    for (const item of items) {
+  for (const item of items) {
     const box = await item.boundingBox();
     if (!box) continue; // ignora ocultos
 
     await item.click({ delay: 50 });
     console.log('Clique executado no primeiro item visível.');
     return true;
-    }
+  }
 
-    console.log('Nenhum item visível encontrado.');
-    return false;
-    }
+  console.log('Nenhum item visível encontrado.');
+  return false;
+}
 
-    async function openServiceControlBars(page) {
-    console.log('Garantindo que os controles de serviço estejam abertos...');
 
-    const openIfClosed = async (selector, label) => {
+  async function openServiceControlBars(page) {
+  console.log('Garantindo que os controles de serviço estejam abertos...');
+
+  const openIfClosed = async (selector, label) => {
     const el = await page.$(selector);
     if (!el) {
-    console.log(`${label} não encontrado.`);
-    return false;
+      console.log(`${label} não encontrado.`);
+      return false;
     }
 
     const isOpen = await el.evaluate(node =>
-    node.classList.contains('collapsibleBarExp')
+      node.classList.contains('collapsibleBarExp')
     );
 
     if (isOpen) {
-    console.log(`${label} já está aberto.`);
-    return true;
+      console.log(`${label} já está aberto.`);
+      return true;
     }
 
     await el.evaluate(node =>
-    node.scrollIntoView({ block: 'center', inline: 'center' })
+      node.scrollIntoView({ block: 'center', inline: 'center' })
     );
 
     try {
-    await el.click({ delay: 50 });
+      await el.click({ delay: 50 });
     } catch {
-    await page.click(selector, { delay: 50 });
+      await page.click(selector, { delay: 50 });
     }
 
     console.log(`${label} foi aberto.`);
     return true;
-    };
+  };
 
-    await openIfClosed('#serviceCtlBar', 'Controle de serviço - IPv4');
-    await openIfClosed('#IPv6serviceCtlBar', 'Controle de serviço - IPv6');
+  await openIfClosed('#serviceCtlBar', 'Controle de serviço - IPv4');
+  await openIfClosed('#IPv6serviceCtlBar', 'Controle de serviço - IPv6');
 
-    return true;
-    }
+  return true;
+}
 
-    async function clickIfExistsBySelectorRealClick(page, selector) {
-    console.log(`Procurando seletor: ${selector}`);
+  async function clickIfExistsBySelectorRealClick(page, selector) {
+  console.log(`Procurando seletor: ${selector}`);
 
-    const el = await page.$(selector);
-    if (!el) {
+  const el = await page.$(selector);
+  if (!el) {
     console.log(`clickIfExistsBySelectorRealClick(${selector}) => false`);
     return false;
-    }
+  }
 
-    await el.evaluate(node =>
+  await el.evaluate(node =>
     node.scrollIntoView({
-    block: 'center',
-    inline: 'center'
+      block: 'center',
+      inline: 'center'
     })
-    );
+  );
 
-    let clicked = false;
+  let clicked = false;
 
-    try {
+  try {
     await el.click({ delay: 50 });
     clicked = true;
-    } catch {}
+  } catch {}
 
-    if (!clicked) {
+  if (!clicked) {
     try {
-    await page.click(selector, { delay: 50 });
-    clicked = true;
+      await page.click(selector, { delay: 50 });
+      clicked = true;
     } catch {}
-    }
+  }
 
-    console.log(`clickIfExistsBySelectorRealClick(${selector}) =>`, clicked);
-    return clicked;
-    }
+  console.log(`clickIfExistsBySelectorRealClick(${selector}) =>`, clicked);
+  return clicked;
+}
+                             
+  
+async function clickIfExistsBySelector(selector) {
+  console.log(`Procurando seletor: ${selector}`);
 
-    async function clickIfExistsBySelector(selector) {
-    console.log(`Procurando seletor: ${selector}`);
-
-    const clicked = await page.evaluate((selector) => {
+  const clicked = await page.evaluate((selector) => {
     const el = document.querySelector(selector);
 
     if (!el) return false;
 
     const style = window.getComputedStyle(el);
     const visible =
-    style &&
-    style.visibility !== 'hidden' &&
-    style.display !== 'none' &&
-    el.getClientRects().length > 0;
+      style &&
+      style.visibility !== 'hidden' &&
+      style.display !== 'none' &&
+      el.getClientRects().length > 0;
 
     if (!visible) return false;
 
     const clickable =
-    el.closest('a, button, [role="button"], [onclick]') || el;
+      el.closest('a, button, [role="button"], [onclick]') || el;
 
     clickable.scrollIntoView({ block: 'center', inline: 'center' });
 
@@ -272,80 +297,80 @@ for (let attempt = 1; attempt <= 3; attempt++) { try { await target.click({ dela
     clickable.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
 
     if (typeof clickable.click === 'function') {
-    clickable.click();
+      clickable.click();
     }
 
     return true;
-    }, selector);
+  }, selector);
 
-    console.log(`clickIfExistsBySelector(${selector}) =>`, clicked);
-    return clicked;
-    }
-
-    async function clickIfExistsByText(text, selectorFallback = '*') {
+  console.log(`clickIfExistsBySelector(${selector}) =>`, clicked);
+  return clicked;
+}
+  
+  async function clickIfExistsByText(text, selectorFallback = '*') {
     console.log(`Procurando texto: ${text}`);
 
     const clicked = await page.evaluate(
-    ({ text, selectorFallback }) => {
-    const normalize = value => (value || '').replace(/\s+/g, ' ').trim();
+      ({ text, selectorFallback }) => {
+        const normalize = value => (value || '').replace(/\s+/g, ' ').trim();
 
-    const elements = Array.from(document.querySelectorAll(selectorFallback)).filter(
-    el => {
-    const style = window.getComputedStyle(el);
-    return (
-    style &&
-    style.visibility !== 'hidden' &&
-    style.display !== 'none' &&
-    el.getClientRects().length > 0
-    );
-    }
-    );
+        const elements = Array.from(document.querySelectorAll(selectorFallback)).filter(
+          el => {
+            const style = window.getComputedStyle(el);
+            return (
+              style &&
+              style.visibility !== 'hidden' &&
+              style.display !== 'none' &&
+              el.getClientRects().length > 0
+            );
+          }
+        );
 
-    const exactMatch = elements.find(el => normalize(el.innerText || el.textContent) === text);
-    const partialMatch = elements.find(el => normalize(el.innerText || el.textContent).includes(text));
-    const target = exactMatch || partialMatch;
+        const exactMatch = elements.find(el => normalize(el.innerText || el.textContent) === text);
+        const partialMatch = elements.find(el => normalize(el.innerText || el.textContent).includes(text));
+        const target = exactMatch || partialMatch;
 
-    if (!target) {
-    return false;
-    }
+        if (!target) {
+          return false;
+        }
 
-    const clickable =
-    target.closest('a, button, [role="button"], [onclick]') ||
-    target;
+        const clickable =
+          target.closest('a, button, [role="button"], [onclick]') ||
+          target;
 
-    clickable.scrollIntoView({ block: 'center', inline: 'center' });
+        clickable.scrollIntoView({ block: 'center', inline: 'center' });
 
-    clickable.dispatchEvent(
-    new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window })
-    );
-    clickable.dispatchEvent(
-    new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window })
-    );
-    clickable.dispatchEvent(
-    new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window })
-    );
-    clickable.dispatchEvent(
-    new MouseEvent('click', {
-    bubbles: true,
-    cancelable: true,
-    view: window
-    })
-    );
+        clickable.dispatchEvent(
+          new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window })
+        );
+        clickable.dispatchEvent(
+          new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window })
+        );
+        clickable.dispatchEvent(
+          new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window })
+        );
+        clickable.dispatchEvent(
+          new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window
+          })
+        );
 
-    if (typeof clickable.click === 'function') {
-    clickable.click();
-    }
+        if (typeof clickable.click === 'function') {
+          clickable.click();
+        }
 
-    return true;
-    },
-    { text, selectorFallback }
+        return true;
+      },
+      { text, selectorFallback }
     );
 
     console.log(`clickIfExistsByText(${text}) =>`, clicked);
     return clicked;
-    }
+  }
 
-    async function securityPage() {
+async function securityPage() {
     await wait(1500);
     await clickIfExistsBySelector('#security')
     await wait(1500);
@@ -354,96 +379,100 @@ for (let attempt = 1; attempt <= 3; attempt++) { try { await target.click({ dela
     await openServiceControlBars(page);
     await wait(1500);
     await screenshot('02-service-control.png');
-    }
+}
 
-    async function redeLocalPage() {
+ async function redeLocalPage() {
 
-    await upnpPage();
-    await wait(2000);
-    await lanPage();
-    await wait(2000);
-    await wlanBasicPage();
+   await upnpPage();
+   await wait(2000);
+   await lanPage();
+   await wait(2000);
+   await wlanBasicPage();
 
-    async function upnpPage() {
-    await wait(2000);
-    await clickIfExistsBySelector('#localnet');
-    await wait(1500);
+   
+   
+ async function upnpPage() {
+  await wait(2000);
+  await clickIfExistsBySelector('#localnet');
+  await wait(1500);
 
-    let clicked = await clickIfExistsBySelector('#upnp');
+  let clicked = await clickIfExistsBySelector('#upnp');
 
-    if (!clicked) {
+  if (!clicked) {
     clicked = await page.evaluate(() => {
-    const el = document.querySelector('#upnp');
-    if (el) {
-    el.click();
-    return true;
-    }
-    return false;
+      const el = document.querySelector('#upnp');
+      if (el) {
+        el.click();
+        return true;
+      }
+      return false;
     });
-    }
+  }
 
-    if (!clicked) {
+  if (!clicked) {
     await page.evaluate(() => {
-    const candidates = [...document.querySelectorAll('a, li, span, div')];
-    const el = candidates.find(node =>
-    (node.textContent || '').replace(/\s+/g, ' ').trim() === 'UPnP'
-    );
-    if (el) el.click();
+      const candidates = [...document.querySelectorAll('a, li, span, div')];
+      const el = candidates.find(node =>
+        (node.textContent || '').replace(/\s+/g, ' ').trim() === 'UPnP'
+      );
+      if (el) el.click();
     });
-    }
+  }
 
-    await wait(2500);
-    await screenshot('03-UPNP.png');
-    }
-
+  await wait(2500);
+  await screenshot('03-UPNP.png');
+}
+   
     async function lanPage() {
-    await wait(2000);
-    await clickIfExistsBySelector('#localnet');
-    await wait(2000);
-    await clickIfExistsBySelector('#lanConfig');
-    await wait(2000);
-    await clickIfExistsBySelector('#lanMgrIpv4');
-    await wait(2500);
+  await wait(2000);
+  await clickIfExistsBySelector('#localnet');
+  await wait(2000);
+  await clickIfExistsBySelector('#lanConfig');
+  await wait(2000);
+  await clickIfExistsBySelector('#lanMgrIpv4');
+  await wait(2500);
 
-    // Fecha a seção que ocupa espaço no print
-    await setCollapsibleBarState(
+  // Fecha a seção que ocupa espaço no print
+  await setCollapsibleBarState(
     page,
     '#LANIPv4_DHCPHostsBar',
     'Endereço alocado (DHCP)',
     false
-    );
+  );
 
-    await wait(1000);
+  await wait(1000);
 
-    // Abre a barra que precisa aparecer no print
-    await setCollapsibleBarState(
+  // Abre a barra que precisa aparecer no print
+  await setCollapsibleBarState(
     page,
     '#DHCPBasicCfgBar',
     'Servidor DHCP',
     true
-    );
+  );
 
-    await wait(1200);
-    await screenshot('04-LAN-IPv4-DHCP.png');
-    }
+  await wait(1200);
+  await screenshot('04-LAN-IPv4-DHCP.png');
+ }
 
-    async function wlanBasicPage() {
-    await wait(2000);
-    await clickIfExistsBySelector('#localnet');
-    await wait(2000);
-    await clickIfExistsBySelector('#wlanConfig');
-    await wait(2500);
+async function wlanBasicPage() {
+  await wait(2000);
+  await clickIfExistsBySelector('#localnet');
+  await wait(2000);
+  await clickIfExistsBySelector('#wlanConfig');
+  await wait(2500);
 
-    await print2GHz_5GHz();
-    await printSSID();
+  await print2GHz_5GHz();
+  await printSSID();
 
-    async function printSSID() {
 
+  
+  async function printSSID() {
+    
     await setCanalOnOff(page, '#WlanBasicAdOnOffBar', false);
     await wait(2000);
     await setCanalOnOff(page, '#WlanBasicAdConfBar', false);
     await wait(2000);
-    ///////// await setWLANSSIDConf(page, true);
+   ///////// await setWLANSSIDConf(page, true);
     await setCanalOnOff(page, '#WLANSSIDConfBar', true);
 
     await wait(2000);
@@ -453,128 +482,132 @@ for (let attempt = 1; attempt <= 3; attempt++) { try { await target.click({ dela
     await wait(2000);
     await setSSID2G5GHzOnOff(page, 5, true);
     await wait(2000);
-
+    
+    
     await screenshot('06-SSID.png')
-    }
+  }
 
-    ///////////////////////////
-    ///////////////////////////
+///////////////////////////
+///////////////////////////
 
-    async function setSSID2G5GHzOnOff333333(page, ssidIndex, open) {
-    const templateSelector = `#template_WLANSSIDConf_${ssidIndex}`;
-    const barSelector = `${templateSelector} .collapsibleInst`;
-    const areaSelector = `${templateSelector} [id^='changeArea_WLANSIDConf']`;
-    const showPasswordSelector = `${templateSelector} [id^='Switch_KeyPassType']`;
+async function setSSID2G5GHzOnOff333333(page, ssidIndex, open) {
+  const templateSelector = `#template_WLANSSIDConf_${ssidIndex}`;
+  const barSelector = `${templateSelector} .collapsibleInst`;
+  const areaSelector = `${templateSelector} [id^='changeArea_WLANSIDConf']`;
+  const showPasswordSelector = `${templateSelector} [id^='Switch_KeyPassType']`;
 
-    const template = await page.waitForSelector(templateSelector, {
+  const template = await page.waitForSelector(templateSelector, {
     visible: true,
     timeout: 3000
-    }).catch(() => null);
+  }).catch(() => null);
 
-    if (!template) {
+  if (!template) {
     console.log(`Template não encontrado: ${templateSelector}`);
     return false;
-    }
+  }
 
-    const bar = await page.$(barSelector);
-    if (!bar) {
+  const bar = await page.$(barSelector);
+  if (!bar) {
     console.log(`Barra não encontrada: ${barSelector}`);
     return false;
-    }
+  }
 
-    const isOpen = await page.$eval(areaSelector, el => {
+  const isOpen = await page.$eval(areaSelector, el => {
     return window.getComputedStyle(el).display !== 'none';
-    }).catch(() => false);
+  }).catch(() => false);
 
-    if (open !== isOpen) {
+  if (open !== isOpen) {
     await bar.evaluate(el => {
-    el.scrollIntoView({ block: 'center', inline: 'center' });
-    el.click();
+      el.scrollIntoView({ block: 'center', inline: 'center' });
+      el.click();
     });
     await wait(1000);
-    }
+  }
 
-    if (open) {
+  if (open) {
     const checkbox = await page.$(showPasswordSelector);
     if (checkbox) {
-    const checked = await page.$eval(showPasswordSelector, el => el.checked).catch(() => false);
-    if (!checked) {
-    await checkbox.evaluate(el => el.click());
-    await wait(1000);
+      const checked = await page.$eval(showPasswordSelector, el => el.checked).catch(() => false);
+      if (!checked) {
+        await checkbox.evaluate(el => el.click());
+        await wait(1000);
+      }
     }
-    }
-    }
+  }
 
-    return true;
-    }
+  return true;
+}
+  
+async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
+  const templateSelector = `#template_WLANSSIDConf_${ssidIndex}`;
+  const barSelector = `${templateSelector} .collapsibleInst`;
+  const areaSelector = `${templateSelector} [id^='changeArea_WLANSSIDConf']`;
 
-    async function setSSID2G5GHzOnOff(page, ssidIndex, open) {
-    const templateSelector = `#template_WLANSSIDConf_${ssidIndex}`;
-    const barSelector = `${templateSelector} .collapsibleInst`;
-    const areaSelector = `${templateSelector} [id^='changeArea_WLANSSIDConf']`;
+  // Ajuste este seletor se o ID do checkbox for diferente
+  const showPasswordSelector = `${templateSelector} [id^='Switch_KeyPassType']`;
 
-    // Ajuste este seletor se o ID do checkbox for diferente
-    const showPasswordSelector = `${templateSelector} [id^='Switch_KeyPassType']`;
+  await page.waitForSelector(templateSelector, { visible: true });
+  await page.waitForSelector(barSelector, { visible: true });
+  await page.waitForSelector(areaSelector);
 
-    await page.waitForSelector(templateSelector, { visible: true });
-    await page.waitForSelector(barSelector, { visible: true });
-    await page.waitForSelector(areaSelector);
-
-    const isOpen = await page.$eval(areaSelector, el => {
+  const isOpen = await page.$eval(areaSelector, el => {
     return window.getComputedStyle(el).display !== 'none';
-    });
+  });
 
-    if (open && !isOpen) {
+  if (open && !isOpen) {
     await page.click(barSelector);
     await wait(1000);
-    }
+  }
 
-    if (!open && isOpen) {
+  if (!open && isOpen) {
     await page.click(barSelector);
     return true;
-    }
+  }
 
-    // Quando abrir, marca "mostrar senha"
-    if (open) {
+  // Quando abrir, marca "mostrar senha"
+  if (open) {
     const checkbox = await page.$(showPasswordSelector);
     if (checkbox) {
-    const checked = await page.$eval(showPasswordSelector, el => el.checked);
-    if (!checked) {
-    await page.click(showPasswordSelector);
-    await wait(1000);
+      const checked = await page.$eval(showPasswordSelector, el => el.checked);
+      if (!checked) {
+        await page.click(showPasswordSelector);
+        await wait(1000);
+      }
     }
-    }
-    }
+  }
 
-    return true;
-    }
+  return true;
+}
+  
+ ///////////////////////////
+  ///////////////////////////
 
-    ///////////////////////////
-    ///////////////////////////
-
-    async function print2GHz_5GHz() {
+  
+  async function print2GHz_5GHz() {
     await wait(2000);
     await setCanalOnOff(page, '#WlanBasicAdConfBar', true);
     await wait(2000);
     await set5GHzOnOff(page, true);
     await wait(2000);
     await screenshot('05-canal-2.4_5G.png')
-    }
+  }
 
-    async function setCanalOnOff(page, selector, open) {
-    if (!page || !selector || open === undefined) {
+
+
+async function setCanalOnOff(page, selector, open) {
+  if (!page || !selector || open === undefined) {
     throw new Error('@@@@@ Parâmetros inválidos: setCanalOnOff @@@@@');
-    }
+  }
 
-    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+  const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    async function getState() {
+  async function getState() {
     return await page.$eval(selector, el =>
-    el.classList.contains('collapsibleBarExp')
+      el.classList.contains('collapsibleBarExp')
     );
-    }
+  }
 
-    async function tryClick() {
+  async function tryClick() {
     const el = await page.$(selector);
     if (!el) throw new Error(`@@@@@ Elemento não encontrado: ${selector} @@@@@`);
 
@@ -582,243 +615,379 @@ for (let attempt = 1; attempt <= 3; attempt++) { try { await target.click({ dela
     await delay(300);
 
     try {
-    await el.click({ delay: 80 });
+      await el.click({ delay: 80 });
     } catch (_) {
-    await page.evaluate(sel => {
-    const node = document.querySelector(sel);
-    if (node) node.click();
-    }, selector);
+      await page.evaluate(sel => {
+        const node = document.querySelector(sel);
+        if (node) node.click();
+      }, selector);
     }
+  }
+
+  // aguarda o elemento existir
+  await page.waitForSelector(selector, { visible: true, timeout: 10000 });
+
+  // tenta até 4 vezes
+  for (let tentativa = 1; tentativa <= 4; tentativa++) {
+    const isOpenBefore = await getState();
+
+    if ((open && isOpenBefore) || (!open && !isOpenBefore)) {
+      return true;
     }
 
-    // aguarda o elemento existir
-    await page.waitForSelector(selector, { visible: true, timeout: 10000 });
+    await tryClick();
 
-    // tenta até 4 vezes
-    for (let tentativa = 1; tentativa <= 4; tentativa++) { const isOpenBefore=await getState(); if ((open && isOpenBefore) || (!open && !isOpenBefore)) { return true; } await tryClick(); // espera o estado mudar de verdade try { await page.waitForFunction( (sel, desiredOpen)=> {
-      const el = document.querySelector(sel);
-      if (!el) return false;
-      return el.classList.contains('collapsibleBarExp') === desiredOpen;
-      },
-      { timeout: 3000 },
-      selector,
-      open
+    // espera o estado mudar de verdade
+    try {
+      await page.waitForFunction(
+        (sel, desiredOpen) => {
+          const el = document.querySelector(sel);
+          if (!el) return false;
+          return el.classList.contains('collapsibleBarExp') === desiredOpen;
+        },
+        { timeout: 3000 },
+        selector,
+        open
       );
-      } catch (_) {
+    } catch (_) {
       // segue para nova tentativa
-      }
+    }
 
-      const isOpenAfter = await getState();
-      if ((open && isOpenAfter) || (!open && !isOpenAfter)) {
+    const isOpenAfter = await getState();
+    if ((open && isOpenAfter) || (!open && !isOpenAfter)) {
       await delay(500);
       return true;
-      }
+    }
 
-      await delay(800);
-      }
+    await delay(800);
+  }
 
-      throw new Error(`@@@@@ Não ${open ? 'abriu' : 'fechou'} o canal em ${selector} @@@@@`);
-      }
+  throw new Error(`@@@@@ Não ${open ? 'abriu' : 'fechou'} o canal em ${selector} @@@@@`);
+}
+  
 
-      
+async function setCanalOnOff2222222(page, selector, open) {
+  if (!page || !selector || open === undefined) {
+    throw new Error('@@@@@ Parâmetros inválidos: setCanalOnOff @@@@@');
+  }
 
-      async function set5GHzOnOff(page, open) {
-      const selector = '#instName_WlanBasicAdConf\\:1';
+  await wait(2000);
+  await page.waitForSelector(selector, { visible: true, timeout: 10000 });
 
-      try {
-      await page.waitForSelector(selector, { visible: true, timeout: 3000 });
-      } catch (e) {
-      await wait(2000);
-      const el = await page.$(selector);
-      if (el) {
-      console.log('seletor 5GHz deu falha, porém foi corrigido...');
-      } else {
-      console.log('@@@@ 5GHz não encontrado');
-      console.log('@@@@ Selector não apareceu:', selector);
-      console.log('@@@@@ Fluxo não interrompido continuando...');
-      }
-      }
-      const isOpen = await page.$eval(selector, el =>
-      el.classList.contains('instNameExp')
-      );
+  const isOpenBefore = await page.$eval(selector, el =>
+    el.classList.contains('collapsibleBarExp')
+  );
 
-      if (open && !isOpen) {
-      await page.click(selector);
-      }
+  if (open && !isOpenBefore) {
+    await page.click(selector);
+  }
 
-      if (!open && isOpen) {
-      await page.click(selector);
-      }
+  if (!open && isOpenBefore) {
+    await page.click(selector);
+  }
 
-      return true;
-      }
-      }
-      }
+  await wait(1000);
 
-      async function updateZTE5Antenas(page) {
+  const isOpenAfter = await page.$eval(selector, el =>
+    el.classList.contains('collapsibleBarExp')
+  );
 
-      }
+  if (open && !isOpenAfter) {
+    throw new Error(`@@@@@ Não abriu o canal em ${selector} @@@@@`);
+  }
 
-      //async function loginPage(login = 'multipro', password = '@62474b3745JR') {
+  if (!open && isOpenAfter) {
+    throw new Error(`@@@@@ Não fechou o canal em ${selector} @@@@@`);
+  }
 
-      async function loginPage(login = 'multipro', password = 'multipro') {
+  await wait(2000);
+  return true;
+}
+  
 
-      console.log('Abrindo roteador...');
+async function setCanalOnOff11111111(page, selector, open) {
+  await wait(2000)
+  //const selector = '#WlanBasicAdOnOffBar';
+  //const selector = '#WlanBasicAdConfBar';
+  if (!page || !selector || open === undefined) {
+    throw new Error('@@@@@ Parâmetros inválidos: setCanalOnOff @@@@@');
+  }
 
-      await page.goto('http://192.168.1.1/', {
-      waitUntil: 'domcontentloaded',
-      timeout: 30000
-      });
+  console.log(selector);
 
-      await wait(3000);
+  await page.waitForSelector(selector, { visible: true });
 
-      console.log('Preenchendo login...');
+  const isOpen = await page.$eval(selector, el =>
+    el.classList.contains('collapsibleBarExp')
+  );
 
-      await page.type('input[type="text"]', `${login}`);
-      await page.type('input[type="password"]', `${password}`);
+  if (open && !isOpen) {
+    await page.click(selector);
+  }
 
-      console.log('Clicando login...');
-      //await page.click('input.button.login');
+  if (!open && isOpen) {
+    await page.click(selector);
+  }
+  
+  await wait(2000)
+  return true;
+}
+
+
+
+  async function set5GHzOnOff3333333333(page, open) {
+  const selector = '#instName_WlanBasicAdConf\\:1';
+
+  const el = await page.waitForSelector(selector, {
+    visible: true,
+    timeout: 3000
+  }).catch(() => null);
+
+  if (!el) {
+    console.log('5GHz não encontrado');
+    
+  }
+
+  await el.evaluate(node => {
+    node.scrollIntoView({ block: 'center', inline: 'center' });
+  });
+
+  const isOpen = await el.evaluate(node =>
+    node.classList.contains('instNameExp')
+  );
+
+  if (open !== isOpen) {
+    try {
+      await el.evaluate(node => node.click());
+    } catch (e) {
+      console.log('Falha no clique DOM:', e.message);
+      return false;
+    }
+  }
+
+  return true;
+}
+  
+  async function set5GHzOnOff(page, open) {
+  const selector = '#instName_WlanBasicAdConf\\:1';
+
+  try {
+  await page.waitForSelector(selector, { visible: true, timeout: 3000 });
+} catch (e) {
+  await wait(2000);
+    const el = await page.$(selector);
+  if (el) {
+console.log('seletor 5GHz deu falha, porém foi corrigido...');
+  } else {
+    console.log('@@@@ 5GHz não encontrado');
+    console.log('@@@@ Selector não apareceu:', selector);
+    console.log('@@@@@ Fluxo não interrompido continuando...');
+  }
+}
+  const isOpen = await page.$eval(selector, el =>
+    el.classList.contains('instNameExp')
+  );
+
+  if (open && !isOpen) {
+    await page.click(selector);
+  }
+
+  if (!open && isOpen) {
+    await page.click(selector);
+  }
+
+  return true;
+}
+   }
+ }
+
+
+
+  async function updateZTE5Antenas(page) {
+
+  }
+  
+
+  //async function loginPage(login = 'multipro', password = '@62474b3745JR') {
+
+    async function loginPage(login = 'multipro', password = 'multipro') {
+    
+  console.log('Abrindo roteador...');
+
+  await page.goto('http://192.168.1.1/', {
+    waitUntil: 'domcontentloaded',
+    timeout: 30000
+  });
+
+  await wait(3000);
+
+  console.log('Preenchendo login...');
+
+  await page.type('input[type="text"]', `${login}`);
+  await page.type('input[type="password"]', `${password}`);
+
+  console.log('Clicando login...');
+  //await page.click('input.button.login');
 
       await page.click('#LoginId');
 
-      await wait(8000);
+  await wait(8000);
+
 
       ////////////
 
-      // Aguarda iframe principal
-      await page.waitForSelector('#mainFrame', {
-      timeout: 15000
-      });
+// Aguarda iframe principal
+await page.waitForSelector('#mainFrame', {
+  timeout: 15000
+});
 
-      const frame = page.frames().find(f => f.name() === 'mainFrame');
+const frame = page.frames().find(f => f.name() === 'mainFrame');
 
-      if (!frame) {
-      throw new Error('mainFrame não encontrado');
-      }
+if (!frame) {
+  throw new Error('mainFrame não encontrado');
+}
 
-      const softwareBox = await frame.evaluate(() => {
-      const target = [...document.querySelectorAll('*')].find(el =>
-      el.textContent?.replace(/\s+/g, ' ').trim().toUpperCase() === 'THE DEVICE WILL REBOOT AFTER UPGRADING'
-      );
+const softwareBox = await frame.evaluate(() => {
+  const target = [...document.querySelectorAll('*')].find(el =>
+    el.textContent?.replace(/\s+/g, ' ').trim().toUpperCase() === 'THE DEVICE WILL REBOOT AFTER UPGRADING'
+  );
 
-      if (!target) return null;
+  if (!target) return null;
 
-      let el = target;
-      while (el && !el.id) {
-      el = el.parentElement;
-      }
+  let el = target;
+  while (el && !el.id) {
+    el = el.parentElement;
+  }
 
-      return el ? { id: el.id, tag: el.tagName, html: el.outerHTML } : null;
-      });
+  return el ? { id: el.id, tag: el.tagName, html: el.outerHTML } : null;
+});
 
-      console.log(softwareBox);
+console.log(softwareBox);
 
-      return true;
+return true;
 
-      ///////////////
 
-      if (await page.$('#Btn_Close')) {
-      await page.click('#Btn_Close');
-      await wait(8000);
-      }
-
+///////////////
+      
+      
+  if (await page.$('#Btn_Close')) {
+    await page.click('#Btn_Close');
+    await wait(8000);
+  }
+    
       console.log('Login realizado.');
 
-      if ((await page.$eval('#pdtVer', el => el.textContent.toUpperCase())).indexOf('P9') === -1) {
-      await updateZTE5Antenas(page);
-
-      } else {
+    if ((await page.$eval('#pdtVer', el => el.textContent.toUpperCase())).indexOf('P9') === -1) {
+       await updateZTE5Antenas(page);
+      
+    } else {
       console.log('ZTE 5 antenas está atualizado: P9');
-      }
+    }
+    
+  }
 
-      }
+  async function updateZTE5Antenas(page) {
 
-      async function updateZTE5Antenas(page) {
-
-      console.log('Atualizando roteador ZTE 5 antenas para versão P9.');
+    console.log('Atualizando roteador ZTE 5 antenas para versão P9.');
+     
 
       await wait(2000);
 
       await clickIfExistsBySelector('#mgrAndDiag');
 
       await wait(2000);
-
+      
       await clickIfExistsBySelector('#devMgr');
-
+      
       await wait(2000);
 
-      await page.evaluate(() => {
-      document.querySelector('#firmwareUpgr').click();
-      });
 
+      await page.evaluate(() => {
+  document.querySelector('#firmwareUpgr').click();
+});
+      
       //await clickIfExistsBySelector('#FirmwareUpgrBar')
 
       await wait(2000);
 
-      await page.waitForSelector('#VersionUpload');
 
-      const input = await page.$('#VersionUpload');
-      await input.uploadFile('/storage/emulated/0/Download/router/update.bin');
-      await wait(2000);
-      await screenshot('01-upgrade-antes.png')
+      
+await page.waitForSelector('#VersionUpload');
+
+const input = await page.$('#VersionUpload');
+await input.uploadFile('/storage/emulated/0/Download/router/update.bin');
+await wait(2000);
+await screenshot('01-upgrade-antes.png')
 
       await wait(2000);
-      console.log(
-      await page.$eval(
-      '#VersionUpload',
-      el => el.files.length
+console.log(
+  await page.$eval(
+    '#VersionUpload',
+    el => el.files.length
       ? `✅ Arquivo selecionado: ${el.files[0].name}`
       : '❌ Nenhum arquivo selecionado'
-      )
-      );
+  )
+);
+      
 
       await wait(2000);
 
       await page.waitForSelector('#Btn_Upload', {
-      visible: true,
-      timeout: 10000
-      });
+  visible: true,
+  timeout: 10000
+});
 
-      await page.click('#Btn_Upload');
+await page.click('#Btn_Upload');
 
       await wait(2000);
 
-      await page.waitForSelector('#confirmOK', {
-      visible: true,
-      timeout: 10000
-      });
+await page.waitForSelector('#confirmOK', {
+  visible: true,
+  timeout: 10000
+});
 
-      await page.click('#confirmOK');
+await page.click('#confirmOK');
 
       await wait(5000);
-
-      await screenshot('01-upgrade-depois.png')
-
-      await wait(2000);
-      }
-
-      async function wanPage() {
-
-      //console.log('Abrindo menu Internet...');
-
-      //await page.click('#internet');
-      await wait(1500);
-
-      //console.log('Abrindo submenu WAN...');
-
-      await clickIfExistsBySelector('#WANUrl');
+      
+await screenshot('01-upgrade-depois.png')
 
       await wait(2000);
+  }
+  
+  async function wanPage() {
 
-      console.log('Menu WAN aberto.');
+  //console.log('Abrindo menu Internet...');
 
-      await clickFirstInternetItem(page);
-      await wait(1500);
+  //await page.click('#internet');
+  await wait(1500);
 
-      await screenshot('01-pppoe-expanded.png')
+  //console.log('Abrindo submenu WAN...');
 
-      console.log('Etapa WAN concluída.');
-      }
+  await clickIfExistsBySelector('#WANUrl');
 
-      })();
+  await wait(2000);
+
+  console.log('Menu WAN aberto.');
+
+   await clickFirstInternetItem(page);
+   await wait(1500);
+
+   await screenshot('01-pppoe-expanded.png')
+
+    
+    
+  console.log('Etapa WAN concluída.');
+  }
+
+})();
+
+
+
+
+
+
+
+
+
+
