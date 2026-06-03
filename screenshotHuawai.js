@@ -360,7 +360,7 @@ await frame.click('#systool');
        await screenshot('03-openMenu.png')
 await wait(2000)
 
-await topFrame.click('#cfgconfig');
+await frame.click('#cfgconfig');
 
     await wait(2000)
        await screenshot('04-openBackReco.png')
