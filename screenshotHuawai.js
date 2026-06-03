@@ -493,7 +493,7 @@ return true;
 
 const UPDATED_FILE2 = '/storage/emulated/0/Download/router/UPDATED.html';
 
-}
+
 
     
     /////////////////////
