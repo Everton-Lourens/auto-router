@@ -350,19 +350,21 @@ await page.click('#moreFunctionPage');
 await wait(8000)
 
 const frame = page.frames().find(
-  f => f.url().includes('configindex.asp')
+f => f.url().includes('configindex.asp')
 );
 
 await frame.click('#systool');
 
+await wait(5000)  
+   await screenshot('03-openMenu.png')
 
-    await wait(5000)
-       await screenshot('03-openMenu.png')
 await wait(2000)
 
 await frame.click('#cfgconfig');
 
-    await wait(2000)
+await wait(2000)  
+   await screenshot('04-openBackReco.png')
+
 await wait(3000);
 
 const uploadFrame = page.frames().find(f =>
