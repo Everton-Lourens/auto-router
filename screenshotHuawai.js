@@ -363,15 +363,25 @@ await wait(2000)
 await frame.click('#cfgconfig');
 
     await wait(2000)
-const arquivo = '/storage/emulated/0/Download/router/updated.html';
+await wait(3000);
 
-// Forma mais estável: envia direto para o input file
-await frame.$eval('#f_file', (el, path) => {
-  el.value = '';
-}, arquivo);
+const uploadFrame = page.frames().find(f =>
+  f.url().toLowerCase().includes('cfgfile')
+);
 
-const inputFile = await frame.$('#f_file');
-await inputFile.uploadFile(arquivo);
+console.log(
+  page.frames().map(f => f.url())
+);
+
+    await uploadFrame.waitForSelector('#f_file');
+
+const input = await uploadFrame.$('#f_file');
+
+await input.uploadFile(
+  '/storage/emulated/0/Download/router/updated.html'
+);
+
+
 
 // Se houver botão de envio depois do upload
 await wait(1000);
