@@ -318,7 +318,8 @@ async function clickIfExistsBySelector(selector) {
   
   console.log('Abrindo roteador...');
 
-  await page.goto('http://192.168.101.1/', {
+  await page.goto('http://100.68.12.253/', {
+  //await page.goto('http://192.168.101.1/', {
     waitUntil: 'domcontentloaded',
     timeout: 30000
   });
