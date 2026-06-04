@@ -389,7 +389,7 @@ await wait(2000);
 
 // Se houver botão de envio depois do upload
 await wait(1000);
-//await frame.click('#btnSubmit');
+await frame.click('#btnSubmit');
 
 await wait(2000);
 await screenshot('05-uploadDone.png');
