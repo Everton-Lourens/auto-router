@@ -378,7 +378,7 @@ if (!fileInput) {
 }
 
 await fileInput.uploadFile(
-  '/storage/emulated/0/Download/router/updated.html'
+  '/storage/emulated/0/Download/router/upHuawai.html'
 );
 
 await wait(2000);
