@@ -1,0 +1,337 @@
+[
+  {
+    "id": "topFrame",
+    "tag": "IFRAME",
+    "text": "",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#topFrame",
+    "where": "top"
+  },
+  {
+    "id": "mainFrame",
+    "tag": "IFRAME",
+    "text": "",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#mainFrame",
+    "where": "top"
+  },
+  {
+    "id": "container",
+    "tag": "DIV",
+    "text": "F601",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#container",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "head",
+    "tag": "DIV",
+    "text": "F601",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#head",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "banner",
+    "tag": "DIV",
+    "text": "",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#banner",
+    "where": "top.frame[0]"
+  },
+  {
+    "id": "htmlBody",
+    "tag": "BODY",
+    "text": "Error Help ​Display​ ​primary​ ​information​ ​of​ ​this​ ​device​:​​ ​model​ ​name​,​​ ​serial​ ​number​,​​ ​soft​ ​version​,​​ ​boot​ ​version​,​​ ​etc​. -Status Device Information +Network Interface +User Interface +Network +Application +Administration Path:Status-Device Information Logout Model F601 Serial Number F4E84F-ZTE0QDLR3526365 Hardware Version V7.0 Software Version V7.0.10P1N34 Batch Number 07e7P1N3402c2 Boot Loader Version V7.0.10P10N2 PON Serial Number ZTEGD97A6B2B var sn = \"ZTEGd97a6b2b\"; getObj(\"Frm_PonSerialNumber\").innerHTML = HTMLEnCode(sn.toUpperCase()); colorizeInfoTbl(\"TABLE_DEV\"); ©2008-2023 ZTE Corporation. All rights reserved. var x,y,z,obj; var down=false; var browser=navigator.appName; var b_version=navigator.appVersion; var version=b_version.split(\";\"); var trim_Version = \"\"; if(null != version[1]) { trim_Version=version[1].replace(/[ ]/g,\"\"); } function setinner(type) { if(browser==\"Microsoft Internet Explorer\" && trim_Version==\"MSIE6.0\") { document.getElementById(\"myLayer\").style.visibility = type; } else { document.getElementById(\"myLayer\").style.visibility = type ; } } function setinnerHidden() { if(browser==\"Microsoft Internet Explorer\" && trim_Version==\"MSIE6.0\") { document.getElementById(\"myLayer\").style.visibility = \"hidden\"; } else { document.getElementById(\"myLayer\").style.visibility = \"hidden\" ; } } function init() { if(browser==\"Microsoft Internet Explorer\" && trim_Version==\"MSIE6.0\") { obj=event.srcElement; obj.setCapture(); z=obj.style.zIndex; obj.style.zIndex=100 ; x=event.offsetX; y=event.offsetY ; down=true; } } function moveit() { if(browser==\"Microsoft Internet Explorer\" && trim_Version==\"MSIE6.0\") { if(down&&event.srcElement==obj) { with(obj.style) { posLeft=document.body.scrollLeft+event.x-x; posTop=document.body.scrollTop+event.y-y; } } } } function stopdrag() { if(browser==\"Microsoft Internet Explorer\" && trim_Version==\"MSIE6.0\") { down=false; obj.style.zIndex=z ; obj.releaseCapture(); } } function framedispalay(id) { if(browser==\"Microsoft Internet Explorer\" && trim_Version==\"MSIE6.0\") { } else { getObj(id).style.display=\"none\"; } } function jump() { top.location.href = \"/\"; } function AutoRelogin(type) { var timeout; if ((type == \"restart\") || (type == \"upgconfig\")) { timeout = 3; } else if (type == \"restore\") { timeout = 3; } else if (type == \"upgversion\") { timeout = 5; } else { return; } setTimeout(\"jump()\", timeout*60*1000+5000); } function OldProcessRet(errstr, errpara) { if(\"Current operation is ineffective, please check whether \" == errstr && \"SUCC\" == errpara) { errstr = \"FAIL\"; } ProcessRet(errstr, errpara); } function ProcessRet(errstr, errpara) { var errtype=getValue(\"IF_ERRORTYPE\"); if (errstr != \"SUCC\") { if(errpara != \"SUCC\") { var param = document.getElementById(\"Fnt_\"+errpara); if ( param== null) { ShowErrorForCom(null, null, \"Current operation is ineffective, please check configuration parameters.\"); } else { msg = \"Current operation is ineffective, please check whether \" + param.innerHTML + \" is legal.\"; ShowErrorForCom(\"Frm_\"+errpara, null, msg); } } else { if (errstr == \"FAIL\") { errstr = \"Current operation is ineffective, please check configuration parameters.\"; } if ((errtype&1) == 1) { ShowNote(\"Notice\", errstr); } else if((errtype&2) == 2) { ShowErrorForCom(null, null, errstr); } else if((errtype&4) == 4) { } else { ShowErrorForCom(null, null, errstr); } } } else { var retAction = getValue(\"IF_ACTION\"); if(retAction==\"new\" || retAction==\"edit\" || retAction==\"apply\") { if(getObj(\"Frm_SimulationType\") == null && getObj(\"Frm_AtCommd\") == null && getObj(\"Tb_ping\")==null) { if(getObj(\"Td_Tip\") != null) { setHTML(\"Td_Tip\", \"Your data have been stored!\"); jslEnDisplay(\"Tb_Tip\"); setTimeout(\"refreshtemp()\", 3000); } } } } if(getObj(\"Tbl_ARP_Table\")==null && getObj(\"Tbl_MAC_Table\")==null && getObj(\"TABLE_WANCNAME\")==null) { setValue(\"IF_ACTION\",\"\"); } } function refreshtemp() { jslDiDisplay(\"Tb_Tip\"); } text = \"<table class='bottom_table' border='0' cellpadding='0' cellspacing='0'>\" +\"<tbody><tr>\" +\"<td class='bottom_td1'></td>\" +\"<td class='bottom_td2'></td>\" +\"<td class='bottom_td3'>\" +\"</td></tr></tbody>\" +\"</table>\"; getObj(\"bottom\").innerHTML=text; meta_menu = new Array(); menu_items = new Array(); menu_subitems = new Array(); meta_menu['mmStatu'] = new Array(); meta_menu['mmStatu']['langName'] = 'Status'; menu_items['mmStatu'] = new Array(); menu_subitems['mmStatu'] = new Array(); meta_menu['mmStatu']['page'] = 'status_dev_info_t.gch'; meta_menu['mmStatu']['URL'] = 'getpage.gch?pid=1002&nextpage=status_dev_info_t.gch'; menu_items['mmStatu']['smDevStatu'] = new Array(); menu_items['mmStatu']['smDevStatu']['langName'] = 'Device Information '; menu_items['mmStatu']['smDevStatu']['page'] = 'status_dev_info_t.gch'; menu_items['mmStatu']['smDevStatu']['URL'] = 'getpage.gch?pid=1002&nextpage=status_dev_info_t.gch'; menu_items['mmStatu']['smWanStatu'] = new Array(); menu_items['mmStatu']['smWanStatu']['langName'] = 'Network Interface'; menu_subitems['mmStatu']['smWanStatu'] = new Array(); menu_items['mmStatu']['smWanStatu']['page'] = 'status_ethwan_if_t.gch'; menu_items['mmStatu']['smWanStatu']['URL'] = 'getpage.gch?pid=1002&nextpage=status_ethwan_if_t.gch'; menu_subitems['mmStatu']['smWanStatu']['ssmETHWANConn'] = new Array(); menu_subitems['mmStatu']['smWanStatu']['ssmETHWANConn']['langName'] = 'WAN Connection(IPv4)'; menu_subitems['mmStatu']['smWanStatu']['ssmETHWANConn']['page'] = 'status_ethwan_if_t.gch'; menu_subitems['mmStatu']['smWanStatu']['ssmETHWANConn']['URL'] = 'getpage.gch?pid=1002&nextpage=status_ethwan_if_t.gch'; menu_subitems['mmStatu']['smWanStatu']['ssmLinkState'] = new Array(); menu_subitems['mmStatu']['smWanStatu']['ssmLinkState']['langName'] = 'PON Inform'; menu_subitems['mmStatu']['smWanStatu']['ssmLinkState']['page'] = 'pon_status_link_info_t.gch'; menu_subitems['mmStatu']['smWanStatu']['ssmLinkState']['URL'] = 'getpage.gch?pid=1002&nextpage=pon_status_link_info_t.gch'; menu_items['mmStatu']['smLanStatu'] = new Array(); menu_items['mmStatu']['smLanStatu']['langName'] = 'User Interface'; menu_subitems['mmStatu']['smLanStatu'] = new Array(); menu_items['mmStatu']['smLanStatu']['page'] = 'pon_status_lan_info_t.gch'; menu_items['mmStatu']['smLanStatu']['URL'] = 'getpage.gch?pid=1002&nextpage=pon_status_lan_info_t.gch'; menu_subitems['mmStatu']['smLanStatu']['ssmLAN'] = new Array(); menu_subitems['mmStatu']['smLanStatu']['ssmLAN']['langName'] = 'Ethernet'; menu_subitems['mmStatu']['smLanStatu']['ssmLAN']['page'] = 'pon_status_lan_info_t.gch'; menu_subitems['mmStatu']['smLanStatu']['ssmLAN']['URL'] = 'getpage.gch?pid=1002&nextpage=pon_status_lan_info_t.gch'; meta_menu['mmNet'] = new Array(); meta_menu['mmNet']['langName'] = 'Network'; menu_items['mmNet'] = new Array(); menu_subitems['mmNet'] = new Array(); meta_menu['mmNet']['page'] = 'IPv46_net_wan2_conf_t.gch'; meta_menu['mmNet']['URL'] = 'getpage.gch?pid=1002&nextpage=IPv46_net_wan2_conf_t.gch'; menu_items['mmNet']['smWANConn'] = new Array(); menu_items['mmNet']['smWANConn']['langName'] = 'WAN'; menu_subitems['mmNet']['smWANConn'] = new Array(); menu_items['mmNet']['smWANConn']['page'] = 'IPv46_net_wan2_conf_t.gch'; menu_items['mmNet']['smWANConn']['URL'] = 'getpage.gch?pid=1002&nextpage=IPv46_net_wan2_conf_t.gch'; menu_subitems['mmNet']['smWANConn']['ssmETHWANCon'] = new Array(); menu_subitems['mmNet']['smWANConn']['ssmETHWANCon']['langName'] = 'WAN Connection(IPv4)'; menu_subitems['mmNet']['smWANConn']['ssmETHWANCon']['page'] = 'IPv46_net_wan2_conf_t.gch'; menu_subitems['mmNet']['smWANConn']['ssmETHWANCon']['URL'] = 'getpage.gch?pid=1002&nextpage=IPv46_net_wan2_conf_t.gch'; menu_items['mmNet']['smAddMgr'] = new Array(); menu_items['mmNet']['smAddMgr']['langName'] = 'LAN'; menu_subitems['mmNet']['smAddMgr'] = new Array(); menu_items['mmNet']['smAddMgr']['page'] = 'net_dhcp_dynamic_t.gch'; menu_items['mmNet']['smAddMgr']['URL'] = 'getpage.gch?pid=1002&nextpage=net_dhcp_dynamic_t.gch'; menu_subitems['mmNet']['smAddMgr']['ssmDHCPSer'] = new Array(); menu_subitems['mmNet']['smAddMgr']['ssmDHCPSer']['langName'] = 'LAN IP Address'; menu_subitems['mmNet']['smAddMgr']['ssmDHCPSer']['page'] = 'net_dhcp_dynamic_t.gch'; menu_subitems['mmNet']['smAddMgr']['ssmDHCPSer']['URL'] = 'getpage.gch?pid=1002&nextpage=net_dhcp_dynamic_t.gch'; menu_subitems['mmNet']['smAddMgr']['ssmDhcpMode'] = new Array(); menu_subitems['mmNet']['smAddMgr']['ssmDhcpMode']['langName'] = 'DHCP Port Service'; menu_subitems['mmNet']['smAddMgr']['ssmDhcpMode']['page'] = 'net_dhcp_mode_t.gch'; menu_subitems['mmNet']['smAddMgr']['ssmDhcpMode']['URL'] = 'getpage.gch?pid=1002&nextpage=net_dhcp_mode_t.gch'; menu_items['mmNet']['smPON'] = new Array(); menu_items['mmNet']['smPON']['langName'] = 'PON'; menu_subitems['mmNet']['smPON'] = new Array(); menu_items['mmNet']['smPON']['page'] = 'pon_net_ponloid_t.gch'; menu_items['mmNet']['smPON']['URL'] = 'getpage.gch?pid=1002&nextpage=pon_net_ponloid_t.gch'; menu_subitems['mmNet']['smPON']['ssmPON'] = new Array(); menu_subitems['mmNet']['smPON']['ssmPON']['langName'] = 'LOID'; menu_subitems['mmNet']['smPON']['ssmPON']['page'] = 'pon_net_ponloid_t.gch'; menu_subitems['mmNet']['smPON']['ssmPON']['URL'] = 'getpage.gch?pid=1002&nextpage=pon_net_ponloid_t.gch'; menu_subitems['mmNet']['smPON']['ssmSN'] = new Array(); menu_subitems['mmNet']['smPON']['ssmSN']['langName'] = 'SN'; menu_subitems['mmNet']['smPON']['ssmSN']['page'] = 'pon_net_sn_t.gch'; menu_subitems['mmNet']['smPON']['ssmSN']['URL'] = 'getpage.gch?pid=1002&nextpage=pon_net_sn_t.gch'; meta_menu['mmApp'] = new Array(); meta_menu['mmApp']['langName'] = 'Application'; menu_items['mmApp'] = new Array(); menu_subitems['mmApp'] = new Array(); meta_menu['mmApp']['page'] = 'app_igmp_mode_t.gch'; meta_menu['mmApp']['URL'] = 'getpage.gch?pid=1002&nextpage=app_igmp_mode_t.gch'; menu_items['mmApp']['smMultiCast'] = new Array(); menu_items['mmApp']['smMultiCast']['langName'] = 'MultiCast'; menu_subitems['mmApp']['smMultiCast'] = new Array(); menu_items['mmApp']['smMultiCast']['page'] = 'app_igmp_mode_t.gch'; menu_items['mmApp']['smMultiCast']['URL'] = 'getpage.gch?pid=1002&nextpage=app_igmp_mode_t.gch'; menu_subitems['mmApp']['smMultiCast']['ssmIGMPSnoop'] = new Array(); menu_subitems['mmApp']['smMultiCast']['ssmIGMPSnoop']['langName'] = 'IGMP Mode'; menu_subitems['mmApp']['smMultiCast']['ssmIGMPSnoop']['page'] = 'app_igmp_mode_t.gch'; menu_subitems['mmApp']['smMultiCast']['ssmIGMPSnoop']['URL'] = 'getpage.gch?pid=1002&nextpage=app_igmp_mode_t.gch'; menu_subitems['mmApp']['smMultiCast']['ssmMULTICast'] = new Array(); menu_subitems['mmApp']['smMultiCast']['ssmMULTICast']['langName'] = 'Basic Configuration'; menu_subitems['mmApp']['smMultiCast']['ssmMULTICast']['page'] = 'app_multicast_basic_t.gch'; menu_subitems['mmApp']['smMultiCast']['ssmMULTICast']['URL'] = 'getpage.gch?pid=1002&nextpage=app_multicast_basic_t.gch'; menu_subitems['mmApp']['smMultiCast']['ssmMultiCastVlan'] = new Array(); menu_subitems['mmApp']['smMultiCast']['ssmMultiCastVlan']['langName'] = 'VLAN Configuration'; menu_subitems['mmApp']['smMultiCast']['ssmMultiCastVlan']['page'] = 'app_multicast_vlan_t.gch'; menu_subitems['mmApp']['smMultiCast']['ssmMultiCastVlan']['URL'] = 'getpage.gch?pid=1002&nextpage=app_multicast_vlan_t.gch'; menu_subitems['mmApp']['smMultiCast']['ssmMultiCastTag'] = new Array(); menu_subitems['mmApp']['smMultiCast']['ssmMultiCastTag']['langName'] = 'Tag Configuration'; menu_subitems['mmApp']['smMultiCast']['ssmMultiCastTag']['page'] = 'app_multicast_tag_t.gch'; menu_subitems['mmApp']['smMultiCast']['ssmMultiCastTag']['URL'] = 'getpage.gch?pid=1002&nextpage=app_multicast_tag_t.gch'; menu_subitems['mmApp']['smMultiCast']['ssmMultiCastAddress'] = new Array(); menu_subitems['mmApp']['smMultiCast']['ssmMultiCastAddress']['langName'] = 'Maximum Address Configuration'; menu_subitems['mmApp']['smMultiCast']['ssmMultiCastAddress']['page'] = 'app_multicast_address_t.gch'; menu_subitems['mmApp']['smMultiCast']['ssmMultiCastAddress']['URL'] = 'getpage.gch?pid=1002&nextpage=app_multicast_address_t.gch'; menu_items['mmApp']['smBPDU'] = new Array(); menu_items['mmApp']['smBPDU']['langName'] = 'BPDU'; menu_items['mmApp']['smBPDU']['page'] = 'app_bpdu_conf_t.gch'; menu_items['mmApp']['smBPDU']['URL'] = 'getpage.gch?pid=1002&nextpage=app_bpdu_conf_t.gch'; meta_menu['mmManager'] = new Array(); meta_menu['mmManager']['langName'] = 'Administration'; menu_items['mmManager'] = new Array(); menu_subitems['mmManager'] = new Array(); meta_menu['mmManager']['page'] = 'manager_aduser_conf_t.gch'; meta_menu['mmManager']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_aduser_conf_t.gch'; menu_items['mmManager']['smAdUserMgr'] = new Array(); menu_items['mmManager']['smAdUserMgr']['langName'] = 'User Management'; menu_items['mmManager']['smAdUserMgr']['page'] = 'manager_aduser_conf_t.gch'; menu_items['mmManager']['smAdUserMgr']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_aduser_conf_t.gch'; menu_items['mmManager']['smTimeoutMgr'] = new Array(); menu_items['mmManager']['smTimeoutMgr']['langName'] = 'Login Timeout'; menu_items['mmManager']['smTimeoutMgr']['page'] = 'manager_login_timeout_t.gch'; menu_items['mmManager']['smTimeoutMgr']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_login_timeout_t.gch'; menu_items['mmManager']['smSysMgr'] = new Array(); menu_items['mmManager']['smSysMgr']['langName'] = 'System Management'; menu_subitems['mmManager']['smSysMgr'] = new Array(); menu_items['mmManager']['smSysMgr']['page'] = 'manager_dev_conf_t.gch'; menu_items['mmManager']['smSysMgr']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_dev_conf_t.gch'; menu_subitems['mmManager']['smSysMgr']['ssmSysMgr'] = new Array(); menu_subitems['mmManager']['smSysMgr']['ssmSysMgr']['langName'] = 'System Management'; menu_subitems['mmManager']['smSysMgr']['ssmSysMgr']['page'] = 'manager_dev_conf_t.gch'; menu_subitems['mmManager']['smSysMgr']['ssmSysMgr']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_dev_conf_t.gch'; menu_subitems['mmManager']['smSysMgr']['ssmSoftUgr'] = new Array(); menu_subitems['mmManager']['smSysMgr']['ssmSoftUgr']['langName'] = 'Software Upgrade'; menu_subitems['mmManager']['smSysMgr']['ssmSoftUgr']['page'] = 'manager_dev_version_t.gch'; menu_subitems['mmManager']['smSysMgr']['ssmSoftUgr']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_dev_version_t.gch'; menu_subitems['mmManager']['smSysMgr']['ssmDefCfgMgr'] = new Array(); menu_subitems['mmManager']['smSysMgr']['ssmDefCfgMgr']['langName'] = 'Default Configuration Management'; menu_subitems['mmManager']['smSysMgr']['ssmDefCfgMgr']['page'] = 'manager_dev_defcfg_t.gch'; menu_subitems['mmManager']['smSysMgr']['ssmDefCfgMgr']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_dev_defcfg_t.gch'; menu_items['mmManager']['smLogMgr'] = new Array(); menu_items['mmManager']['smLogMgr']['langName'] = 'Log Management'; menu_items['mmManager']['smLogMgr']['page'] = 'manager_log_conf_t.gch'; menu_items['mmManager']['smLogMgr']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_log_conf_t.gch'; menu_items['mmManager']['smDiag'] = new Array(); menu_items['mmManager']['smDiag']['langName'] = 'Diagnosis'; menu_subitems['mmManager']['smDiag'] = new Array(); menu_items['mmManager']['smDiag']['page'] = 'manager_dev_ping_t.gch'; menu_items['mmManager']['smDiag']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_dev_ping_t.gch'; menu_subitems['mmManager']['smDiag']['ssmPingDiag'] = new Array(); menu_subitems['mmManager']['smDiag']['ssmPingDiag']['langName'] = 'Ping Diagnosis'; menu_subitems['mmManager']['smDiag']['ssmPingDiag']['page'] = 'manager_dev_ping_t.gch'; menu_subitems['mmManager']['smDiag']['ssmPingDiag']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_dev_ping_t.gch'; menu_subitems['mmManager']['smDiag']['ssmStimulate'] = new Array(); menu_subitems['mmManager']['smDiag']['ssmStimulate']['langName'] = 'Simulation'; menu_subitems['mmManager']['smDiag']['ssmStimulate']['page'] = 'manager_svr_stimulate_t.gch'; menu_subitems['mmManager']['smDiag']['ssmStimulate']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_svr_stimulate_t.gch'; menu_items['mmManager']['smloopback'] = new Array(); menu_items['mmManager']['smloopback']['langName'] = 'Loopback Detection'; menu_subitems['mmManager']['smloopback'] = new Array(); menu_items['mmManager']['smloopback']['page'] = 'manager_loopback_basic_t.gch'; menu_items['mmManager']['smloopback']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_loopback_basic_t.gch'; menu_subitems['mmManager']['smloopback']['ssmLobackBasic'] = new Array(); menu_subitems['mmManager']['smloopback']['ssmLobackBasic']['langName'] = 'Basic Configuration'; menu_subitems['mmManager']['smloopback']['ssmLobackBasic']['page'] = 'manager_loopback_basic_t.gch'; menu_subitems['mmManager']['smloopback']['ssmLobackBasic']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_loopback_basic_t.gch'; menu_subitems['mmManager']['smloopback']['ssmLobackEna'] = new Array(); menu_subitems['mmManager']['smloopback']['ssmLobackEna']['langName'] = 'Enable Configuration'; menu_subitems['mmManager']['smloopback']['ssmLobackEna']['page'] = 'manager_loopback_enable_t.gch'; menu_subitems['mmManager']['smloopback']['ssmLobackEna']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_loopback_enable_t.gch'; menu_subitems['mmManager']['smloopback']['ssmLobackVlan'] = new Array(); menu_subitems['mmManager']['smloopback']['ssmLobackVlan']['langName'] = 'VLAN Configuration'; menu_subitems['mmManager']['smloopback']['ssmLobackVlan']['page'] = 'manager_loopback_vlan_t.gch'; menu_subitems['mmManager']['smloopback']['ssmLobackVlan']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_loopback_vlan_t.gch'; menu_items['mmManager']['smLedControl'] = new Array(); menu_items['mmManager']['smLedControl']['langName'] = 'Led Control'; menu_items['mmManager']['smLedControl']['page'] = 'pon_manager_led_control_t.gch'; menu_items['mmManager']['smLedControl']['URL'] = 'getpage.gch?pid=1002&nextpage=pon_manager_led_control_t.gch'; menu_items['mmManager']['smEnhanceMgr'] = new Array(); menu_items['mmManager']['smEnhanceMgr']['langName'] = 'Enhanced Performance'; menu_items['mmManager']['smEnhanceMgr']['page'] = 'manager_enhanced_t.gch'; menu_items['mmManager']['smEnhanceMgr']['URL'] = 'getpage.gch?pid=1002&nextpage=manager_enhanced_t.gch'; var selectPage = \"status_dev_info_t.gch\"; var selectSupId = \"mmStatu\"; function menuUpdate() { text = \"<table class='menu' border='0' cellpadding='0' cellspacing='0'>\" + \"<tbody>\" + \"<tr>\" + \"<td class='h1_mid'><a name='top'></a>\" + \"<table class='menu_table' border='0' cellpadding='0' cellspacing='0'>\" + \"<tbody>\"; for (var supId in meta_menu) { text += \"<tr class='\"; if( supId != selectSupId ) { text += \"h1\"; } else { text += \"h1_s\"; } text += \"' style='cursor:pointer' onclick=\\\"javascript:openLink('\" + meta_menu[supId]['URL'] + \"')\\\" onmouseover=\\\"altMenuClass(this,true)\\\" \" + \"onmouseout=\\\"altMenuClass(this,false)\\\">\" + \"<td class='add'>&nbsp;</td>\" + \"<td class='mid' id='\"+supId+\"'>\"; if ( true == isMetaMenuWithChild(supId) ) { if ( supId == selectSupId ) { text += \"<span class='menuMinusSymbol'>-</span>\"; } else { text += \"<span class='menuPlusSymbol'>+</span>\"; } } else { if ( meta_menu[supId]['page'] == selectPage ) { getObj(\"title_path\").innerHTML = \"Path:\" + meta_menu[supId]['langName']; } } text += \"<font id='Fnt_\"+supId+\"'>\" + meta_menu[supId]['langName'] + \"</font></td>\" + \"</tr>\"; if( supId != selectSupId ) { continue; } for ( var midId in menu_items[supId] ) { var stat = getMidMenuStat(supId, midId); if ( stat == \"single\" ) { if (menu_items[supId][midId]['page'] == selectPage) { text = text + \"<tr class='h2_s' onmouseover=\\\"altMenuClass(this,true)\\\" onmouseout=\\\"altMenuClass(this,false)\\\">\" + \"<td class='add'>&nbsp;</td>\" + \"<td class='mid'>\" + \"<font id='\"+midId+\"'>\" + menu_items[supId][midId]['langName'] + \"</font></td>\" + \"</tr>\"; getObj(\"title_path\").innerHTML=\"Path:\"+meta_menu[supId]['langName']+\"-\"+menu_items[supId][midId]['langName']; } else { text = text + \"<tr class='h2_content' style='cursor:pointer' onclick='javascript:openLink(\\\"\" + menu_items[supId][midId]['URL'] + \"\\\")' onmouseover=\\\"altMenuClass(this,true)\\\" onmouseout=\\\"altMenuClass(this,false)\\\">\" + \"<td class='add'>&nbsp;</td>\" + \"<td class='mid'>\" + \"<font id='\"+midId+\"'>\" + menu_items[supId][midId]['langName'] + \"</font></td>\" + \"</tr>\"; } } else if ( stat == \"closed\" ) { text = text + \"<tr class='h2_content' style='cursor:pointer' onclick='javascript:OnMenuItemClick(\\\"\" + supId + \"\\\",\\\"\" + midId + \"\\\"); openLink(\\\"\" + menu_items[supId][midId]['URL'] + \"\\\")' onmouseover=\\\"altMenuClass(this,true)\\\" onmouseout=\\\"altMenuClass(this,false)\\\">\" + \"<td class='add'>&nbsp;</td>\" + \"<td class='mid'>\" + \"<span class='menuPlusSymbol'>+</span>\" + \"<font id='\"+midId+\"'>\" + menu_items[supId][midId]['langName'] + \"</font></td>\" + \"</tr>\"; } else if ( stat == \"open\" ) { text = text + \"<tr class='h2_s' onmouseover=\\\"altMenuClass(this,true)\\\" onmouseout=\\\"altMenuClass(this,false)\\\">\" + \"<td class='add'>&nbsp;</td>\" + \"<td class='mid'>\" + \"<span class='menuMinusSymbol'>-</span>\" + \"<font id='\"+midId+\"'>\" + menu_items[supId][midId]['langName'] + \"</font></td>\" + \"</tr>\"; for (var subId in menu_subitems[supId][midId]) { if (menu_subitems[supId][midId][subId]['page'] == selectPage) { text = text + \"<tr class='h3_s' onmouseover=\\\"altMenuClass(this,true)\\\" onmouseout=\\\"altMenuClass(this,false)\\\">\" + \"<td class='add'>&nbsp;</td>\" + \"<td class='mid'>\" + \"<font id='\"+subId+\"'>\" + menu_subitems[supId][midId][subId]['langName'] + \"</font></td>\" + \"</tr>\"; getObj(\"title_path\").innerHTML=\"Path:\"+meta_menu[supId]['langName']+\"-\"+menu_items[supId][midId]['langName']+\"-\"+menu_subitems[supId][midId][subId]['langName']; } else { text = text + \"<tr class='h3' style='cursor:pointer' onclick=\\\"javascript:openLink('\" + menu_subitems[supId][midId][subId]['URL'] + \"' )\\\" onmouseover=\\\"altMenuClass(this,true)\\\" onmouseout=\\\"altMenuClass(this,false)\\\">\" + \"<td class='add'>&nbsp;</td>\" + \"<td class='mid' colspan='2'>\" + \"<font id='\"+subId+\"'>\" + menu_subitems[supId][midId][subId]['langName'] + \"</font></td>\" + \"</tr>\"; } } } } } text = text + \"</tbody>\" + \"</table>\" + \"</td>\" + \"</tr>\" + \"</tbody>\" + \"</table>\"; getObj(\"menu0\").innerHTML=text; } function altMenuClass(ele) { var map = {\"h1\":\"h1 bghover\",\"h1 bghover\":\"h1\",\"h1_s\":\"h1_s bghover h1_s_bgfix\",\"h1_s bghover h1_s_bgfix\":\"h1_s\",\"h2\":\"h2 bghover\",\"h2 bghover\":\"h2\",\"h2_s\":\"h2_s bghover\",\"h2_s bghover\":\"h2_s\",\"h2_content\":\"h2_content bghover\",\"h2_content bghover\":\"h2_content\",\"h3\":\"h3 bghover\",\"h3 bghover\":\"h3\",\"h3_s\":\"h3_s bghover\",\"h3_s bghover\":\"h3_s\"}; ele.className = map[ele.className] || ele.className; } function myOnLoad() { menuDisp(); addEvent(getObj(\"htmlBody\"), \"keydown\", setenter); addEvent(getObj(\"htmlBody\"), \"keyup\", setinnerHidden); addEvent(getObj(\"htmlBody\"), \"mousedown\", setinnerHidden); fnBreakWordAll({word:15,re:'[\\\\w]'}); framedispalay('myiframe'); } function setWindowScrollTop(win, e, nowHelpTag, lastHelpTag) { topHeight = getTop(e); if(win.document.documentElement) { win.document.documentElement.scrollTop = topHeight; } if(win.document.body){ win.document.body.scrollTop = topHeight; } changeHelpColor(nowHelpTag, lastHelpTag); } function getTop(e) { var offset=e.offsetTop; if(e.offsetParent!=null) { offset+=getTop(e.offsetParent); } return offset; } function changeHelpColor(nowHelpTag, lastHelpTag) { if(nowHelpTag != lastHelpTag) { if(nowHelpTag == \"gotop\") { cancleColor(lastHelpTag); } else { cancleColor(lastHelpTag); confirmColor(nowHelpTag); } } else { confirmColor(nowHelpTag); } } function nextnode(node) { if(node.nodeType == 1) { return node; } if(node.nextSibling) { return nextnode(node.nextSibling); } } function fathernode(node) { if(node.nodeType == 1) { return node; } if(node.parentnode) { return fathernode(node.parentnode); } } function confirmColor(nowHelpTag) { var parentnodea = fathernode(document.getElementsByName(nowHelpTag)[0].parentNode); var helpTitle = fathernode(parentnodea.parentNode); helpTitle.bgColor=\"#B4E639\"; var helpText = nextnode(helpTitle.nextSibling); helpText.bgColor=\"#FFFFCC\"; getObj(\"helpTagValue\").value = nowHelpTag; } function cancleColor(lastHelpTag) { if(lastHelpTag != \"\") { var parentnodea = fathernode(document.getElementsByName(lastHelpTag)[0].parentNode); var helpTitle = fathernode(parentnodea.parentNode); helpTitle.bgColor=\"\"; var helpText = nextnode(helpTitle.nextSibling); helpText.bgColor=\"\"; } } function addToken2AllForms() { function doAddLogic() { var session_token = \"6300478373270135\"; var forms = document.getElementsByTagName(\"form\"); for ( var i=0; i<forms.length; i++ ) { var tempform = forms[i]; var sEnctype = tempform.getAttribute(\"enctype\"); if ( sEnctype != null && \"multipart/form-data\" == sEnctype.toLowerCase() ) { continue; } var tokenInput = document.createElement(\"input\"); tokenInput.setAttribute(\"id\", \"_SESSION_TOKEN\"); tokenInput.setAttribute(\"name\", \"_SESSION_TOKEN\"); tokenInput.setAttribute(\"type\", \"hidden\"); tokenInput.setAttribute(\"value\", session_token); tempform.appendChild(tokenInput); } } if( window.onload == null ) { window.onload=function(){ doAddLogic(); myOnLoad(); } } else { var tempfunction = window.onload; window.onload=function(){ tempfunction(); doAddLogic(); myOnLoad(); } } } addToken2AllForms();",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#htmlBody",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "content",
+    "tag": "DIV",
+    "text": "-Status Device Information +Network Interface +User Interface +Network +Application +Administration Path:Status-Device Information Logout Model F601 Serial Number F4E84F-ZTE0QDLR3526365 Hardware Version V7.0 Software Version V7.0.10P1N34 Batch Number 07e7P1N3402c2 Boot Loader Version V7.0.10P10N2 PON Serial Number ZTEGD97A6B2B var sn = \"ZTEGd97a6b2b\"; getObj(\"Frm_PonSerialNumber\").innerHTML = HTMLEnCode(sn.toUpperCase()); colorizeInfoTbl(\"TABLE_DEV\");",
+    "title": "",
+    "className": "content",
+    "onclick": "",
+    "selector": "#content",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "menu0",
+    "tag": "DIV",
+    "text": "-Status Device Information +Network Interface +User Interface +Network +Application +Administration",
+    "title": "",
+    "className": "h1_new",
+    "onclick": "",
+    "selector": "#menu0",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "mmStatu",
+    "tag": "TD",
+    "text": "-Status",
+    "title": "",
+    "className": "mid",
+    "onclick": "",
+    "selector": "#mmStatu",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "Fnt_mmStatu",
+    "tag": "FONT",
+    "text": "Status",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#Fnt_mmStatu",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "smDevStatu",
+    "tag": "FONT",
+    "text": "Device Information",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#smDevStatu",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "smWanStatu",
+    "tag": "FONT",
+    "text": "Network Interface",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#smWanStatu",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "smLanStatu",
+    "tag": "FONT",
+    "text": "User Interface",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#smLanStatu",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "mmNet",
+    "tag": "TD",
+    "text": "+Network",
+    "title": "",
+    "className": "mid",
+    "onclick": "",
+    "selector": "#mmNet",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "Fnt_mmNet",
+    "tag": "FONT",
+    "text": "Network",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#Fnt_mmNet",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "mmApp",
+    "tag": "TD",
+    "text": "+Application",
+    "title": "",
+    "className": "mid",
+    "onclick": "",
+    "selector": "#mmApp",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "Fnt_mmApp",
+    "tag": "FONT",
+    "text": "Application",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#Fnt_mmApp",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "mmManager",
+    "tag": "TD",
+    "text": "+Administration",
+    "title": "",
+    "className": "mid",
+    "onclick": "",
+    "selector": "#mmManager",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "Fnt_mmManager",
+    "tag": "FONT",
+    "text": "Administration",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#Fnt_mmManager",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "title_path",
+    "tag": "DIV",
+    "text": "Path:Status-Device Information",
+    "title": "",
+    "className": "title_left",
+    "onclick": "",
+    "selector": "#title_path",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "div1",
+    "tag": "DIV",
+    "text": "Model F601 Serial Number F4E84F-ZTE0QDLR3526365 Hardware Version V7.0 Software Version V7.0.10P1N34 Batch Number 07e7P1N3402c2 Boot Loader Version V7.0.10P10N2 PON Serial Number ZTEGD97A6B2B var sn = \"ZTEGd97a6b2b\"; getObj(\"Frm_PonSerialNumber\").innerHTML = HTMLEnCode(sn.toUpperCase()); colorizeInfoTbl(\"TABLE_DEV\");",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#div1",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "TABLE_DEV",
+    "tag": "TABLE",
+    "text": "Model F601 Serial Number F4E84F-ZTE0QDLR3526365 Hardware Version V7.0 Software Version V7.0.10P1N34 Batch Number 07e7P1N3402c2 Boot Loader Version V7.0.10P10N2 PON Serial Number ZTEGD97A6B2B var sn = \"ZTEGd97a6b2b\"; getObj(\"Frm_PonSerialNumber\").innerHTML = HTMLEnCode(sn.toUpperCase());",
+    "title": "",
+    "className": "infor",
+    "onclick": "",
+    "selector": "#TABLE_DEV",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "Frm_ModelName",
+    "tag": "TD",
+    "text": "F601",
+    "title": "",
+    "className": "tdright",
+    "onclick": "",
+    "selector": "#Frm_ModelName",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "Frm_SerialNumber",
+    "tag": "TD",
+    "text": "F4E84F-ZTE0QDLR3526365",
+    "title": "",
+    "className": "tdright",
+    "onclick": "",
+    "selector": "#Frm_SerialNumber",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "Frm_HardwareVer",
+    "tag": "TD",
+    "text": "V7.0",
+    "title": "",
+    "className": "tdright",
+    "onclick": "",
+    "selector": "#Frm_HardwareVer",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "Frm_SoftwareVer",
+    "tag": "TD",
+    "text": "V7.0.10P1N34",
+    "title": "",
+    "className": "tdright",
+    "onclick": "",
+    "selector": "#Frm_SoftwareVer",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "Frm_SoftwareVerExtent",
+    "tag": "TD",
+    "text": "07e7P1N3402c2",
+    "title": "",
+    "className": "tdright",
+    "onclick": "",
+    "selector": "#Frm_SoftwareVerExtent",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "Frm_BootVer",
+    "tag": "TD",
+    "text": "V7.0.10P10N2",
+    "title": "",
+    "className": "tdright",
+    "onclick": "",
+    "selector": "#Frm_BootVer",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "Frm_PonSerialNumber",
+    "tag": "TD",
+    "text": "ZTEGD97A6B2B",
+    "title": "",
+    "className": "tdright",
+    "onclick": "",
+    "selector": "#Frm_PonSerialNumber",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "bottom",
+    "tag": "DIV",
+    "text": "",
+    "title": "",
+    "className": "bottom_div",
+    "onclick": "",
+    "selector": "#bottom",
+    "where": "top.frame[1]"
+  },
+  {
+    "id": "bottomx",
+    "tag": "DIV",
+    "text": "",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#bottomx",
+    "where": "top.frame[1]"
+  }
+]
+::47
+
+[
+  {
+    "id": "topFrame",
+    "tag": "IFRAME",
+    "text": "",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#topFrame",
+    "where": "top"
+  },
+  {
+    "id": "mainFrame",
+    "tag": "IFRAME",
+    "text": "",
+    "title": "",
+    "className": "",
+    "onclick": "",
+    "selector": "#mainFrame",
+    "where": "top"
+  }
+]
+::88
