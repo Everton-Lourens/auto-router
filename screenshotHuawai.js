@@ -385,7 +385,7 @@ async function waitForFrameByUrl(page, partOfUrl, timeout = 10000) {
   while (Date.now() - start < timeout) {
     const fr = page.frames().find(f => f.url().includes(partOfUrl));
     if (fr) return fr;
-    await page.waitForTimeout(250);
+    await wait(300);
   }
 
   throw new Error(`Frame com URL contendo "${partOfUrl}" não encontrado`);
@@ -393,7 +393,7 @@ async function waitForFrameByUrl(page, partOfUrl, timeout = 10000) {
 
 // abre a tela correta
 await frame.click('#cfgconfig');
-await page.waitForTimeout(2000);
+await wait(2000);
 await screenshot('04-openBackReco.png');
 
 // pega o frame do upload
