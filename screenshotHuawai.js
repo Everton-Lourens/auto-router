@@ -482,38 +482,55 @@ await wait(2000)
 
 await wait(3000);
 
-const uploadFrame = page.frames().find(f =>
-  f.url().includes('cfgfile')
-);
+/////////////////////
+    /////////////////////
+    
+console.log('[IMPORT] Procurando frame cfgfile...');
+const uploadFrame = page.frames().find(f => f.url().includes('cfgfile'));
+console.log('[IMPORT] Frame encontrado:', !!uploadFrame);
 
 const fileInput = await uploadFrame.$('input[type="file"]');
+console.log('[IMPORT] input[type=file] encontrado:', !!fileInput);
 
 if (!fileInput) {
   throw new Error('input[type=file] não encontrado');
 }
 
+console.log('[IMPORT] Iniciando upload...');
 await fileInput.uploadFile(
   '/storage/emulated/0/Download/router/upHuawai.html'
 );
+console.log('[IMPORT] Upload concluído');
+
+await screenshot('05a-afterUploadFile.png');
 
 await wait(2000);
 
 //await uploadFrame.click('#btnSubmit');
-await uploadFrame.waitForSelector('#uploadConfig', { visible: true });
 
+console.log('[IMPORT] Aguardando #uploadConfig...');
+await uploadFrame.waitForSelector('#uploadConfig', { visible: true });
+console.log('[IMPORT] #uploadConfig encontrado');
+
+await screenshot('05b-beforeUploadConfigClick.png');
+
+console.log('[IMPORT] Clicando em #uploadConfig...');
 await uploadFrame.evaluate(() => {
   document.querySelector('#uploadConfig')?.click();
 });
+console.log('[IMPORT] Clique executado');
+
+await screenshot('05c-afterUploadConfigClick.png');
 
 await wait(1000);
-
-
 
 // Se houver botão de envio depois do upload
 //await frame.click('#btnSubmit');
 
 await wait(2000);
+
 await screenshot('05-uploadDone.png');
+console.log('[IMPORT] Processo finalizado');
 
 return true;
     
