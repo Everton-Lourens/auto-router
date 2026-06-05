@@ -37,7 +37,10 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
   await loginPage();
   //await wanPage()
-async function clicarPorIdEmQualquerFrame(page, id, fakeClick = false) {
+
+
+
+  async function clicarPorIdUsandoWhere(page, id, fakeClick = false) {
   if (!page) throw new Error('page é obrigatório');
   if (!id) throw new Error('id é obrigatório');
 
@@ -51,62 +54,105 @@ async function clicarPorIdEmQualquerFrame(page, id, fakeClick = false) {
 
   const selector = `[id="${escapeAttrValue(id)}"]`;
 
-  async function procurarEmFrame(frame, caminho = 'top') {
+  function getFrameByWhere(page, where) {
+    if (!where || where === 'top') return page.mainFrame();
+
+    const parts = where.split('.').slice(1); // remove "top"
+    let frame = page.mainFrame();
+
+    for (const part of parts) {
+      const match = part.match(/^frame\[(\d+)\]$/);
+      if (!match) return null;
+
+      const index = Number(match[1]);
+      const children = frame.childFrames();
+
+      if (!children[index]) return null;
+      frame = children[index];
+    }
+
+    return frame;
+  }
+
+  async function procurarFrameComId(frame, where = 'top') {
     try {
       const handle = await frame.$(selector);
 
       if (handle) {
-        await handle.evaluate(el => {
-          el.scrollIntoView({ block: 'center', inline: 'center' });
-        });
-
-        if (fakeClick) {
-          await handle.evaluate(el => {
-            el.click();
-          });
-        } else {
-          try {
-            await handle.click({ delay: 0 });
-          } catch (err) {
-            await handle.evaluate(el => {
-              el.click();
-            });
-          }
-        }
-
         return {
-          ok: true,
-          id,
-          fakeClick,
-          frameUrl: frame.url(),
-          where: caminho
+          frame,
+          where,
+          handle
         };
       }
-    } catch (err) {
-      // continua procurando nos filhos
+    } catch (e) {
+      // segue procurando
     }
 
-    const filhos = frame.childFrames ? frame.childFrames() : [];
+    const filhos = frame.childFrames();
     for (let i = 0; i < filhos.length; i++) {
-      const resultado = await procurarEmFrame(filhos[i], `${caminho}.frame[${i}]`);
-      if (resultado.ok) return resultado;
+      const achou = await procurarFrameComId(filhos[i], `${where}.frame[${i}]`);
+      if (achou) return achou;
     }
 
-    return { ok: false };
+    return null;
   }
 
-  const resultado = await procurarEmFrame(page.mainFrame(), 'top');
+  const encontrado = await procurarFrameComId(page.mainFrame(), 'top');
 
-  if (resultado.ok) return resultado;
+  if (!encontrado) {
+    return {
+      ok: false,
+      id,
+      fakeClick,
+      error: `Elemento com id "${id}" não encontrado em nenhum frame`
+    };
+  }
+
+  const frameAlvo = getFrameByWhere(page, encontrado.where);
+  if (!frameAlvo) {
+    return {
+      ok: false,
+      id,
+      fakeClick,
+      error: `Não foi possível localizar o frame pelo caminho "${encontrado.where}"`
+    };
+  }
+
+  const handle = await frameAlvo.$(selector);
+  if (!handle) {
+    return {
+      ok: false,
+      id,
+      fakeClick,
+      error: `Elemento com id "${id}" não encontrado no frame "${encontrado.where}"`
+    };
+  }
+
+  await handle.evaluate(el => {
+    el.scrollIntoView({ block: 'center', inline: 'center' });
+  });
+
+  if (fakeClick) {
+    await handle.evaluate(el => el.click());
+  } else {
+    try {
+      await handle.click({ delay: 0 });
+    } catch (err) {
+      await handle.evaluate(el => el.click());
+    }
+  }
 
   return {
-    ok: false,
+    ok: true,
     id,
     fakeClick,
-    error: `Elemento com id "${id}" não encontrado em nenhum frame`
+    where: encontrado.where
   };
 }
 
+
+  
   
 
   async function loginHuawai(login = 'root', password = '@62474b3745JR') {
