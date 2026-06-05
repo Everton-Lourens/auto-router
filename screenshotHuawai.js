@@ -158,8 +158,8 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
   async function loginHuawai(login = 'root', password = '@62474b3745JR') {
   console.log('Abrindo HUAWAI...');
 
-   await page.goto('http://100.68.22.20/', {
-  //await page.goto('http://192.168.101.1/', {
+   // await page.goto('http://100.68.12.253/', {
+  await page.goto('http://192.168.101.1/', {
     waitUntil: 'domcontentloaded',
     timeout: 30000
   });
@@ -433,8 +433,8 @@ async function clickIfExistsBySelector(selector) {
   
   console.log('Abrindo roteador...');
 
-  await page.goto('http://100.68.22.20/', {
-  //await page.goto('http://192.168.101.1/', {
+  //await page.goto('http://100.68.12.253/', {
+  await page.goto('http://192.168.101.1/', {
     waitUntil: 'domcontentloaded',
     timeout: 30000
   });
@@ -482,38 +482,40 @@ await wait(2000)
 
 await wait(3000);
 
-    await FuncaoParaImport(page)
+const uploadFrame = page.frames().find(f =>
+  f.url().includes('cfgfile')
+);
 
-    return true;
+const fileInput = await uploadFrame.$('input[type="file"]');
 
-async function FuncaoParaImport(page) {
-  const uploadFrame = page.frames().find(f => f.url().includes('cfgfile'));
-
-  if (!uploadFrame) {
-    throw new Error('Frame cfgfile não encontrado');
-  }
-
-  const fileInput = await uploadFrame.$('input[type="file"]');
-  if (!fileInput) {
-    throw new Error('input[type=file] não encontrado');
-  }
-
-  await fileInput.uploadFile('/storage/emulated/0/Download/router/upHuawai.html');
-  await wait(1000);
-
-  await uploadFrame.waitForSelector('#uploadConfig', { visible: true });
-  try {
-    await uploadFrame.click('#uploadConfig');
-  } catch {
-    const btn = await uploadFrame.$('#uploadConfig');
-    await uploadFrame.evaluate(el => el.click(), btn);
-  }
-
-  await wait(2000);
-  await screenshot('05-uploadDone.png');
-
-  return true;
+if (!fileInput) {
+  throw new Error('input[type=file] não encontrado');
 }
+
+await fileInput.uploadFile(
+  '/storage/emulated/0/Download/router/upHuawai.html'
+);
+
+await wait(2000);
+
+//await uploadFrame.click('#btnSubmit');
+await uploadFrame.waitForSelector('#uploadConfig', { visible: true });
+
+await uploadFrame.evaluate(() => {
+  document.querySelector('#uploadConfig')?.click();
+});
+
+await wait(1000);
+
+
+
+// Se houver botão de envio depois do upload
+//await frame.click('#btnSubmit');
+
+await wait(2000);
+await screenshot('05-uploadDone.png');
+
+return true;
     
     /////////////////////
     /////////////////////
@@ -560,7 +562,6 @@ await screenshot('03-service-control.png')
   await browser.close();
 
 })();
-
 
 
 
