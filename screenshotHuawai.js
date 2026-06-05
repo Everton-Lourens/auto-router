@@ -508,15 +508,15 @@ await wait(2000);
 
 //await uploadFrame.click('#btnSubmit');
 
-console.log('[IMPORT] Aguardando #uploadConfig...');
-await uploadFrame.waitForSelector('#uploadConfig', { visible: true });
-console.log('[IMPORT] #uploadConfig encontrado');
+console.log('[IMPORT] Aguardando #btnSubmit...');
+await uploadFrame.waitForSelector('#btnSubmit', { visible: true });
+console.log('[IMPORT] #btnSubmit encontrado');
 
 await screenshot('05b-beforeUploadConfigClick.png');
 
-console.log('[IMPORT] Clicando em #uploadConfig...');
+console.log('[IMPORT] Clicando em #btnSubmit...');
 await uploadFrame.evaluate(() => {
-  document.querySelector('#uploadConfig')?.click();
+  document.querySelector('#btnSubmit')?.click();
 });
 console.log('[IMPORT] Clique executado');
 
