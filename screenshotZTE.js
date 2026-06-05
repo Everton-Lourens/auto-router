@@ -43,7 +43,117 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
   await browser.close();
 
   
-  
+    async function clicarPorIdUsandoWhere(page, id, fakeClick = false) {
+  if (!page) throw new Error('page é obrigatório');
+  if (!id) throw new Error('id é obrigatório');
+
+  id = String(id).replace(/^#/, '').trim();
+
+  function escapeAttrValue(value) {
+    return String(value)
+      .replace(/\\/g, '\\\\')
+      .replace(/"/g, '\\"');
+  }
+
+  const selector = `[id="${escapeAttrValue(id)}"]`;
+
+  function getFrameByWhere(page, where) {
+    if (!where || where === 'top') return page.mainFrame();
+
+    const parts = where.split('.').slice(1); // remove "top"
+    let frame = page.mainFrame();
+
+    for (const part of parts) {
+      const match = part.match(/^frame\[(\d+)\]$/);
+      if (!match) return null;
+
+      const index = Number(match[1]);
+      const children = frame.childFrames();
+
+      if (!children[index]) return null;
+      frame = children[index];
+    }
+
+    return frame;
+  }
+
+  async function procurarFrameComId(frame, where = 'top') {
+    try {
+      const handle = await frame.$(selector);
+
+      if (handle) {
+        return {
+          frame,
+          where,
+          handle
+        };
+      }
+    } catch (e) {
+      // segue procurando
+    }
+
+    const filhos = frame.childFrames();
+    for (let i = 0; i < filhos.length; i++) {
+      const achou = await procurarFrameComId(filhos[i], `${where}.frame[${i}]`);
+      if (achou) return achou;
+    }
+
+    return null;
+  }
+
+  const encontrado = await procurarFrameComId(page.mainFrame(), 'top');
+
+  if (!encontrado) {
+    return {
+      ok: false,
+      id,
+      fakeClick,
+      error: `Elemento com id "${id}" não encontrado em nenhum frame`
+    };
+  }
+
+  const frameAlvo = getFrameByWhere(page, encontrado.where);
+  if (!frameAlvo) {
+    return {
+      ok: false,
+      id,
+      fakeClick,
+      error: `Não foi possível localizar o frame pelo caminho "${encontrado.where}"`
+    };
+  }
+
+  const handle = await frameAlvo.$(selector);
+  if (!handle) {
+    return {
+      ok: false,
+      id,
+      fakeClick,
+      error: `Elemento com id "${id}" não encontrado no frame "${encontrado.where}"`
+    };
+  }
+
+  await handle.evaluate(el => {
+    el.scrollIntoView({ block: 'center', inline: 'center' });
+  });
+
+  if (fakeClick) {
+    await handle.evaluate(el => el.click());
+  } else {
+    try {
+      await handle.click({ delay: 0 });
+    } catch (err) {
+      await handle.evaluate(el => el.click());
+    }
+  }
+
+  return {
+    ok: true,
+    id,
+    fakeClick,
+    where: encontrado.where
+  };
+}
+
 
 async function screenshot(name) {
 await wait(2000);
@@ -811,6 +921,9 @@ const softwareBox = await frame.evaluate(() => {
 
   return el ? { id: el.id, tag: el.tagName, html: el.outerHTML } : null;
 });
+
+
+     // await clicarPorIdUsandoWhere(page, id);
 
 if (false) {
 //if ((await page.$eval('#pdtVer', el => el.textContent.toUpperCase())).indexOf('P9') === -1) {
