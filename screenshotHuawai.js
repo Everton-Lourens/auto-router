@@ -482,35 +482,38 @@ await wait(2000)
 
 await wait(3000);
 
-const uploadFrame = page.frames().find(f =>
-  f.url().includes('cfgfile')
-);
+    await FuncaoParaImport(page)
 
-const fileInput = await uploadFrame.$('input[type="file"]');
+    return true;
 
-if (!fileInput) {
-  throw new Error('input[type=file] não encontrado');
+async function FuncaoParaImport(page) {
+  const uploadFrame = page.frames().find(f => f.url().includes('cfgfile'));
+
+  if (!uploadFrame) {
+    throw new Error('Frame cfgfile não encontrado');
+  }
+
+  const fileInput = await uploadFrame.$('input[type="file"]');
+  if (!fileInput) {
+    throw new Error('input[type=file] não encontrado');
+  }
+
+  await fileInput.uploadFile('/storage/emulated/0/Download/router/upHuawai.html');
+  await wait(1000);
+
+  await uploadFrame.waitForSelector('#uploadConfig', { visible: true });
+  try {
+    await uploadFrame.click('#uploadConfig');
+  } catch {
+    const btn = await uploadFrame.$('#uploadConfig');
+    await uploadFrame.evaluate(el => el.click(), btn);
+  }
+
+  await wait(2000);
+  await screenshot('05-uploadDone.png');
+
+  return true;
 }
-
-await fileInput.uploadFile(
-  '/storage/emulated/0/Download/router/upHuawai.html'
-);
-
-await wait(2000);
-
-//await uploadFrame.click('#btnSubmit');
-    await clicarPorIdUsandoWhere(page, '#btnSubmit'); // clique real
-
-
-
-// Se houver botão de envio depois do upload
-await wait(1000);
-//await frame.click('#btnSubmit');
-
-await wait(2000);
-await screenshot('05-uploadDone.png');
-
-return true;
     
     /////////////////////
     /////////////////////
