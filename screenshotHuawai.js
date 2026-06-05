@@ -112,8 +112,8 @@ async function clicarPorIdEmQualquerFrame(page, id, fakeClick = false) {
   async function loginHuawai(login = 'root', password = '@62474b3745JR') {
   console.log('Abrindo HUAWAI...');
 
-    await page.goto('http://100.68.12.253/', {
-  //await page.goto('http://192.168.101.1/', {
+   // await page.goto('http://100.68.12.253/', {
+  await page.goto('http://192.168.101.1/', {
     waitUntil: 'domcontentloaded',
     timeout: 30000
   });
@@ -387,8 +387,8 @@ async function clickIfExistsBySelector(selector) {
   
   console.log('Abrindo roteador...');
 
-  await page.goto('http://100.68.12.253/', {
-  //await page.goto('http://192.168.101.1/', {
+  //await page.goto('http://100.68.12.253/', {
+  await page.goto('http://192.168.101.1/', {
     waitUntil: 'domcontentloaded',
     timeout: 30000
   });
@@ -453,7 +453,7 @@ await fileInput.uploadFile(
 await wait(2000);
 
 //await uploadFrame.click('#btnSubmit');
-    await clicarPorIdEmQualquerFrame(page, '#btnSubmit); // clique real
+    await clicarPorIdEmQualquerFrame(page, '#btnSubmit'); // clique real
 
 
 
