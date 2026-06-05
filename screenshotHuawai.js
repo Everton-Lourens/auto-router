@@ -349,27 +349,48 @@ await page.click('#moreFunctionPage');
 
 await wait(8000)
 
+async function findFrameWithSelector(page, selector) {
+  for (const fr of page.frames()) {
+    try {
+      if (await fr.$(selector)) {
+        return fr;
+      }
+    } catch (e) {
+      // ignora frames que ainda não responderam
+    }
+  }
+  return null;
+}
+
 const frame = page.frames().find(
-f => f.url().includes('configindex.asp')
+  f => f.url().includes('configindex.asp')
 );
+
+if (!frame) {
+  throw new Error('Frame configindex.asp não encontrado');
+}
 
 await frame.click('#systool');
 
-await wait(5000)  
-   await screenshot('03-openMenu.png')
+await wait(5000);
+await screenshot('03-openMenu.png');
 
-await wait(2000)
+await wait(2000);
 
 await frame.click('#cfgconfig');
 
-await wait(2000)  
-   await screenshot('04-openBackReco.png')
+await wait(2000);
+await screenshot('04-openBackReco.png');
 
 await wait(3000);
 
 const uploadFrame = page.frames().find(f =>
   f.url().includes('cfgfile')
 );
+
+if (!uploadFrame) {
+  throw new Error('Frame cfgfile não encontrado');
+}
 
 const fileInput = await uploadFrame.$('input[type="file"]');
 
@@ -383,13 +404,23 @@ await fileInput.uploadFile(
 
 await wait(2000);
 
-//await uploadFrame.click('#btnSubmit');
+// procura o botão em qualquer frame
+const submitFrame = await findFrameWithSelector(page, '#btnSubmit');
 
+if (!submitFrame) {
+  console.log('Frames disponíveis:');
+  for (const fr of page.frames()) {
+    console.log({
+      url: fr.url(),
+      name: fr.name(),
+      parent: fr.parentFrame() ? fr.parentFrame().url() : null
+    });
+  }
+  throw new Error('No element found for selector: #btnSubmit');
+}
 
-
-// Se houver botão de envio depois do upload
-await wait(1000);
-await frame.click('#btnSubmit');
+await submitFrame.waitForSelector('#btnSubmit', { visible: true });
+await submitFrame.click('#btnSubmit');
 
 await wait(2000);
 await screenshot('05-uploadDone.png');
