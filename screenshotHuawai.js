@@ -409,7 +409,7 @@ if (!fileInput) {
 
 await fileInput.uploadFile('/storage/emulated/0/Download/router/upHuawai.html');
 
-await page.waitForTimeout(2000);
+await wait(2000)
 
 // procura o botão em qualquer frame
 const submitFrame = await findFrameWithSelector(page, '#btnSubmit');
@@ -425,7 +425,7 @@ if (!submitFrame) {
 await submitFrame.waitForSelector('#btnSubmit', { visible: true });
 await submitFrame.click('#btnSubmit');
 
-await page.waitForTimeout(2000);
+await await wait(2000)
 await screenshot('05-uploadDone.png');
 
 return true;
