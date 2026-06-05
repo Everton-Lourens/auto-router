@@ -499,7 +499,7 @@ await fileInput.uploadFile(
 await wait(2000);
 
 //await uploadFrame.click('#btnSubmit');
-    await clicarPorIdEmQualquerFrame(page, '#btnSubmit'); // clique real
+    await clicarPorIdUsandoWhere(page, '#btnSubmit'); // clique real
 
 
 
