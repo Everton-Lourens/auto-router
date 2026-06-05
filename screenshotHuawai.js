@@ -349,18 +349,7 @@ await page.click('#moreFunctionPage');
 
 await wait(8000)
 
-async function findFrameWithSelector(page, selector) {
-  for (const fr of page.frames()) {
-    try {
-      if (await fr.$(selector)) {
-        return fr;
-      }
-    } catch (e) {
-      // ignora frames que ainda não responderam
-    }
-  }
-  return null;
-}
+
 
 const frame = page.frames().find(
   f => f.url().includes('configindex.asp')
@@ -377,32 +366,50 @@ await screenshot('03-openMenu.png');
 
 await wait(2000);
 
-await frame.click('#cfgconfig');
-
-await wait(2000);
-await screenshot('04-openBackReco.png');
-
-await wait(3000);
-
-const uploadFrame = page.frames().find(f =>
-  f.url().includes('cfgfile')
-);
-
-if (!uploadFrame) {
-  throw new Error('Frame cfgfile não encontrado');
+async function findFrameWithSelector(page, selector) {
+  for (const fr of page.frames()) {
+    try {
+      if (await fr.$(selector)) {
+        return fr;
+      }
+    } catch (e) {
+      // ignora frames que ainda não estão prontos
+    }
+  }
+  return null;
 }
 
-const fileInput = await uploadFrame.$('input[type="file"]');
+async function waitForFrameByUrl(page, partOfUrl, timeout = 10000) {
+  const start = Date.now();
+
+  while (Date.now() - start < timeout) {
+    const fr = page.frames().find(f => f.url().includes(partOfUrl));
+    if (fr) return fr;
+    await page.waitForTimeout(250);
+  }
+
+  throw new Error(`Frame com URL contendo "${partOfUrl}" não encontrado`);
+}
+
+// abre a tela correta
+await frame.click('#cfgconfig');
+await page.waitForTimeout(2000);
+await screenshot('04-openBackReco.png');
+
+// pega o frame do upload
+const uploadFrame = await waitForFrameByUrl(page, 'cfgfile');
+
+const fileInput = await uploadFrame.waitForSelector('input[type="file"]', {
+  visible: true,
+});
 
 if (!fileInput) {
   throw new Error('input[type=file] não encontrado');
 }
 
-await fileInput.uploadFile(
-  '/storage/emulated/0/Download/router/upHuawai.html'
-);
+await fileInput.uploadFile('/storage/emulated/0/Download/router/upHuawai.html');
 
-await wait(2000);
+await page.waitForTimeout(2000);
 
 // procura o botão em qualquer frame
 const submitFrame = await findFrameWithSelector(page, '#btnSubmit');
@@ -410,19 +417,15 @@ const submitFrame = await findFrameWithSelector(page, '#btnSubmit');
 if (!submitFrame) {
   console.log('Frames disponíveis:');
   for (const fr of page.frames()) {
-    console.log({
-      url: fr.url(),
-      name: fr.name(),
-      parent: fr.parentFrame() ? fr.parentFrame().url() : null
-    });
+    console.log('FRAME =>', fr.url());
   }
-  throw new Error('No element found for selector: #btnSubmit');
+  throw new Error('Não encontrei #btnSubmit em nenhum frame');
 }
 
 await submitFrame.waitForSelector('#btnSubmit', { visible: true });
 await submitFrame.click('#btnSubmit');
 
-await wait(2000);
+await page.waitForTimeout(2000);
 await screenshot('05-uploadDone.png');
 
 return true;
