@@ -37,41 +37,67 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
   await loginPage();
   //await wanPage()
-
-
 async function clicarPorIdEmQualquerFrame(page, id, fakeClick = false) {
   if (!page) throw new Error('page é obrigatório');
   if (!id) throw new Error('id é obrigatório');
 
-  const escapedId = CSS.escape(id);
+  id = String(id).replace(/^#/, '').trim();
 
-  for (const frame of page.frames()) {
-    try {
-      const handle = await frame.$(`${escapedId}`);
-      if (!handle) continue;
-
-      await handle.evaluate((el, fake) => {
-        el.scrollIntoView({ block: 'center', inline: 'center' });
-
-        if (fake) {
-          el.click();
-        }
-      }, fakeClick);
-
-      if (!fakeClick) {
-        await handle.click();
-      }
-
-      return {
-        ok: true,
-        id,
-        frameUrl: frame.url(),
-        fakeClick
-      };
-    } catch (err) {
-      // segue procurando nos outros frames
-    }
+  function escapeAttrValue(value) {
+    return String(value)
+      .replace(/\\/g, '\\\\')
+      .replace(/"/g, '\\"');
   }
+
+  const selector = `[id="${escapeAttrValue(id)}"]`;
+
+  async function procurarEmFrame(frame, caminho = 'top') {
+    try {
+      const handle = await frame.$(selector);
+
+      if (handle) {
+        await handle.evaluate(el => {
+          el.scrollIntoView({ block: 'center', inline: 'center' });
+        });
+
+        if (fakeClick) {
+          await handle.evaluate(el => {
+            el.click();
+          });
+        } else {
+          try {
+            await handle.click({ delay: 0 });
+          } catch (err) {
+            await handle.evaluate(el => {
+              el.click();
+            });
+          }
+        }
+
+        return {
+          ok: true,
+          id,
+          fakeClick,
+          frameUrl: frame.url(),
+          where: caminho
+        };
+      }
+    } catch (err) {
+      // continua procurando nos filhos
+    }
+
+    const filhos = frame.childFrames ? frame.childFrames() : [];
+    for (let i = 0; i < filhos.length; i++) {
+      const resultado = await procurarEmFrame(filhos[i], `${caminho}.frame[${i}]`);
+      if (resultado.ok) return resultado;
+    }
+
+    return { ok: false };
+  }
+
+  const resultado = await procurarEmFrame(page.mainFrame(), 'top');
+
+  if (resultado.ok) return resultado;
 
   return {
     ok: false,
