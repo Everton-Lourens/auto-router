@@ -39,6 +39,49 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
   //await wanPage()
 
 
+async function clicarPorIdEmQualquerFrame(page, id, fakeClick = false) {
+  if (!page) throw new Error('page é obrigatório');
+  if (!id) throw new Error('id é obrigatório');
+
+  const escapedId = CSS.escape(id);
+
+  for (const frame of page.frames()) {
+    try {
+      const handle = await frame.$(`${escapedId}`);
+      if (!handle) continue;
+
+      await handle.evaluate((el, fake) => {
+        el.scrollIntoView({ block: 'center', inline: 'center' });
+
+        if (fake) {
+          el.click();
+        }
+      }, fakeClick);
+
+      if (!fakeClick) {
+        await handle.click();
+      }
+
+      return {
+        ok: true,
+        id,
+        frameUrl: frame.url(),
+        fakeClick
+      };
+    } catch (err) {
+      // segue procurando nos outros frames
+    }
+  }
+
+  return {
+    ok: false,
+    id,
+    fakeClick,
+    error: `Elemento com id "${id}" não encontrado em nenhum frame`
+  };
+}
+
+  
 
   async function loginHuawai(login = 'root', password = '@62474b3745JR') {
   console.log('Abrindo HUAWAI...');
@@ -318,8 +361,8 @@ async function clickIfExistsBySelector(selector) {
   
   console.log('Abrindo roteador...');
 
- // await page.goto('http://100.68.12.253/', {
-  await page.goto('http://192.168.101.1/', {
+  await page.goto('http://100.68.12.253/', {
+  //await page.goto('http://192.168.101.1/', {
     waitUntil: 'domcontentloaded',
     timeout: 30000
   });
@@ -349,83 +392,50 @@ await page.click('#moreFunctionPage');
 
 await wait(8000)
 
-
-
 const frame = page.frames().find(
-  f => f.url().includes('configindex.asp')
+f => f.url().includes('configindex.asp')
 );
-
-if (!frame) {
-  throw new Error('Frame configindex.asp não encontrado');
-}
 
 await frame.click('#systool');
 
-await wait(5000);
-await screenshot('03-openMenu.png');
+await wait(5000)  
+   await screenshot('03-openMenu.png')
 
-await wait(2000);
+await wait(2000)
 
-async function findFrameWithSelector(page, selector) {
-  for (const fr of page.frames()) {
-    try {
-      if (await fr.$(selector)) {
-        return fr;
-      }
-    } catch (e) {
-      // ignora frames que ainda não estão prontos
-    }
-  }
-  return null;
-}
-
-async function waitForFrameByUrl(page, partOfUrl, timeout = 10000) {
-  const start = Date.now();
-
-  while (Date.now() - start < timeout) {
-    const fr = page.frames().find(f => f.url().includes(partOfUrl));
-    if (fr) return fr;
-    await wait(300);
-  }
-
-  throw new Error(`Frame com URL contendo "${partOfUrl}" não encontrado`);
-}
-
-// abre a tela correta
 await frame.click('#cfgconfig');
-await wait(2000);
-await screenshot('04-openBackReco.png');
 
-// pega o frame do upload
-const uploadFrame = await waitForFrameByUrl(page, 'cfgfile');
+await wait(2000)  
+   await screenshot('04-openBackReco.png')
 
-const fileInput = await uploadFrame.waitForSelector('input[type="file"]', {
-  visible: true,
-});
+await wait(3000);
+
+const uploadFrame = page.frames().find(f =>
+  f.url().includes('cfgfile')
+);
+
+const fileInput = await uploadFrame.$('input[type="file"]');
 
 if (!fileInput) {
   throw new Error('input[type=file] não encontrado');
 }
 
-await fileInput.uploadFile('/storage/emulated/0/Download/router/upHuawai.html');
+await fileInput.uploadFile(
+  '/storage/emulated/0/Download/router/upHuawai.html'
+);
 
-await wait(2000)
+await wait(2000);
 
-// procura o botão em qualquer frame
-const submitFrame = await findFrameWithSelector(page, '#btnSubmit');
+//await uploadFrame.click('#btnSubmit');
+    await clicarPorIdEmQualquerFrame(page, '#btnSubmit); // clique real
 
-if (!submitFrame) {
-  console.log('Frames disponíveis:');
-  for (const fr of page.frames()) {
-    console.log('FRAME =>', fr.url());
-  }
-  throw new Error('Não encontrei #btnSubmit em nenhum frame');
-}
 
-await submitFrame.waitForSelector('#btnSubmit', { visible: true });
-await submitFrame.click('#btnSubmit');
 
-await await wait(2000)
+// Se houver botão de envio depois do upload
+await wait(1000);
+//await frame.click('#btnSubmit');
+
+await wait(2000);
 await screenshot('05-uploadDone.png');
 
 return true;
@@ -475,7 +485,6 @@ await screenshot('03-service-control.png')
   await browser.close();
 
 })();
-
 
 
 
