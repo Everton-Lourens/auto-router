@@ -747,8 +747,8 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     await wait(2000);
 
     await page.evaluate(() => {
-      //document.querySelector('#firmwareUpgr').click();
-      document.querySelector('#defCfgMgr').click()
+      //document.querySelector('#firmwareUpgr').click(); // Upgrade
+      document.querySelector('#defCfgMgr').click()  // Preset
       
     });
     
