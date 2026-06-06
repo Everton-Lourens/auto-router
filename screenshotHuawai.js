@@ -42,118 +42,7 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
 
 
-  async function clicarPorIdUsandoWhere(page, id, fakeClick = false) {
-    if (!page) throw new Error('page é obrigatório');
-    if (!id) throw new Error('id é obrigatório');
-
-    id = String(id).replace(/^#/, '').trim();
-
-    function escapeAttrValue(value) {
-      return String(value)
-        .replace(/\\/g, '\\\\')
-        .replace(/"/g, '\\"');
-    }
-
-    const selector = `[id="${escapeAttrValue(id)}"]`;
-
-    function getFrameByWhere(page, where) {
-      if (!where || where === 'top') return page.mainFrame();
-
-      const parts = where.split('.').slice(1); // remove "top"
-      let frame = page.mainFrame();
-
-      for (const part of parts) {
-        const match = part.match(/^frame\[(\d+)\]$/);
-        if (!match) return null;
-
-        const index = Number(match[1]);
-        const children = frame.childFrames();
-
-        if (!children[index]) return null;
-        frame = children[index];
-      }
-
-      return frame;
-    }
-
-    async function procurarFrameComId(frame, where = 'top') {
-      try {
-        const handle = await frame.$(selector);
-
-        if (handle) {
-          return {
-            frame,
-            where,
-            handle
-          };
-        }
-      } catch (e) {
-        // segue procurando
-      }
-
-      const filhos = frame.childFrames();
-      for (let i = 0; i < filhos.length; i++) {
-        const achou = await procurarFrameComId(filhos[i], `${where}.frame[${i}]`);
-        if (achou) return achou;
-      }
-
-      return null;
-    }
-
-    const encontrado = await procurarFrameComId(page.mainFrame(), 'top');
-
-    if (!encontrado) {
-      return {
-        ok: false,
-        id,
-        fakeClick,
-        error: `Elemento com id "${id}" não encontrado em nenhum frame`
-      };
-    }
-
-    const frameAlvo = getFrameByWhere(page, encontrado.where);
-    if (!frameAlvo) {
-      return {
-        ok: false,
-        id,
-        fakeClick,
-        error: `Não foi possível localizar o frame pelo caminho "${encontrado.where}"`
-      };
-    }
-
-    const handle = await frameAlvo.$(selector);
-    if (!handle) {
-      return {
-        ok: false,
-        id,
-        fakeClick,
-        error: `Elemento com id "${id}" não encontrado no frame "${encontrado.where}"`
-      };
-    }
-
-    await handle.evaluate(el => {
-      el.scrollIntoView({ block: 'center', inline: 'center' });
-    });
-
-    if (fakeClick) {
-      await handle.evaluate(el => el.click());
-    } else {
-      try {
-        await handle.click({ delay: 0 });
-      } catch (err) {
-        await handle.evaluate(el => el.click());
-      }
-    }
-
-    return {
-      ok: true,
-      id,
-      fakeClick,
-      where: encontrado.where
-    };
-  }
-
-
+  
   
 
   async function loginHuawai(login = 'root', password = 't8EtN?4y') {
@@ -185,20 +74,19 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
     ///////////////////
     ///////////////////
-    const frame = page.frames().find(f => f.url().includes('portalInte'));
+    await page.waitForSelector('#iframepage', { visible: true, timeout: 15000 });
 
-if (!frame) throw new Error('Frame do portal não encontrado');
+const iframeHandle = await page.$('#iframepage');
+const frame = await iframeHandle.contentFrame();
 
-const result = await frame.evaluate(() => {
-  if (typeof jumpToAutoConnection === 'function') {
-    jumpToAutoConnection();
-    return true;
-  }
-  return false;
+console.log('iframe URL:', frame?.url());
+
+await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
+  modo: 'selector',
+  acao: 'click'
 });
 
-console.log('jumpToAutoConnection executada:', result);
-    //await clicarPorIdUsandoWhere(page, '##test-up-content')
+    
     await wait(5000)
     await screenshot('01-login-after.png')
     ///////////////////
@@ -317,6 +205,164 @@ console.log('jumpToAutoConnection executada:', result);
     console.log(`clickIfExistsBySelectorRealClick(${selector}) =>`, clicked);
     return clicked;
   }
+
+  async function procurarEAcionarEmTodosFrames(page, alvo, opts = {}) {
+  const {
+    modo = 'auto',   // 'auto' | 'id' | 'selector' | 'funcao'
+    acao = 'click',   // 'click' | 'call'
+    timeoutMs = 15000,
+    verbose = true
+  } = opts;
+
+  if (!page) throw new Error('page é obrigatório');
+  if (!alvo) throw new Error('alvo é obrigatório');
+
+  const normalizarId = (v) => String(v).replace(/^#/, '').trim();
+
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+  // Garante tempo para o iframe ser criado/carregado
+  await page.waitForSelector('#iframepage', { timeout: timeoutMs }).catch(() => {});
+  await sleep(1000);
+
+  const visitados = new Set();
+  const frames = [];
+
+  function coletarFrames(frame) {
+    if (!frame || visitados.has(frame)) return;
+    visitados.add(frame);
+    frames.push(frame);
+    for (const child of frame.childFrames()) {
+      coletarFrames(child);
+    }
+  }
+
+  coletarFrames(page.mainFrame());
+
+  if (verbose) {
+    console.log(`\n=== Procurando "${alvo}" em ${frames.length} frames ===`);
+    frames.forEach((f, i) => {
+      console.log(`[${i}] ${f.name() || '(sem nome)'} -> ${f.url()}`);
+    });
+    console.log('========================================\n');
+  }
+
+  for (const frame of frames) {
+    try {
+      const resultado = await frame.evaluate(
+        ({ alvo, modo, acao }) => {
+          const norm = (v) => String(v || '').replace(/^#/, '').trim();
+          const valor = norm(alvo);
+
+          const visivel = (el) => {
+            const s = window.getComputedStyle(el);
+            return (
+              s &&
+              s.visibility !== 'hidden' &&
+              s.display !== 'none' &&
+              el.getClientRects().length > 0
+            );
+          };
+
+          const clicar = (el) => {
+            const alvoClique = el.closest('a, button, [role="button"], [onclick]') || el;
+            alvoClique.scrollIntoView({ block: 'center', inline: 'center' });
+
+            alvoClique.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }));
+            alvoClique.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
+            alvoClique.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
+            alvoClique.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+
+            if (typeof alvoClique.click === 'function') {
+              alvoClique.click();
+            }
+
+            return alvoClique.outerHTML?.slice(0, 300) || '';
+          };
+
+          const seletores = [];
+
+          if (modo === 'auto' || modo === 'id') {
+            seletores.push(`#${CSS.escape(valor)}`);
+            seletores.push(`[id="${CSS.escape(valor)}"]`);
+          }
+
+          if (modo === 'auto' || modo === 'selector') {
+            seletores.push(alvo);
+          }
+
+          for (const sel of seletores) {
+            let el = null;
+            try {
+              el = document.querySelector(sel);
+            } catch {
+              continue;
+            }
+
+            if (!el || !visivel(el)) continue;
+
+            if (acao === 'click') {
+              return {
+                ok: true,
+                tipo: 'elemento',
+                seletor: sel,
+                html: clicar(el)
+              };
+            }
+
+            return {
+              ok: true,
+              tipo: 'elemento',
+              seletor: sel,
+              html: el.outerHTML?.slice(0, 300) || ''
+            };
+          }
+
+          if (modo === 'auto' || modo === 'funcao') {
+            const fn = window[valor];
+            if (typeof fn === 'function') {
+              if (acao === 'call') {
+                fn();
+              }
+              return {
+                ok: true,
+                tipo: 'funcao',
+                nome: valor
+              };
+            }
+          }
+
+          return { ok: false };
+        },
+        { alvo, modo, acao }
+      );
+
+      if (resultado?.ok) {
+        if (verbose) {
+          console.log(`ACHOU em: ${frame.url()}`);
+          console.log(resultado);
+        }
+
+        return {
+          ok: true,
+          frameUrl: frame.url(),
+          frameName: frame.name(),
+          resultado
+        };
+      }
+    } catch (err) {
+      if (verbose) {
+        console.log(`Ignorando frame ${frame.url()} -> ${err.message}`);
+      }
+    }
+  }
+
+  if (verbose) {
+    console.log(`Não encontrou "${alvo}" em nenhum frame.`);
+  }
+
+  return { ok: false, alvo };
+}
                              
   
   async function clickIfExistsBySelector(selector) {
