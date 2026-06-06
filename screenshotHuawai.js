@@ -506,18 +506,30 @@ await screenshot('05a-afterUploadFile.png');
 
 await wait(2000);
 
-//await uploadFrame.click('#btnSubmit');
-
 console.log('[IMPORT] Aguardando #btnSubmit...');
 await uploadFrame.waitForSelector('#btnSubmit', { visible: true });
 console.log('[IMPORT] #btnSubmit encontrado');
 
 await screenshot('05b-beforeUploadConfigClick.png');
 
+await wait(2000);
+    
+// Aceita automaticamente o popup de confirmação (OK)
+page.once('dialog', async dialog => {
+  console.log('[IMPORT] Dialog encontrado:', dialog.message());
+  await dialog.accept();
+  console.log('[IMPORT] Dialog confirmado');
+});
+
+    await wait(3000);
+
 console.log('[IMPORT] Clicando em #btnSubmit...');
 await uploadFrame.evaluate(() => {
   document.querySelector('#btnSubmit')?.click();
 });
+
+    await wait(1000);
+    
 console.log('[IMPORT] Clique executado');
 
 await screenshot('05c-afterUploadConfigClick.png');
