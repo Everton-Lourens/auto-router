@@ -170,8 +170,6 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
     await wait(3000);
 
-    await screenshot('01-login-before.png')
-
     console.log('Preenchendo login...');
 
     await page.type('input[type="text"]', `${login}`);
@@ -181,6 +179,15 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     await clickIfExistsBySelector('#loginbutton')
     console.log('Login realizado...');
     await wait(2000);
+
+
+    ///////////////////
+    ///////////////////
+    await clicarPorIdUsandoWhere(page, '#frameline')
+    await wait(5000)
+    await screenshot('01-login-after.png')
+    ///////////////////
+    ///////////////////
     return true;
   }
   
