@@ -823,7 +823,7 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
     console.log('Login realizado.');
 
-    if ((await page.$eval('#pdtVer', el => el.textContent.toUpperCase())).indexOf('P9') === -1) {
+    if (true || (await page.$eval('#pdtVer', el => el.textContent.toUpperCase())).indexOf('P9') === -1) {
       await updateZTE5Antenas(page);
     } else {
       console.log('ZTE 5 antenas está atualizado: P9');
