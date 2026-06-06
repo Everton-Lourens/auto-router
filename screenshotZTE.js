@@ -26,6 +26,8 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
   });
 
   var configZTE5Antenas = false;
+  var emailPPPoE = null;
+  var passwordPPPoE = null;
 
   const page = await browser.newPage();
 
