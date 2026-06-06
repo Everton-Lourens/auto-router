@@ -71,9 +71,6 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     console.log('Login realizado...');
     await wait(2000);
 
-
-    ///////////////////
-    ///////////////////
     await page.waitForSelector('#iframepage', { visible: true, timeout: 15000 });
 
 const iframeHandle = await page.$('#iframepage');
@@ -86,9 +83,21 @@ await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
   acao: 'click'
 });
 
+///////////////////
+    ///////////////////
+    await screenshot('01-login-after.png')
+await wait(5000)
+    await procurarEAcionarEmTodosFrames(page, 'Next', {
+  modo: 'selector',
+  acao: 'click'
+});
+await screenshot('02-login-after.png')
+await wait(5000)
+    await clicarTextoEmTodosFrames(page, 'Next');
+
     
     await wait(5000)
-    await screenshot('01-login-after.png')
+    await screenshot('03-login-after.png')
     ///////////////////
     ///////////////////
     return true;
@@ -206,6 +215,42 @@ await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
     return clicked;
   }
 
+
+async function clicarTextoEmTodosFrames(page, texto) {
+  for (const frame of page.frames()) {
+    try {
+      const ok = await frame.evaluate((texto) => {
+
+        const elementos = [...document.querySelectorAll('*')];
+
+        const alvo = elementos.find(el =>
+          (el.innerText || '').trim() === texto
+        );
+
+        if (!alvo) return false;
+
+        alvo.scrollIntoView({
+          block: 'center',
+          inline: 'center'
+        });
+
+        alvo.click();
+
+        return true;
+
+      }, texto);
+
+      if (ok) {
+        console.log('Achou em:', frame.url());
+        return true;
+      }
+
+    } catch {}
+  }
+
+  return false;
+}
+  
   async function procurarEAcionarEmTodosFrames(page, alvo, opts = {}) {
   const {
     modo = 'auto',   // 'auto' | 'id' | 'selector' | 'funcao'
