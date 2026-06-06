@@ -885,11 +885,11 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     await clickFirstInternetItem(page);
     await wait(1500);
 
-    await page.type('#UserName:0', '@@@@@@@@@@@');
+    await page.type('#UserName\\:0', '@@@@@@@@@@@');
     await wait(1500);
             await screenshot('01-escrevendo.png');
     await wait(1500);
-    await page.type('#Password:0', 'senha123');
+    await page.type('#Password\\:0', 'senha123');
     await wait(1500);
 
     await screenshot('01-pppoe-expanded.png');
