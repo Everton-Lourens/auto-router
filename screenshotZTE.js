@@ -740,8 +740,13 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
     await wait(2000);
 
-    await clickIfExistsBySelector('#devMgr');
-
+   // await clickIfExistsBySelector('#devMgr')
+    await clickIfExistsBySelector('#defCfgMgr')
+    
+    await wait(2000);
+    await screenshot('01-testeeees.png');
+/////////////////
+    
     await wait(2000);
 
     await page.evaluate(() => {
