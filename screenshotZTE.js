@@ -962,6 +962,12 @@ return true;
    await clickFirstInternetItem(page);
    await wait(1500);
 
+
+    await page.type('#UserName', 'admin');
+       await wait(1500);
+await page.type('#Password', 'senha123');
+       await wait(1500);
+    
    await screenshot('01-pppoe-expanded.png')
 
     
