@@ -25,6 +25,8 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     ]
   });
 
+  var configZTE5Antenas = false;
+
   const page = await browser.newPage();
 
   await page.setViewport({
@@ -885,12 +887,19 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     await clickFirstInternetItem(page);
     await wait(1500);
 
-    await page.type('#UserName\\:0', '@@@@@@@@@@@');
-    await wait(1500);
-            await screenshot('01-escrevendo.png');
-    await wait(1500);
-    await page.type('#Password\\:0', 'senha123');
-    await wait(1500);
+    if (configZTE5Antenas) {
+       await configPPPoE();
+    }
+
+    async function configPPPoE() {
+          if (!emailPPPoE || !passwordPPPoE) {
+             throw new Error(`EMAIL: ${!!emailPPPoE} // SENHA: ${!!passwordPPPoE} (faltou adicionar)`);
+          }
+          await page.type('#UserName\\:0', emailPPPoE);
+          await wait(1500);
+          await page.type('#Password\\:0', passwordPPPoE);
+          await wait(1500);
+    }
 
     await screenshot('01-pppoe-expanded.png');
 
