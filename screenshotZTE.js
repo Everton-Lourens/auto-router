@@ -740,19 +740,20 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
     await wait(2000);
 
-   // await clickIfExistsBySelector('#devMgr')
-    await clickIfExistsBySelector('#defCfgMgr')
+   await clickIfExistsBySelector('#devMgr')
     
-    await wait(2000);
-    await screenshot('01-testeeees.png');
 /////////////////
     
     await wait(2000);
 
     await page.evaluate(() => {
-      document.querySelector('#firmwareUpgr').click();
+      //document.querySelector('#firmwareUpgr').click();
+      document.querySelector('#defCfgMgr').click()
+      
     });
-
+    
+    await wait(2000);
+    await screenshot('01-testeeees.png')
     await wait(2000);
 
     await page.waitForSelector('#VersionUpload');
