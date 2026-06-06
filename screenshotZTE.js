@@ -774,6 +774,10 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
       timeout: 10000
     });
 
+    await screenshot('01-upgrade-depois.png')
+
+    return true
+
     await page.click('#Btn_Upload');
 
     await wait(2000);
