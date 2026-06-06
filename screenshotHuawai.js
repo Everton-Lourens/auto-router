@@ -185,7 +185,20 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
     ///////////////////
     ///////////////////
-    await clicarPorIdUsandoWhere(page, '##test-up-content')
+    const frame = page.frames().find(f => f.url().includes('portalInte'));
+
+if (!frame) throw new Error('Frame do portal não encontrado');
+
+const result = await frame.evaluate(() => {
+  if (typeof jumpToAutoConnection === 'function') {
+    jumpToAutoConnection();
+    return true;
+  }
+  return false;
+});
+
+console.log('jumpToAutoConnection executada:', result);
+    //await clicarPorIdUsandoWhere(page, '##test-up-content')
     await wait(5000)
     await screenshot('01-login-after.png')
     ///////////////////
