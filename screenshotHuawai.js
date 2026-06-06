@@ -409,12 +409,6 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
     await page.click('#moreFunctionPage');
     
-    await wait(5000)
-
-    await screenshot('02-moreButton.png')
-    
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@');
-
     await wait(8000)
 
     const frame = page.frames().find(
@@ -424,19 +418,10 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     await frame.click('#systool');
 
     await wait(5000)  
-    await screenshot('03-openMenu.png')
-
-    await wait(2000)
 
     await frame.click('#cfgconfig');
 
-    await wait(2000)  
-    await screenshot('04-openBackReco.png')
-
     await wait(3000);
-
-    /////////////////////
-    /////////////////////
     
     console.log('[IMPORT] Procurando frame cfgfile...');
     const uploadFrame = page.frames().find(f => f.url().includes('cfgfile'));
@@ -455,15 +440,11 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     );
     console.log('[IMPORT] Upload concluído');
 
-    await screenshot('05a-afterUploadFile.png');
-
     await wait(2000);
 
     console.log('[IMPORT] Aguardando #btnSubmit...');
     await uploadFrame.waitForSelector('#btnSubmit', { visible: true });
     console.log('[IMPORT] #btnSubmit encontrado');
-
-    await screenshot('05b-beforeUploadConfigClick.png');
 
     await wait(2000);
     
@@ -482,26 +463,10 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     });
 
     await wait(1000);
-    
-    console.log('[IMPORT] Clique executado');
 
-    await screenshot('05c-afterUploadConfigClick.png');
-
-    await wait(1000);
-
-    // Se houver botão de envio depois do upload
-    //await frame.click('#btnSubmit');
-
-    await wait(2000);
-
-    await screenshot('05-uploadDone.png');
     console.log('[IMPORT] Processo finalizado');
 
     return true;
-    
-    /////////////////////
-    /////////////////////
-    
   }
 
   async function wanPage() {
