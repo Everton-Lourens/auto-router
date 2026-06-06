@@ -35,7 +35,7 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
   });
 
 
-  await loginPage();
+  await loginHuawai();
   //await wanPage()
 
 
@@ -156,9 +156,14 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
   
 
   async function loginHuawai(login = 'root', password = '@62474b3745JR') {
-  console.log('Abrindo HUAWAI...');
+  if (!password) {
+     throw new Error('password é obrigatório');
+  }
 
-   // await page.goto('http://100.68.12.253/', {
+    
+    console.log('Abrindo HUAWAI...');
+
+  //await page.goto('http://100.68.12.253/', {
   await page.goto('http://192.168.101.1/', {
     waitUntil: 'domcontentloaded',
     timeout: 30000
@@ -166,53 +171,18 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
   await wait(3000);
 
+   await screenshot('01-login-before.png')
+
   console.log('Preenchendo login...');
 
-  await page.type('input[type="text"]', login);
-  await page.type('input[type="password"]', password);
+  await page.type('input[type="text"]', `${login}`);
+  await page.type('input[type="password"]', `${password}`);
 
   console.log('Clicando login...');
-  await page.click('#LoginId');
-
-  await wait(8000);
-
-  console.log('Login realizado.');
-
-  const frame = page.frames().find(f =>
-    f.name() === 'mainFrame' || f.name() === 'functioncontent'
-  );
-
-  if (!frame) {
-    throw new Error('Frame principal não encontrado');
-  }
-
-  const systemManagementInfo = await frame.evaluate(() => {
-    const target = [...document.querySelectorAll('*')].find(el =>
-      el.textContent?.replace(/\s+/g, ' ').trim().toLowerCase() === 'system management'
-    );
-
-    if (!target) return null;
-
-    let parent = target.parentElement;
-
-    while (parent && parent.tagName !== 'DIV') {
-      parent = parent.parentElement;
-    }
-
-    return {
-      targetTag: target.tagName,
-      targetId: target.id || null,
-      targetClass: target.className || null,
-      parentTag: parent ? parent.tagName : null,
-      parentId: parent ? parent.id || null : null,
-      parentClass: parent ? parent.className || null : null,
-      parentHtml: parent ? parent.outerHTML : null
-    };
-  });
-
-  console.log('System Management:', systemManagementInfo);
-
-  return systemManagementInfo;
+  await clickIfExistsBySelector('#loginbutton')
+console.log('Login realizado...');
+  await wait(2000);
+    return true;
 }
   
   
@@ -429,29 +399,13 @@ async function clickIfExistsBySelector(selector) {
     return clicked;
   }
 
-  async function loginPage(login = 'root', password = '@62474b3745JR') {
-  
-  console.log('Abrindo roteador...');
+  async function presetHuawai(login = 'root') {
 
-  //await page.goto('http://100.68.12.253/', {
-  await page.goto('http://192.168.101.1/', {
-    waitUntil: 'domcontentloaded',
-    timeout: 30000
-  });
+    if (!inputPassword) throw new Error('password é obrigatório');
 
-  await wait(3000);
+    await loginHuawai('root', inputPassword);
 
-   await screenshot('01-login-before.png')
-
-  console.log('Preenchendo login...');
-
-  await page.type('input[type="text"]', `${login}`);
-  await page.type('input[type="password"]', `${password}`);
-
-  console.log('Clicando login...');
-  await clickIfExistsBySelector('#loginbutton')
-
-  await wait(2000);
+    await wait(2000)
 
       await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
 await page.click('#moreFunctionPage');
