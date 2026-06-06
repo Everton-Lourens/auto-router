@@ -83,26 +83,37 @@ await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
   acao: 'click'
 });
 
+
 ///////////////////
     ///////////////////
-    await screenshot('01-login-after.png')
+    await screenshot('000-login-after.png')
 await wait(5000)
     await procurarEAcionarEmTodosFrames(page, 'Next', {
   modo: 'selector',
   acao: 'click'
 });
-await screenshot('02-login-after.png')
+await screenshot('01-login-after.png')
 await wait(5000)
     await clicarTextoEmTodosFrames(page, 'Next');
 
-    
+
+    await screenshot('02-login-after.png')
+await wait(5000)
+    await procurarEAcionarEmTodosFrames(page, 'Skip', {
+  modo: 'selector',
+  acao: 'click'
+});
+await screenshot('03-login-after.png')
+await wait(5000)
+    await clicarTextoEmTodosFrames(page, 'Skip');
+
+
     await wait(5000)
-    await screenshot('03-login-after.png')
+    await screenshot('04-login-after.png')
     ///////////////////
     ///////////////////
     return true;
   }
-  
   
 
   async function screenshot(name) {
