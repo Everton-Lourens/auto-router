@@ -41,153 +41,152 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
 
   async function clicarPorIdUsandoWhere(page, id, fakeClick = false) {
-  if (!page) throw new Error('page é obrigatório');
-  if (!id) throw new Error('id é obrigatório');
+    if (!page) throw new Error('page é obrigatório');
+    if (!id) throw new Error('id é obrigatório');
 
-  id = String(id).replace(/^#/, '').trim();
+    id = String(id).replace(/^#/, '').trim();
 
-  function escapeAttrValue(value) {
-    return String(value)
-      .replace(/\\/g, '\\\\')
-      .replace(/"/g, '\\"');
-  }
-
-  const selector = `[id="${escapeAttrValue(id)}"]`;
-
-  function getFrameByWhere(page, where) {
-    if (!where || where === 'top') return page.mainFrame();
-
-    const parts = where.split('.').slice(1); // remove "top"
-    let frame = page.mainFrame();
-
-    for (const part of parts) {
-      const match = part.match(/^frame\[(\d+)\]$/);
-      if (!match) return null;
-
-      const index = Number(match[1]);
-      const children = frame.childFrames();
-
-      if (!children[index]) return null;
-      frame = children[index];
+    function escapeAttrValue(value) {
+      return String(value)
+        .replace(/\\/g, '\\\\')
+        .replace(/"/g, '\\"');
     }
 
-    return frame;
-  }
+    const selector = `[id="${escapeAttrValue(id)}"]`;
 
-  async function procurarFrameComId(frame, where = 'top') {
-    try {
-      const handle = await frame.$(selector);
+    function getFrameByWhere(page, where) {
+      if (!where || where === 'top') return page.mainFrame();
 
-      if (handle) {
-        return {
-          frame,
-          where,
-          handle
-        };
+      const parts = where.split('.').slice(1); // remove "top"
+      let frame = page.mainFrame();
+
+      for (const part of parts) {
+        const match = part.match(/^frame\[(\d+)\]$/);
+        if (!match) return null;
+
+        const index = Number(match[1]);
+        const children = frame.childFrames();
+
+        if (!children[index]) return null;
+        frame = children[index];
       }
-    } catch (e) {
-      // segue procurando
+
+      return frame;
     }
 
-    const filhos = frame.childFrames();
-    for (let i = 0; i < filhos.length; i++) {
-      const achou = await procurarFrameComId(filhos[i], `${where}.frame[${i}]`);
-      if (achou) return achou;
+    async function procurarFrameComId(frame, where = 'top') {
+      try {
+        const handle = await frame.$(selector);
+
+        if (handle) {
+          return {
+            frame,
+            where,
+            handle
+          };
+        }
+      } catch (e) {
+        // segue procurando
+      }
+
+      const filhos = frame.childFrames();
+      for (let i = 0; i < filhos.length; i++) {
+        const achou = await procurarFrameComId(filhos[i], `${where}.frame[${i}]`);
+        if (achou) return achou;
+      }
+
+      return null;
     }
 
-    return null;
-  }
+    const encontrado = await procurarFrameComId(page.mainFrame(), 'top');
 
-  const encontrado = await procurarFrameComId(page.mainFrame(), 'top');
+    if (!encontrado) {
+      return {
+        ok: false,
+        id,
+        fakeClick,
+        error: `Elemento com id "${id}" não encontrado em nenhum frame`
+      };
+    }
 
-  if (!encontrado) {
-    return {
-      ok: false,
-      id,
-      fakeClick,
-      error: `Elemento com id "${id}" não encontrado em nenhum frame`
-    };
-  }
+    const frameAlvo = getFrameByWhere(page, encontrado.where);
+    if (!frameAlvo) {
+      return {
+        ok: false,
+        id,
+        fakeClick,
+        error: `Não foi possível localizar o frame pelo caminho "${encontrado.where}"`
+      };
+    }
 
-  const frameAlvo = getFrameByWhere(page, encontrado.where);
-  if (!frameAlvo) {
-    return {
-      ok: false,
-      id,
-      fakeClick,
-      error: `Não foi possível localizar o frame pelo caminho "${encontrado.where}"`
-    };
-  }
+    const handle = await frameAlvo.$(selector);
+    if (!handle) {
+      return {
+        ok: false,
+        id,
+        fakeClick,
+        error: `Elemento com id "${id}" não encontrado no frame "${encontrado.where}"`
+      };
+    }
 
-  const handle = await frameAlvo.$(selector);
-  if (!handle) {
-    return {
-      ok: false,
-      id,
-      fakeClick,
-      error: `Elemento com id "${id}" não encontrado no frame "${encontrado.where}"`
-    };
-  }
+    await handle.evaluate(el => {
+      el.scrollIntoView({ block: 'center', inline: 'center' });
+    });
 
-  await handle.evaluate(el => {
-    el.scrollIntoView({ block: 'center', inline: 'center' });
-  });
-
-  if (fakeClick) {
-    await handle.evaluate(el => el.click());
-  } else {
-    try {
-      await handle.click({ delay: 0 });
-    } catch (err) {
+    if (fakeClick) {
       await handle.evaluate(el => el.click());
+    } else {
+      try {
+        await handle.click({ delay: 0 });
+      } catch (err) {
+        await handle.evaluate(el => el.click());
+      }
     }
+
+    return {
+      ok: true,
+      id,
+      fakeClick,
+      where: encontrado.where
+    };
   }
 
-  return {
-    ok: true,
-    id,
-    fakeClick,
-    where: encontrado.where
-  };
-}
 
-
-  
   
 
   async function loginHuawai(login = 'root', password = '@62474b3745JR') {
-  if (!password) {
-     throw new Error('password é obrigatório');
-  }
+    if (!password) {
+      throw new Error('password é obrigatório');
+    }
 
     
     console.log('Abrindo HUAWAI...');
 
-  //await page.goto('http://100.68.12.253/', {
-  await page.goto('http://192.168.101.1/', {
-    waitUntil: 'domcontentloaded',
-    timeout: 30000
-  });
+    //await page.goto('http://100.68.12.253/', {
+    await page.goto('http://192.168.101.1/', {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000
+    });
 
-  await wait(3000);
+    await wait(3000);
 
-   await screenshot('01-login-before.png')
+    await screenshot('01-login-before.png')
 
-  console.log('Preenchendo login...');
+    console.log('Preenchendo login...');
 
-  await page.type('input[type="text"]', `${login}`);
-  await page.type('input[type="password"]', `${password}`);
+    await page.type('input[type="text"]', `${login}`);
+    await page.type('input[type="password"]', `${password}`);
 
-  console.log('Clicando login...');
-  await clickIfExistsBySelector('#loginbutton')
-console.log('Login realizado...');
-  await wait(2000);
+    console.log('Clicando login...');
+    await clickIfExistsBySelector('#loginbutton')
+    console.log('Login realizado...');
+    await wait(2000);
     return true;
-}
+  }
   
   
 
-async function screenshot(name) {
+  async function screenshot(name) {
 
     const path = `${SAVE_DIR}/${name}`;
 
@@ -204,137 +203,137 @@ async function screenshot(name) {
     await new Promise(resolve => setTimeout(resolve, time));
   }
 
-async function clickFirstInternetItem(page) {
-  console.log('Procurando o primeiro item visível...');
+  async function clickFirstInternetItem(page) {
+    console.log('Procurando o primeiro item visível...');
 
-  await page.waitForSelector('#Internet_container .instName.collapsibleInst');
+    await page.waitForSelector('#Internet_container .instName.collapsibleInst');
 
-  const items = await page.$$('#Internet_container .instName.collapsibleInst');
+    const items = await page.$$('#Internet_container .instName.collapsibleInst');
 
-  for (const item of items) {
-    const box = await item.boundingBox();
-    if (!box) continue; // ignora ocultos
+    for (const item of items) {
+      const box = await item.boundingBox();
+      if (!box) continue; // ignora ocultos
 
-    await item.click({ delay: 50 });
-    console.log('Clique executado no primeiro item visível.');
-    return true;
-  }
-
-  console.log('Nenhum item visível encontrado.');
-  return false;
-}
-
-  async function openServiceControlBars(page) {
-  console.log('Garantindo que os controles de serviço estejam abertos...');
-
-  const openIfClosed = async (selector, label) => {
-    const el = await page.$(selector);
-    if (!el) {
-      console.log(`${label} não encontrado.`);
-      return false;
-    }
-
-    const isOpen = await el.evaluate(node =>
-      node.classList.contains('collapsibleBarExp')
-    );
-
-    if (isOpen) {
-      console.log(`${label} já está aberto.`);
+      await item.click({ delay: 50 });
+      console.log('Clique executado no primeiro item visível.');
       return true;
     }
 
-    await el.evaluate(node =>
-      node.scrollIntoView({ block: 'center', inline: 'center' })
-    );
-
-    try {
-      await el.click({ delay: 50 });
-    } catch {
-      await page.click(selector, { delay: 50 });
-    }
-
-    console.log(`${label} foi aberto.`);
-    return true;
-  };
-
-  await openIfClosed('#serviceCtlBar', 'Controle de serviço - IPv4');
-  await openIfClosed('#IPv6serviceCtlBar', 'Controle de serviço - IPv6');
-
-  return true;
-}
-
-  async function clickIfExistsBySelectorRealClick(page, selector) {
-  console.log(`Procurando seletor: ${selector}`);
-
-  const el = await page.$(selector);
-  if (!el) {
-    console.log(`clickIfExistsBySelectorRealClick(${selector}) => false`);
+    console.log('Nenhum item visível encontrado.');
     return false;
   }
 
-  await el.evaluate(node =>
-    node.scrollIntoView({
-      block: 'center',
-      inline: 'center'
-    })
-  );
+  async function openServiceControlBars(page) {
+    console.log('Garantindo que os controles de serviço estejam abertos...');
 
-  let clicked = false;
+    const openIfClosed = async (selector, label) => {
+      const el = await page.$(selector);
+      if (!el) {
+        console.log(`${label} não encontrado.`);
+        return false;
+      }
 
-  try {
-    await el.click({ delay: 50 });
-    clicked = true;
-  } catch {}
+      const isOpen = await el.evaluate(node =>
+        node.classList.contains('collapsibleBarExp')
+      );
 
-  if (!clicked) {
-    try {
-      await page.click(selector, { delay: 50 });
-      clicked = true;
-    } catch {}
-  }
+      if (isOpen) {
+        console.log(`${label} já está aberto.`);
+        return true;
+      }
 
-  console.log(`clickIfExistsBySelectorRealClick(${selector}) =>`, clicked);
-  return clicked;
-}
-                             
-  
-async function clickIfExistsBySelector(selector) {
-  console.log(`Procurando seletor: ${selector}`);
+      await el.evaluate(node =>
+        node.scrollIntoView({ block: 'center', inline: 'center' })
+      );
 
-  const clicked = await page.evaluate((selector) => {
-    const el = document.querySelector(selector);
+      try {
+        await el.click({ delay: 50 });
+      } catch {
+        await page.click(selector, { delay: 50 });
+      }
 
-    if (!el) return false;
+      console.log(`${label} foi aberto.`);
+      return true;
+    };
 
-    const style = window.getComputedStyle(el);
-    const visible =
-      style &&
-      style.visibility !== 'hidden' &&
-      style.display !== 'none' &&
-      el.getClientRects().length > 0;
-
-    if (!visible) return false;
-
-    const clickable =
-      el.closest('a, button, [role="button"], [onclick]') || el;
-
-    clickable.scrollIntoView({ block: 'center', inline: 'center' });
-
-    clickable.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }));
-    clickable.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
-    clickable.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
-    clickable.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
-
-    if (typeof clickable.click === 'function') {
-      clickable.click();
-    }
+    await openIfClosed('#serviceCtlBar', 'Controle de serviço - IPv4');
+    await openIfClosed('#IPv6serviceCtlBar', 'Controle de serviço - IPv6');
 
     return true;
-  }, selector);
+  }
 
-  console.log(`clickIfExistsBySelector(${selector}) =>`, clicked);
-  return clicked;
-}
+  async function clickIfExistsBySelectorRealClick(page, selector) {
+    console.log(`Procurando seletor: ${selector}`);
+
+    const el = await page.$(selector);
+    if (!el) {
+      console.log(`clickIfExistsBySelectorRealClick(${selector}) => false`);
+      return false;
+    }
+
+    await el.evaluate(node =>
+      node.scrollIntoView({
+        block: 'center',
+        inline: 'center'
+      })
+    );
+
+    let clicked = false;
+
+    try {
+      await el.click({ delay: 50 });
+      clicked = true;
+    } catch {}
+
+    if (!clicked) {
+      try {
+        await page.click(selector, { delay: 50 });
+        clicked = true;
+      } catch {}
+    }
+
+    console.log(`clickIfExistsBySelectorRealClick(${selector}) =>`, clicked);
+    return clicked;
+  }
+                             
+  
+  async function clickIfExistsBySelector(selector) {
+    console.log(`Procurando seletor: ${selector}`);
+
+    const clicked = await page.evaluate((selector) => {
+      const el = document.querySelector(selector);
+
+      if (!el) return false;
+
+      const style = window.getComputedStyle(el);
+      const visible =
+        style &&
+        style.visibility !== 'hidden' &&
+        style.display !== 'none' &&
+        el.getClientRects().length > 0;
+
+      if (!visible) return false;
+
+      const clickable =
+        el.closest('a, button, [role="button"], [onclick]') || el;
+
+      clickable.scrollIntoView({ block: 'center', inline: 'center' });
+
+      clickable.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }));
+      clickable.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
+      clickable.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
+      clickable.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+
+      if (typeof clickable.click === 'function') {
+        clickable.click();
+      }
+
+      return true;
+    }, selector);
+
+    console.log(`clickIfExistsBySelector(${selector}) =>`, clicked);
+    return clicked;
+  }
   
   async function clickIfExistsByText(text, selectorFallback = '*') {
     console.log(`Procurando texto: ${text}`);
@@ -407,98 +406,98 @@ async function clickIfExistsBySelector(selector) {
 
     await wait(2000)
 
-      await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
-await page.click('#moreFunctionPage');
+    await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
+    await page.click('#moreFunctionPage');
     
     await wait(5000)
 
-   await screenshot('02-moreButton.png')
+    await screenshot('02-moreButton.png')
     
-      console.log('@@@@@@@@@@@@@@@@@@@@@@@@');
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@');
 
-await wait(8000)
+    await wait(8000)
 
-const frame = page.frames().find(
-f => f.url().includes('configindex.asp')
-);
+    const frame = page.frames().find(
+      f => f.url().includes('configindex.asp')
+    );
 
-await frame.click('#systool');
+    await frame.click('#systool');
 
-await wait(5000)  
-   await screenshot('03-openMenu.png')
+    await wait(5000)  
+    await screenshot('03-openMenu.png')
 
-await wait(2000)
+    await wait(2000)
 
-await frame.click('#cfgconfig');
+    await frame.click('#cfgconfig');
 
-await wait(2000)  
-   await screenshot('04-openBackReco.png')
-
-await wait(3000);
-
-/////////////////////
-    /////////////////////
-    
-console.log('[IMPORT] Procurando frame cfgfile...');
-const uploadFrame = page.frames().find(f => f.url().includes('cfgfile'));
-console.log('[IMPORT] Frame encontrado:', !!uploadFrame);
-
-const fileInput = await uploadFrame.$('input[type="file"]');
-console.log('[IMPORT] input[type=file] encontrado:', !!fileInput);
-
-if (!fileInput) {
-  throw new Error('input[type=file] não encontrado');
-}
-
-console.log('[IMPORT] Iniciando upload...');
-await fileInput.uploadFile(
-  '/storage/emulated/0/Download/router/upHuawai.html'
-);
-console.log('[IMPORT] Upload concluído');
-
-await screenshot('05a-afterUploadFile.png');
-
-await wait(2000);
-
-console.log('[IMPORT] Aguardando #btnSubmit...');
-await uploadFrame.waitForSelector('#btnSubmit', { visible: true });
-console.log('[IMPORT] #btnSubmit encontrado');
-
-await screenshot('05b-beforeUploadConfigClick.png');
-
-await wait(2000);
-    
-// Aceita automaticamente o popup de confirmação (OK)
-page.once('dialog', async dialog => {
-  console.log('[IMPORT] Dialog encontrado:', dialog.message());
-  await dialog.accept();
-  console.log('[IMPORT] Dialog confirmado');
-});
+    await wait(2000)  
+    await screenshot('04-openBackReco.png')
 
     await wait(3000);
 
-console.log('[IMPORT] Clicando em #btnSubmit...');
-await uploadFrame.evaluate(() => {
-  document.querySelector('#btnSubmit')?.click();
-});
+    /////////////////////
+    /////////////////////
+    
+    console.log('[IMPORT] Procurando frame cfgfile...');
+    const uploadFrame = page.frames().find(f => f.url().includes('cfgfile'));
+    console.log('[IMPORT] Frame encontrado:', !!uploadFrame);
+
+    const fileInput = await uploadFrame.$('input[type="file"]');
+    console.log('[IMPORT] input[type=file] encontrado:', !!fileInput);
+
+    if (!fileInput) {
+      throw new Error('input[type=file] não encontrado');
+    }
+
+    console.log('[IMPORT] Iniciando upload...');
+    await fileInput.uploadFile(
+      '/storage/emulated/0/Download/router/upHuawai.html'
+    );
+    console.log('[IMPORT] Upload concluído');
+
+    await screenshot('05a-afterUploadFile.png');
+
+    await wait(2000);
+
+    console.log('[IMPORT] Aguardando #btnSubmit...');
+    await uploadFrame.waitForSelector('#btnSubmit', { visible: true });
+    console.log('[IMPORT] #btnSubmit encontrado');
+
+    await screenshot('05b-beforeUploadConfigClick.png');
+
+    await wait(2000);
+    
+    // Aceita automaticamente o popup de confirmação (OK)
+    page.once('dialog', async dialog => {
+      console.log('[IMPORT] Dialog encontrado:', dialog.message());
+      await dialog.accept();
+      console.log('[IMPORT] Dialog confirmado');
+    });
+
+    await wait(3000);
+
+    console.log('[IMPORT] Clicando em #btnSubmit...');
+    await uploadFrame.evaluate(() => {
+      document.querySelector('#btnSubmit')?.click();
+    });
 
     await wait(1000);
     
-console.log('[IMPORT] Clique executado');
+    console.log('[IMPORT] Clique executado');
 
-await screenshot('05c-afterUploadConfigClick.png');
+    await screenshot('05c-afterUploadConfigClick.png');
 
-await wait(1000);
+    await wait(1000);
 
-// Se houver botão de envio depois do upload
-//await frame.click('#btnSubmit');
+    // Se houver botão de envio depois do upload
+    //await frame.click('#btnSubmit');
 
-await wait(2000);
+    await wait(2000);
 
-await screenshot('05-uploadDone.png');
-console.log('[IMPORT] Processo finalizado');
+    await screenshot('05-uploadDone.png');
+    console.log('[IMPORT] Processo finalizado');
 
-return true;
+    return true;
     
     /////////////////////
     /////////////////////
@@ -507,52 +506,41 @@ return true;
 
   async function wanPage() {
 
-  //console.log('Abrindo menu Internet...');
+    //console.log('Abrindo menu Internet...');
 
-  //await page.click('#internet');
-  await wait(1500);
+    //await page.click('#internet');
+    await wait(1500);
 
-  //console.log('Abrindo submenu WAN...');
+    //console.log('Abrindo submenu WAN...');
 
-  await clickIfExistsBySelector('#WANUrl');
+    await clickIfExistsBySelector('#WANUrl');
 
-  await wait(2000);
+    await wait(2000);
 
-  console.log('Menu WAN aberto.');
+    console.log('Menu WAN aberto.');
 
-   await clickFirstInternetItem(page);
-   await wait(1500);
+    await clickFirstInternetItem(page);
+    await wait(1500);
 
-   await screenshot('01-pppoe-expanded.png')
+    await screenshot('01-pppoe-expanded.png')
 
     await wait(1500);
-   await clickIfExistsBySelector('#security')
+    await clickIfExistsBySelector('#security')
     await wait(1500);
     await clickIfExistsBySelectorRealClick(page, '#localServiceCtrl');
     await wait(1500);
     await screenshot('02-security.png');
 
     //////////
-await wait(1500);
+    await wait(1500);
     await openServiceControlBars(page);
     await wait(1500);
-await screenshot('03-service-control.png')
-//////////
+    await screenshot('03-service-control.png')
+    //////////
     
-  console.log('Etapa WAN concluída.');
+    console.log('Etapa WAN concluída.');
   }
 
   await browser.close();
 
 })();
-
-
-
-
-
-
-
-
-
-
-
