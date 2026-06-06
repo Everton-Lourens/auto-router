@@ -27,6 +27,8 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     ]
   });
 
+  var inputPassword = null;
+
   const page = await browser.newPage();
 
   await page.setViewport({
@@ -154,7 +156,7 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
   
 
-  async function loginHuawai(login = 'root', password = '@62474b3745JR') {
+  async function loginHuawai(login = 'root', password = 't8EtN?4y') {
     if (!password) {
       throw new Error('password é obrigatório');
     }
@@ -183,7 +185,7 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
 
     ///////////////////
     ///////////////////
-    await clicarPorIdUsandoWhere(page, '#frameline')
+    await clicarPorIdUsandoWhere(page, '##test-up-content')
     await wait(5000)
     await screenshot('01-login-after.png')
     ///////////////////
