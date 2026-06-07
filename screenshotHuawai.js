@@ -172,6 +172,18 @@ var inputPassword = null;
     return true;
   }
 
+  async function screenshot(name) {
+
+    const path = `${SAVE_DIR}/${name}`;
+
+    console.log(`Screenshot: ${path}`);
+
+    await page.screenshot({
+      path,
+      fullPage: true
+    });
+  }
+  
   async function wait(time) {
     await new Promise(resolve => setTimeout(resolve, time));
   }
