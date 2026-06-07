@@ -83,10 +83,11 @@ var inputPassword = null;
     await screenshot('03-login-after.png')
     await wait(5000)
     await clicarTextoEmTodosFrames(page, 'Skip');
+    await wait(5000);
 
     try {
       await clicarTextoEmTodosFrames(page, 'Finish');
-
+      await wait(20000);
     } catch (e) {
 
     await wait(30000); // aguarda o equipamento voltar
