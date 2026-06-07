@@ -45,15 +45,19 @@ var inputPassword = null;
     if (!inputPassword) throw new Error('password é obrigatório');
 
     await loginHuawai('root', inputPassword);
-
+    await wait(5000)
     ///////////////////
     ///////////////////
-    await page.waitForSelector('#iframepage', { visible: true, timeout: 15000 });
+    try {
+       await page.waitForSelector('#iframepage', { visible: true, timeout: 15000 });
 
-    const iframeHandle = await page.$('#iframepage');
-    const frameUrl = await iframeHandle.contentFrame();
+       const iframeHandle = await page.$('#iframepage');
+       const frameUrl = await iframeHandle.contentFrame();
 
-    console.log('iframe URL:', frameUrl?.url());
+       console.log('iframe URL:', frameUrl?.url());
+    catch (e) {
+       await wait(8000)
+    }
 
     await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
       modo: 'selector',
