@@ -29,8 +29,6 @@ var inputPassword = null;
     ]
   });
 
-
-
   const page = await browser.newPage();
 
   await page.setViewport({
@@ -38,75 +36,67 @@ var inputPassword = null;
     height: 720
   });
 
-  
   inputPassword = '';
   await presetHuawai();
   //await loginHuawai();
   //await wanPage()
 
-
-
-    async function presetHuawai() {
+  async function presetHuawai() {
     if (!inputPassword) throw new Error('password é obrigatório');
-      
+
     await loginHuawai('root', inputPassword);
 
-
-        ///////////////////
+    ///////////////////
     ///////////////////
     await page.waitForSelector('#iframepage', { visible: true, timeout: 15000 });
 
-const iframeHandle = await page.$('#iframepage');
-const frame = await iframeHandle.contentFrame();
+    const iframeHandle = await page.$('#iframepage');
+    const frame = await iframeHandle.contentFrame();
 
-console.log('iframe URL:', frame?.url());
+    console.log('iframe URL:', frame?.url());
 
-await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
-  modo: 'selector',
-  acao: 'click'
-});
+    await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
+      modo: 'selector',
+      acao: 'click'
+    });
 
     await screenshot('000-login-after.png')
-await wait(5000)
+    await wait(5000)
     await procurarEAcionarEmTodosFrames(page, 'Next', {
-  modo: 'selector',
-  acao: 'click'
-});
-await screenshot('01-login-after.png')
-await wait(5000)
+      modo: 'selector',
+      acao: 'click'
+    });
+    await screenshot('01-login-after.png')
+    await wait(5000)
     await clicarTextoEmTodosFrames(page, 'Next');
 
-
     await screenshot('02-login-after.png')
-await wait(5000)
+    await wait(5000)
     await procurarEAcionarEmTodosFrames(page, 'Skip', {
-  modo: 'selector',
-  acao: 'click'
-});
-await screenshot('03-login-after.png')
-await wait(5000)
+      modo: 'selector',
+      acao: 'click'
+    });
+    await screenshot('03-login-after.png')
+    await wait(5000)
     await clicarTextoEmTodosFrames(page, 'Skip');
 
+    await wait(30000); // aguarda o equipamento voltar
 
-await wait(30000); // aguarda o equipamento voltar
+    await page.goto('http://192.168.101.1/', {
+      waitUntil: 'domcontentloaded',
+      timeout: 60000
+    });
 
-await page.goto('http://192.168.101.1/', {
-  waitUntil: 'domcontentloaded',
-  timeout: 60000
-});
-    
     await wait(5000)
     await screenshot('04-login-after.png')
     ///////////////////
     ///////////////////
 
-    
-
     await wait(2000)
 
     await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
     await page.click('#moreFunctionPage');
-    
+
     await wait(8000)
 
     const frame = page.frames().find(
@@ -115,12 +105,12 @@ await page.goto('http://192.168.101.1/', {
 
     await frame.click('#systool');
 
-    await wait(5000)  
+    await wait(5000)
 
     await frame.click('#cfgconfig');
 
     await wait(3000);
-    
+
     console.log('[IMPORT] Procurando frame cfgfile...');
     const uploadFrame = page.frames().find(f => f.url().includes('cfgfile'));
     console.log('[IMPORT] Frame encontrado:', !!uploadFrame);
@@ -145,7 +135,7 @@ await page.goto('http://192.168.101.1/', {
     console.log('[IMPORT] #btnSubmit encontrado');
 
     await wait(2000);
-    
+
     // Aceita automaticamente o popup de confirmação (OK)
     page.once('dialog', async dialog => {
       console.log('[IMPORT] Dialog encontrado:', dialog.message());
@@ -167,15 +157,11 @@ await page.goto('http://192.168.101.1/', {
     return true;
   }
 
-  
-  
-
   async function loginHuawai(login = 'root', password = 't8EtN?4y') {
     if (!password) {
       throw new Error('password é obrigatório');
     }
 
-    
     console.log('Abrindo HUAWAI...');
 
     //await page.goto('http://100.68.12.253/', {
@@ -198,7 +184,6 @@ await page.goto('http://192.168.101.1/', {
 
     return true;
   }
-  
 
   async function screenshot(name) {
 
@@ -211,7 +196,6 @@ await page.goto('http://192.168.101.1/', {
       fullPage: true
     });
   }
-  
 
   async function wait(time) {
     await new Promise(resolve => setTimeout(resolve, time));
@@ -297,214 +281,212 @@ await page.goto('http://192.168.101.1/', {
     try {
       await el.click({ delay: 50 });
       clicked = true;
-    } catch {}
+    } catch { }
 
     if (!clicked) {
       try {
         await page.click(selector, { delay: 50 });
         clicked = true;
-      } catch {}
+      } catch { }
     }
 
     console.log(`clickIfExistsBySelectorRealClick(${selector}) =>`, clicked);
     return clicked;
   }
 
+  async function clicarTextoEmTodosFrames(page, texto) {
+    for (const frame of page.frames()) {
+      try {
+        const ok = await frame.evaluate((texto) => {
 
-async function clicarTextoEmTodosFrames(page, texto) {
-  for (const frame of page.frames()) {
-    try {
-      const ok = await frame.evaluate((texto) => {
+          const elementos = [...document.querySelectorAll('*')];
 
-        const elementos = [...document.querySelectorAll('*')];
+          const alvo = elementos.find(el =>
+            (el.innerText || '').trim() === texto
+          );
 
-        const alvo = elementos.find(el =>
-          (el.innerText || '').trim() === texto
-        );
+          if (!alvo) return false;
 
-        if (!alvo) return false;
+          alvo.scrollIntoView({
+            block: 'center',
+            inline: 'center'
+          });
 
-        alvo.scrollIntoView({
-          block: 'center',
-          inline: 'center'
-        });
+          alvo.click();
 
-        alvo.click();
+          return true;
 
-        return true;
+        }, texto);
 
-      }, texto);
+        if (ok) {
+          console.log('Achou em:', frame.url());
+          return true;
+        }
 
-      if (ok) {
-        console.log('Achou em:', frame.url());
-        return true;
-      }
-
-    } catch {}
-  }
-
-  return false;
-}
-  
-  async function procurarEAcionarEmTodosFrames(page, alvo, opts = {}) {
-  const {
-    modo = 'auto',   // 'auto' | 'id' | 'selector' | 'funcao'
-    acao = 'click',   // 'click' | 'call'
-    timeoutMs = 15000,
-    verbose = true
-  } = opts;
-
-  if (!page) throw new Error('page é obrigatório');
-  if (!alvo) throw new Error('alvo é obrigatório');
-
-  const normalizarId = (v) => String(v).replace(/^#/, '').trim();
-
-  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-
-  // Garante tempo para o iframe ser criado/carregado
-  await page.waitForSelector('#iframepage', { timeout: timeoutMs }).catch(() => {});
-  await sleep(1000);
-
-  const visitados = new Set();
-  const frames = [];
-
-  function coletarFrames(frame) {
-    if (!frame || visitados.has(frame)) return;
-    visitados.add(frame);
-    frames.push(frame);
-    for (const child of frame.childFrames()) {
-      coletarFrames(child);
+      } catch { }
     }
+
+    return false;
   }
 
-  coletarFrames(page.mainFrame());
+  async function procurarEAcionarEmTodosFrames(page, alvo, opts = {}) {
+    const {
+      modo = 'auto',   // 'auto' | 'id' | 'selector' | 'funcao'
+      acao = 'click',   // 'click' | 'call'
+      timeoutMs = 15000,
+      verbose = true
+    } = opts;
 
-  if (verbose) {
-    console.log(`\n=== Procurando "${alvo}" em ${frames.length} frames ===`);
-    frames.forEach((f, i) => {
-      console.log(`[${i}] ${f.name() || '(sem nome)'} -> ${f.url()}`);
-    });
-    console.log('========================================\n');
-  }
+    if (!page) throw new Error('page é obrigatório');
+    if (!alvo) throw new Error('alvo é obrigatório');
 
-  for (const frame of frames) {
-    try {
-      const resultado = await frame.evaluate(
-        ({ alvo, modo, acao }) => {
-          const norm = (v) => String(v || '').replace(/^#/, '').trim();
-          const valor = norm(alvo);
+    const normalizarId = (v) => String(v).replace(/^#/, '').trim();
 
-          const visivel = (el) => {
-            const s = window.getComputedStyle(el);
-            return (
-              s &&
-              s.visibility !== 'hidden' &&
-              s.display !== 'none' &&
-              el.getClientRects().length > 0
-            );
-          };
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
-          const clicar = (el) => {
-            const alvoClique = el.closest('a, button, [role="button"], [onclick]') || el;
-            alvoClique.scrollIntoView({ block: 'center', inline: 'center' });
+    // Garante tempo para o iframe ser criado/carregado
+    await page.waitForSelector('#iframepage', { timeout: timeoutMs }).catch(() => { });
+    await sleep(1000);
 
-            alvoClique.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }));
-            alvoClique.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
-            alvoClique.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
-            alvoClique.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+    const visitados = new Set();
+    const frames = [];
 
-            if (typeof alvoClique.click === 'function') {
-              alvoClique.click();
+    function coletarFrames(frame) {
+      if (!frame || visitados.has(frame)) return;
+      visitados.add(frame);
+      frames.push(frame);
+      for (const child of frame.childFrames()) {
+        coletarFrames(child);
+      }
+    }
+
+    coletarFrames(page.mainFrame());
+
+    if (verbose) {
+      console.log(`\n=== Procurando "${alvo}" em ${frames.length} frames ===`);
+      frames.forEach((f, i) => {
+        console.log(`[${i}] ${f.name() || '(sem nome)'} -> ${f.url()}`);
+      });
+      console.log('========================================\n');
+    }
+
+    for (const frame of frames) {
+      try {
+        const resultado = await frame.evaluate(
+          ({ alvo, modo, acao }) => {
+            const norm = (v) => String(v || '').replace(/^#/, '').trim();
+            const valor = norm(alvo);
+
+            const visivel = (el) => {
+              const s = window.getComputedStyle(el);
+              return (
+                s &&
+                s.visibility !== 'hidden' &&
+                s.display !== 'none' &&
+                el.getClientRects().length > 0
+              );
+            };
+
+            const clicar = (el) => {
+              const alvoClique = el.closest('a, button, [role="button"], [onclick]') || el;
+              alvoClique.scrollIntoView({ block: 'center', inline: 'center' });
+
+              alvoClique.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true, view: window }));
+              alvoClique.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, view: window }));
+              alvoClique.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, view: window }));
+              alvoClique.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+
+              if (typeof alvoClique.click === 'function') {
+                alvoClique.click();
+              }
+
+              return alvoClique.outerHTML?.slice(0, 300) || '';
+            };
+
+            const seletores = [];
+
+            if (modo === 'auto' || modo === 'id') {
+              seletores.push(`#${CSS.escape(valor)}`);
+              seletores.push(`[id="${CSS.escape(valor)}"]`);
             }
 
-            return alvoClique.outerHTML?.slice(0, 300) || '';
-          };
-
-          const seletores = [];
-
-          if (modo === 'auto' || modo === 'id') {
-            seletores.push(`#${CSS.escape(valor)}`);
-            seletores.push(`[id="${CSS.escape(valor)}"]`);
-          }
-
-          if (modo === 'auto' || modo === 'selector') {
-            seletores.push(alvo);
-          }
-
-          for (const sel of seletores) {
-            let el = null;
-            try {
-              el = document.querySelector(sel);
-            } catch {
-              continue;
+            if (modo === 'auto' || modo === 'selector') {
+              seletores.push(alvo);
             }
 
-            if (!el || !visivel(el)) continue;
+            for (const sel of seletores) {
+              let el = null;
+              try {
+                el = document.querySelector(sel);
+              } catch {
+                continue;
+              }
 
-            if (acao === 'click') {
+              if (!el || !visivel(el)) continue;
+
+              if (acao === 'click') {
+                return {
+                  ok: true,
+                  tipo: 'elemento',
+                  seletor: sel,
+                  html: clicar(el)
+                };
+              }
+
               return {
                 ok: true,
                 tipo: 'elemento',
                 seletor: sel,
-                html: clicar(el)
+                html: el.outerHTML?.slice(0, 300) || ''
               };
             }
 
-            return {
-              ok: true,
-              tipo: 'elemento',
-              seletor: sel,
-              html: el.outerHTML?.slice(0, 300) || ''
-            };
-          }
-
-          if (modo === 'auto' || modo === 'funcao') {
-            const fn = window[valor];
-            if (typeof fn === 'function') {
-              if (acao === 'call') {
-                fn();
+            if (modo === 'auto' || modo === 'funcao') {
+              const fn = window[valor];
+              if (typeof fn === 'function') {
+                if (acao === 'call') {
+                  fn();
+                }
+                return {
+                  ok: true,
+                  tipo: 'funcao',
+                  nome: valor
+                };
               }
-              return {
-                ok: true,
-                tipo: 'funcao',
-                nome: valor
-              };
             }
+
+            return { ok: false };
+          },
+          { alvo, modo, acao }
+        );
+
+        if (resultado?.ok) {
+          if (verbose) {
+            console.log(`ACHOU em: ${frame.url()}`);
+            console.log(resultado);
           }
 
-          return { ok: false };
-        },
-        { alvo, modo, acao }
-      );
-
-      if (resultado?.ok) {
-        if (verbose) {
-          console.log(`ACHOU em: ${frame.url()}`);
-          console.log(resultado);
+          return {
+            ok: true,
+            frameUrl: frame.url(),
+            frameName: frame.name(),
+            resultado
+          };
         }
-
-        return {
-          ok: true,
-          frameUrl: frame.url(),
-          frameName: frame.name(),
-          resultado
-        };
-      }
-    } catch (err) {
-      if (verbose) {
-        console.log(`Ignorando frame ${frame.url()} -> ${err.message}`);
+      } catch (err) {
+        if (verbose) {
+          console.log(`Ignorando frame ${frame.url()} -> ${err.message}`);
+        }
       }
     }
+
+    if (verbose) {
+      console.log(`Não encontrou "${alvo}" em nenhum frame.`);
+    }
+
+    return { ok: false, alvo };
   }
 
-  if (verbose) {
-    console.log(`Não encontrou "${alvo}" em nenhum frame.`);
-  }
-
-  return { ok: false, alvo };
-}
-                             
-  
   async function clickIfExistsBySelector(selector) {
     console.log(`Procurando seletor: ${selector}`);
 
@@ -542,7 +524,7 @@ async function clicarTextoEmTodosFrames(page, texto) {
     console.log(`clickIfExistsBySelector(${selector}) =>`, clicked);
     return clicked;
   }
-  
+
   async function clickIfExistsByText(text, selectorFallback = '*') {
     console.log(`Procurando texto: ${text}`);
 
@@ -606,7 +588,6 @@ async function clicarTextoEmTodosFrames(page, texto) {
     return clicked;
   }
 
-
   async function wanPage() {
 
     //console.log('Abrindo menu Internet...');
@@ -640,7 +621,7 @@ async function clicarTextoEmTodosFrames(page, texto) {
     await wait(1500);
     await screenshot('03-service-control.png')
     //////////
-    
+
     console.log('Etapa WAN concluída.');
   }
 
