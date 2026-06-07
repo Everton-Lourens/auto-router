@@ -64,51 +64,21 @@ var inputPassword = null;
       acao: 'click'
     });
 
-await wait(3000)
-    await screenshot('Next-before.png')
     await wait(3000)
     await clicarBotaoPorTextoNoFrame(page, '/PortalUPPort.asp', 'Next');
     await wait(3000)
-console.log(page.frames().map(f => f.url()));
-await new Promise(r => setTimeout(r, 3000));
-    await wait(3000)
-await screenshot('skip111-before.png')
-await wait(3000)
     await clicarBotaoPorTextoNoFrame(page, '/PortalSetWiFiPwd.asp', 'Skip');
     await wait(3000)
-console.log(page.frames().map(f => f.url()));
-await new Promise(r => setTimeout(r, 3000));
-    await wait(3000)
-await screenshot('skip222-before.png')
-    await wait(3000)
-await clicarBotaoPorTextoNoFrame(page, '/PortalSetPWD.asp', 'Skip');
-    await wait(3000)
-console.log(page.frames().map(f => f.url()));
-await wait(3000)
-    await screenshot('skip-after.png')
-
-
-    
+    await clicarBotaoPorTextoNoFrame(page, '/PortalSetPWD.asp', 'Skip');
+      
        await wait(30000); // aguarda o equipamento voltar
-    
-       await screenshot('presetFINISH-before.png')
-       await wait(5000)
-    
        await page.goto('http://192.168.101.1/', {
           waitUntil: 'domcontentloaded',
           timeout: 60000
        });
- //   }
 
     await wait(5000)
-    ///////////////////
-    ///////////////////
-    await screenshot('presetLogin-before.png')
-    await wait(2000)
     await loginHuawai(inputPassword);
-    await wait(2000)
-    await screenshot('presetLogin-after.png')
-
     await wait(2000)
 
     await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
