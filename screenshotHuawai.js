@@ -36,7 +36,7 @@ var inputPassword = null;
     height: 720
   });
 
-  inputPassword = 't8EtN?4y';
+  inputPassword = '76%t9C=Z';
   await presetHuawai();
   //await loginHuawai();
   //await wanPage()
