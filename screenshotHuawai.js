@@ -5,6 +5,10 @@ const fs = require('fs');
 const SAVE_DIR = '/storage/emulated/0/Download/router';
 const login = 'root';
 var inputPassword = null;
+var emailPPPoE = null;
+var passwordPPPoE = null;
+var nameSSID = null;
+var passwordSSID = null;
 
 (async () => {
 
