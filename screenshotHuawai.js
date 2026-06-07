@@ -64,27 +64,26 @@ var inputPassword = null;
       acao: 'click'
     });
 
-    await screenshot('000-login-after.png')
+   // await wait(5000)
+  //  await procurarEAcionarEmTodosFrames(page, 'Next', {
+   //   modo: 'selector',
+   //   acao: 'click'
+   // });
     await wait(5000)
-    await procurarEAcionarEmTodosFrames(page, 'Next', {
-      modo: 'selector',
-      acao: 'click'
-    });
-    await screenshot('01-login-after.png')
+  await screenshot('after-link.png')
     await wait(5000)
     await clicarTextoEmTodosFrames(page, 'Next');
 
-    await screenshot('02-login-after.png')
     await wait(5000)
-    await procurarEAcionarEmTodosFrames(page, 'Skip', {
-      modo: 'selector',
-      acao: 'click'
-    });
-    await screenshot('03-login-after.png')
-    await wait(5000)
+    await screenshot('after-next.png')
+  //  await procurarEAcionarEmTodosFrames(page, 'Skip', {
+    //  modo: 'selector',
+    //  acao: 'click'
+   // });
+await wait(5000)
     await clicarTextoEmTodosFrames(page, 'Skip');
     await wait(5000);
-
+await screenshot('after-skip.png')
   //  try {
     //   await wait(30000);
      //  await screenshot('presetLogin-after.png')
@@ -95,7 +94,7 @@ var inputPassword = null;
   //  } catch (e) {
        await wait(30000); // aguarda o equipamento voltar
     
-       await screenshot('presetLogin-before.png')
+       await screenshot('presetFINISH-before.png')
        await wait(5000)
     
        await page.goto('http://192.168.101.1/', {
@@ -103,8 +102,7 @@ var inputPassword = null;
           timeout: 60000
        });
  //   }
-    await wait(5000)
-    await screenshot('presetLogin-after.png')
+
     await wait(5000)
     ///////////////////
     ///////////////////
