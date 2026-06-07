@@ -80,10 +80,15 @@ var inputPassword = null;
     //  modo: 'selector',
     //  acao: 'click'
    // });
-await wait(5000)
+    await wait(5000)
     await clicarTextoEmTodosFrames(page, 'Skip');
     await wait(5000);
-await screenshot('after-skip.png')
+    await screenshot('after-skip11.png')
+
+    await wait(5000)
+    await clicarTextoEmTodosFrames(page, 'Skip');
+    await wait(5000);
+    await screenshot('after-skip22.png')
   //  try {
     //   await wait(30000);
      //  await screenshot('presetLogin-after.png')
