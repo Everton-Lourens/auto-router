@@ -67,17 +67,23 @@ var inputPassword = null;
 await wait(3000)
     await screenshot('Next-before.png')
     await wait(3000)
-    await clicarTextoEmFramePorSrc(page, '/PortalUPPort.asp', 'Next');
+    await clicarBotaoPorTextoNoFrame(page, '/PortalUPPort.asp', 'Next');
+    await wait(3000)
+console.log(page.frames().map(f => f.url()));
 await new Promise(r => setTimeout(r, 3000));
     await wait(3000)
 await screenshot('skip111-before.png')
 await wait(3000)
-    await clicarTextoEmFramePorSrc(page, '/PortalSetWiFiPwd.asp', 'Skip');
+    await clicarBotaoPorTextoNoFrame(page, '/PortalSetWiFiPwd.asp', 'Skip');
+    await wait(3000)
+console.log(page.frames().map(f => f.url()));
 await new Promise(r => setTimeout(r, 3000));
     await wait(3000)
 await screenshot('skip222-before.png')
     await wait(3000)
-await clicarTextoEmFramePorSrc(page, '/PortalSetPWD.asp', 'Skip');
+await clicarBotaoPorTextoNoFrame(page, '/PortalSetPWD.asp', 'Skip');
+    await wait(3000)
+console.log(page.frames().map(f => f.url()));
 await wait(3000)
     await screenshot('skip-after.png')
 
@@ -307,7 +313,10 @@ await wait(3000)
     return clicked;
   }
 
-async function clicarTextoEmFramePorSrc(page, srcParte, texto) {
+
+
+  
+async function clicarBotaoPorTextoNoFrame(page, srcParte, texto) {
   const frame = page.frames().find(f => f.url().includes(srcParte));
 
   if (!frame) {
@@ -317,109 +326,48 @@ async function clicarTextoEmFramePorSrc(page, srcParte, texto) {
 
   await frame.waitForSelector('body', { timeout: 5000 }).catch(() => null);
 
-  const dados = await frame.evaluate((texto) => {
+  const handle = await frame.evaluateHandle((texto) => {
     const normaliza = (s) => (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
     const alvoTexto = normaliza(texto);
 
-    const seletor = [
-      'button',
-      'input[type="button"]',
-      'input[type="submit"]',
-      'input[type="reset"]',
-      'a',
-      '[role="button"]'
-    ].join(',');
+    const candidatos = [
+      ...document.querySelectorAll('button, a, input[type="button"], input[type="submit"], [role="button"]')
+    ].filter(el => {
+      const r = el.getBoundingClientRect();
+      const style = getComputedStyle(el);
+      return r.width > 0 && r.height > 0 &&
+             style.display !== 'none' &&
+             style.visibility !== 'hidden';
+    });
 
-    const candidatos = [...document.querySelectorAll(seletor)]
-      .filter(el => {
-        const style = getComputedStyle(el);
-        const r = el.getBoundingClientRect();
-        return (
-          style.display !== 'none' &&
-          style.visibility !== 'hidden' &&
-          r.width > 0 &&
-          r.height > 0
-        );
-      })
-      .map(el => {
-        const r = el.getBoundingClientRect();
-        return {
-          tag: el.tagName,
-          text: normaliza(el.innerText || el.value || el.textContent),
-          html: el.outerHTML.slice(0, 300),
-          x: r.left + r.width / 2,
-          y: r.top + r.height / 2
-        };
-      });
-
-    const alvo = candidatos.find(el => el.text === alvoTexto);
-
-    return alvo || null;
+    return candidatos.find(el => {
+      const txt = normaliza(el.innerText || el.value || el.textContent);
+      return txt === alvoTexto;
+    }) || null;
   }, texto);
 
-  if (!dados) {
+  const element = handle.asElement();
+  if (!element) {
     console.log(`Texto não encontrado em: ${srcParte} -> ${texto}`);
     return false;
   }
 
-  console.log('Elemento alvo:', {
-    tag: dados.tag,
-    text: dados.text,
-    html: dados.html
-  });
+  await element.evaluate(el => el.scrollIntoView({ block: 'center', inline: 'center' }));
 
-  const box = await frame.evaluate((texto) => {
-    const normaliza = (s) => (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
-    const alvoTexto = normaliza(texto);
+  try {
+    await element.click({ delay: 80 });
+  } catch (err) {
+    console.log('Falhou no elementHandle.click(), tentando mouse.click():', err.message);
 
-    const seletor = [
-      'button',
-      'input[type="button"]',
-      'input[type="submit"]',
-      'input[type="reset"]',
-      'a',
-      '[role="button"]'
-    ].join(',');
+    const box = await element.boundingBox();
+    if (!box) return false;
 
-    const candidatos = [...document.querySelectorAll(seletor)].filter(el => {
-      const style = getComputedStyle(el);
-      const r = el.getBoundingClientRect();
-      return (
-        style.display !== 'none' &&
-        style.visibility !== 'hidden' &&
-        r.width > 0 &&
-        r.height > 0
-      );
-    });
-
-    const alvo = candidatos.find(el => {
-      const txt = normaliza(el.innerText || el.value || el.textContent);
-      return txt === alvoTexto;
-    });
-
-    if (!alvo) return null;
-
-    const r = alvo.getBoundingClientRect();
-    alvo.scrollIntoView({ block: 'center', inline: 'center' });
-
-    return {
-      x: r.left + r.width / 2,
-      y: r.top + r.height / 2
-    };
-  }, texto);
-
-  if (!box) {
-    console.log(`Não consegui calcular a posição do clique: ${texto}`);
-    return false;
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
   }
 
-  await page.mouse.click(box.x, box.y);
+  await page.waitForTimeout(1500);
 
-  await new Promise(r => setTimeout(r, 3000));
-
-  const urls = page.frames().map(f => f.url());
-  console.log('Frames após clique:', urls);
-
+  console.log(`Achou e clicou em: ${srcParte} -> ${texto}`);
   return true;
 }
 
