@@ -3,6 +3,8 @@ const puppeteer = require('puppeteer-core');
 const fs = require('fs');
 
 const SAVE_DIR = '/storage/emulated/0/Download/router';
+const login = 'root';
+var inputPassword = null;
 
 (async () => {
 
@@ -27,7 +29,7 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     ]
   });
 
-  var inputPassword = null;
+
 
   const page = await browser.newPage();
 
@@ -36,11 +38,134 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     height: 720
   });
 
-
-  await loginHuawai();
+  
+  inputPassword = '';
+  await presetHuawai();
+  //await loginHuawai();
   //await wanPage()
 
 
+
+    async function presetHuawai() {
+    if (!inputPassword) throw new Error('password é obrigatório');
+      
+    await loginHuawai('root', inputPassword);
+
+
+        ///////////////////
+    ///////////////////
+    await page.waitForSelector('#iframepage', { visible: true, timeout: 15000 });
+
+const iframeHandle = await page.$('#iframepage');
+const frame = await iframeHandle.contentFrame();
+
+console.log('iframe URL:', frame?.url());
+
+await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
+  modo: 'selector',
+  acao: 'click'
+});
+
+    await screenshot('000-login-after.png')
+await wait(5000)
+    await procurarEAcionarEmTodosFrames(page, 'Next', {
+  modo: 'selector',
+  acao: 'click'
+});
+await screenshot('01-login-after.png')
+await wait(5000)
+    await clicarTextoEmTodosFrames(page, 'Next');
+
+
+    await screenshot('02-login-after.png')
+await wait(5000)
+    await procurarEAcionarEmTodosFrames(page, 'Skip', {
+  modo: 'selector',
+  acao: 'click'
+});
+await screenshot('03-login-after.png')
+await wait(5000)
+    await clicarTextoEmTodosFrames(page, 'Skip');
+
+
+await wait(30000); // aguarda o equipamento voltar
+
+await page.goto('http://192.168.101.1/', {
+  waitUntil: 'domcontentloaded',
+  timeout: 60000
+});
+    
+    await wait(5000)
+    await screenshot('04-login-after.png')
+    ///////////////////
+    ///////////////////
+
+    
+
+    await wait(2000)
+
+    await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
+    await page.click('#moreFunctionPage');
+    
+    await wait(8000)
+
+    const frame = page.frames().find(
+      f => f.url().includes('configindex.asp')
+    );
+
+    await frame.click('#systool');
+
+    await wait(5000)  
+
+    await frame.click('#cfgconfig');
+
+    await wait(3000);
+    
+    console.log('[IMPORT] Procurando frame cfgfile...');
+    const uploadFrame = page.frames().find(f => f.url().includes('cfgfile'));
+    console.log('[IMPORT] Frame encontrado:', !!uploadFrame);
+
+    const fileInput = await uploadFrame.$('input[type="file"]');
+    console.log('[IMPORT] input[type=file] encontrado:', !!fileInput);
+
+    if (!fileInput) {
+      throw new Error('input[type=file] não encontrado');
+    }
+
+    console.log('[IMPORT] Iniciando upload...');
+    await fileInput.uploadFile(
+      '/storage/emulated/0/Download/router/upHuawai.html'
+    );
+    console.log('[IMPORT] Upload concluído');
+
+    await wait(2000);
+
+    console.log('[IMPORT] Aguardando #btnSubmit...');
+    await uploadFrame.waitForSelector('#btnSubmit', { visible: true });
+    console.log('[IMPORT] #btnSubmit encontrado');
+
+    await wait(2000);
+    
+    // Aceita automaticamente o popup de confirmação (OK)
+    page.once('dialog', async dialog => {
+      console.log('[IMPORT] Dialog encontrado:', dialog.message());
+      await dialog.accept();
+      console.log('[IMPORT] Dialog confirmado');
+    });
+
+    await wait(3000);
+
+    console.log('[IMPORT] Clicando em #btnSubmit...');
+    await uploadFrame.evaluate(() => {
+      document.querySelector('#btnSubmit')?.click();
+    });
+
+    await wait(1000);
+
+    console.log('[IMPORT] Processo finalizado');
+
+    return true;
+  }
 
   
   
@@ -71,47 +196,6 @@ const SAVE_DIR = '/storage/emulated/0/Download/router';
     console.log('Login realizado...');
     await wait(2000);
 
-    await page.waitForSelector('#iframepage', { visible: true, timeout: 15000 });
-
-const iframeHandle = await page.$('#iframepage');
-const frame = await iframeHandle.contentFrame();
-
-console.log('iframe URL:', frame?.url());
-
-await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
-  modo: 'selector',
-  acao: 'click'
-});
-
-
-///////////////////
-    ///////////////////
-    await screenshot('000-login-after.png')
-await wait(5000)
-    await procurarEAcionarEmTodosFrames(page, 'Next', {
-  modo: 'selector',
-  acao: 'click'
-});
-await screenshot('01-login-after.png')
-await wait(5000)
-    await clicarTextoEmTodosFrames(page, 'Next');
-
-
-    await screenshot('02-login-after.png')
-await wait(5000)
-    await procurarEAcionarEmTodosFrames(page, 'Skip', {
-  modo: 'selector',
-  acao: 'click'
-});
-await screenshot('03-login-after.png')
-await wait(5000)
-    await clicarTextoEmTodosFrames(page, 'Skip');
-
-
-    await wait(5000)
-    await screenshot('04-login-after.png')
-    ///////////////////
-    ///////////////////
     return true;
   }
   
@@ -522,76 +606,6 @@ async function clicarTextoEmTodosFrames(page, texto) {
     return clicked;
   }
 
-  async function presetHuawai(login = 'root') {
-
-    if (!inputPassword) throw new Error('password é obrigatório');
-
-    await loginHuawai('root', inputPassword);
-
-    await wait(2000)
-
-    await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
-    await page.click('#moreFunctionPage');
-    
-    await wait(8000)
-
-    const frame = page.frames().find(
-      f => f.url().includes('configindex.asp')
-    );
-
-    await frame.click('#systool');
-
-    await wait(5000)  
-
-    await frame.click('#cfgconfig');
-
-    await wait(3000);
-    
-    console.log('[IMPORT] Procurando frame cfgfile...');
-    const uploadFrame = page.frames().find(f => f.url().includes('cfgfile'));
-    console.log('[IMPORT] Frame encontrado:', !!uploadFrame);
-
-    const fileInput = await uploadFrame.$('input[type="file"]');
-    console.log('[IMPORT] input[type=file] encontrado:', !!fileInput);
-
-    if (!fileInput) {
-      throw new Error('input[type=file] não encontrado');
-    }
-
-    console.log('[IMPORT] Iniciando upload...');
-    await fileInput.uploadFile(
-      '/storage/emulated/0/Download/router/upHuawai.html'
-    );
-    console.log('[IMPORT] Upload concluído');
-
-    await wait(2000);
-
-    console.log('[IMPORT] Aguardando #btnSubmit...');
-    await uploadFrame.waitForSelector('#btnSubmit', { visible: true });
-    console.log('[IMPORT] #btnSubmit encontrado');
-
-    await wait(2000);
-    
-    // Aceita automaticamente o popup de confirmação (OK)
-    page.once('dialog', async dialog => {
-      console.log('[IMPORT] Dialog encontrado:', dialog.message());
-      await dialog.accept();
-      console.log('[IMPORT] Dialog confirmado');
-    });
-
-    await wait(3000);
-
-    console.log('[IMPORT] Clicando em #btnSubmit...');
-    await uploadFrame.evaluate(() => {
-      document.querySelector('#btnSubmit')?.click();
-    });
-
-    await wait(1000);
-
-    console.log('[IMPORT] Processo finalizado');
-
-    return true;
-  }
 
   async function wanPage() {
 
