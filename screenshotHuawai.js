@@ -85,23 +85,34 @@ var inputPassword = null;
     await clicarTextoEmTodosFrames(page, 'Skip');
     await wait(5000);
 
-    try {
-       await wait(40000);
-       await clicarTextoEmTodosFrames(page, 'Finish');
-    } catch (e) {
-       await wait(40000); // aguarda o equipamento voltar
+  //  try {
+    //   await wait(30000);
+     //  await screenshot('presetLogin-after.png')
+   //    await wait(2000)
+    //   await clicarTextoEmTodosFrames(page, 'Finish');
+    //   await wait(4000);
+  //     await screenshot('presetLogin-after.png')
+  //  } catch (e) {
+       await wait(30000); // aguarda o equipamento voltar
+    
+       await screenshot('presetLogin-before.png')
+       await wait(5000)
+    
        await page.goto('http://192.168.101.1/', {
           waitUntil: 'domcontentloaded',
           timeout: 60000
        });
-    }
-
+ //   }
     await wait(5000)
-    await screenshot('04-login-after.png')
+    await screenshot('presetLogin-after.png')
+    await wait(5000)
     ///////////////////
     ///////////////////
-
+    await screenshot('presetLogin-before.png')
+    await wait(2000)
     await loginHuawai(inputPassword);
+    await wait(2000)
+    await screenshot('presetLogin-after.png')
 
     await wait(2000)
 
