@@ -64,13 +64,17 @@ var inputPassword = null;
       acao: 'click'
     });
 
-    await wait(5000)
+    await wait(5000);
 await clicarTextoEmFramePorSrc(page, '/PortalUPPort.asp', 'Next');
-        await wait(5000)
+
+await wait(5000);
 await clicarTextoEmFramePorSrc(page, '/PortalSetWiFiPwd.asp', 'Skip');
-        await wait(5000)
+
+await wait(5000);
 await clicarTextoEmFramePorSrc(page, '/PortalSetPWD.asp', 'Skip');
 
+
+    
        await wait(30000); // aguarda o equipamento voltar
     
        await screenshot('presetFINISH-before.png')
@@ -295,11 +299,31 @@ await clicarTextoEmFramePorSrc(page, '/PortalSetPWD.asp', 'Skip');
     return clicked;
   }
 
-  async function clicarTextoEmFramePorSrc(page, srcParte, texto) {
-  const frame = page.frames().find(f => f.url().includes(srcParte));
+  async function listarFrames(page, label = '') {
+  console.log(`\n=== FRAMES ${label} ===`);
+  for (const f of page.frames()) {
+    console.log(f.url());
+  }
+}
+
+async function aguardarFramePorSrc(page, srcParte, timeout = 15000) {
+  const inicio = Date.now();
+
+  while (Date.now() - inicio < timeout) {
+    const frame = page.frames().find(f => f.url().includes(srcParte));
+    if (frame) return frame;
+    await new Promise(r => setTimeout(r, 300));
+  }
+
+  return null;
+}
+
+async function clicarTextoEmFramePorSrc(page, srcParte, texto) {
+  const frame = await aguardarFramePorSrc(page, srcParte, 15000);
 
   if (!frame) {
     console.log(`Frame não encontrado: ${srcParte}`);
+    await listarFrames(page, `após tentar ${srcParte}`);
     return false;
   }
 
@@ -307,8 +331,7 @@ await clicarTextoEmFramePorSrc(page, '/PortalSetPWD.asp', 'Skip');
 
   const ok = await frame.evaluate((texto) => {
     const normaliza = (s) => (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
-
-    const textoAlvo = normaliza(texto);
+    const alvoTexto = normaliza(texto);
 
     const seletor = [
       'button',
@@ -336,26 +359,22 @@ await clicarTextoEmFramePorSrc(page, '/PortalSetPWD.asp', 'Skip');
 
     const alvo = candidatos.find(el => {
       const txt = normaliza(el.innerText || el.value || el.textContent);
-      return txt === textoAlvo;
+      return txt === alvoTexto;
     });
 
     if (!alvo) return false;
 
-    alvo.scrollIntoView({
-      block: 'center',
-      inline: 'center'
-    });
-
+    alvo.scrollIntoView({ block: 'center', inline: 'center' });
     alvo.click();
     return true;
   }, texto);
 
   if (ok) {
-    console.log(`Achou e clicou em: ${srcParte}`);
+    console.log(`Achou e clicou em: ${srcParte} -> ${texto}`);
     return true;
   }
 
-  console.log(`Texto não encontrado em: ${srcParte}`);
+  console.log(`Texto não encontrado em: ${srcParte} -> ${texto}`);
   return false;
 }
 
