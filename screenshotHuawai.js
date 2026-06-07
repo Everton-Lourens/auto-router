@@ -64,39 +64,13 @@ var inputPassword = null;
       acao: 'click'
     });
 
-   // await wait(5000)
-  //  await procurarEAcionarEmTodosFrames(page, 'Next', {
-   //   modo: 'selector',
-   //   acao: 'click'
-   // });
     await wait(5000)
-  await screenshot('after-link.png')
-    await wait(5000)
-    await clicarTextoEmTodosFrames(page, 'Next');
+await clicarTextoEmFramePorSrc(page, '/PortalUPPort.asp', 'Next');
+        await wait(5000)
+await clicarTextoEmFramePorSrc(page, '/PortalSetWiFiPwd.asp', 'Skip');
+        await wait(5000)
+await clicarTextoEmFramePorSrc(page, '/PortalSetPWD.asp', 'Skip');
 
-    await wait(5000)
-    await screenshot('after-next.png')
-  //  await procurarEAcionarEmTodosFrames(page, 'Skip', {
-    //  modo: 'selector',
-    //  acao: 'click'
-   // });
-    await wait(5000)
-    await clicarTextoEmTodosFrames(page, 'Skip');
-    await wait(5000);
-    await screenshot('after-skip11.png')
-
-    await wait(5000)
-    await clicarTextoEmTodosFrames(page, 'Skip');
-    await wait(5000);
-    await screenshot('after-skip22.png')
-  //  try {
-    //   await wait(30000);
-     //  await screenshot('presetLogin-after.png')
-   //    await wait(2000)
-    //   await clicarTextoEmTodosFrames(page, 'Finish');
-    //   await wait(4000);
-  //     await screenshot('presetLogin-after.png')
-  //  } catch (e) {
        await wait(30000); // aguarda o equipamento voltar
     
        await screenshot('presetFINISH-before.png')
@@ -321,7 +295,71 @@ var inputPassword = null;
     return clicked;
   }
 
-  async function clicarTextoEmTodosFrames(page, texto) {
+  async function clicarTextoEmFramePorSrc(page, srcParte, texto) {
+  const frame = page.frames().find(f => f.url().includes(srcParte));
+
+  if (!frame) {
+    console.log(`Frame não encontrado: ${srcParte}`);
+    return false;
+  }
+
+  await frame.waitForSelector('body', { timeout: 5000 }).catch(() => null);
+
+  const ok = await frame.evaluate((texto) => {
+    const normaliza = (s) => (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+    const textoAlvo = normaliza(texto);
+
+    const seletor = [
+      'button',
+      'input[type="button"]',
+      'input[type="submit"]',
+      'input[type="reset"]',
+      'a',
+      '[role="button"]',
+      'td',
+      'span',
+      'div',
+      'label'
+    ].join(',');
+
+    const candidatos = [...document.querySelectorAll(seletor)].filter(el => {
+      const style = getComputedStyle(el);
+      const r = el.getBoundingClientRect();
+      return (
+        style.display !== 'none' &&
+        style.visibility !== 'hidden' &&
+        r.width > 0 &&
+        r.height > 0
+      );
+    });
+
+    const alvo = candidatos.find(el => {
+      const txt = normaliza(el.innerText || el.value || el.textContent);
+      return txt === textoAlvo;
+    });
+
+    if (!alvo) return false;
+
+    alvo.scrollIntoView({
+      block: 'center',
+      inline: 'center'
+    });
+
+    alvo.click();
+    return true;
+  }, texto);
+
+  if (ok) {
+    console.log(`Achou e clicou em: ${srcParte}`);
+    return true;
+  }
+
+  console.log(`Texto não encontrado em: ${srcParte}`);
+  return false;
+}
+
+  async function clicarTextoEmTodosFrames222(page, texto) {
     for (const frame of page.frames()) {
       try {
         const ok = await frame.evaluate((texto) => {
