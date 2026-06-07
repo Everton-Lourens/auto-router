@@ -86,16 +86,14 @@ var inputPassword = null;
     await wait(5000);
 
     try {
-      await clicarTextoEmTodosFrames(page, 'Finish');
-      await wait(20000);
+       await wait(40000);
+       await clicarTextoEmTodosFrames(page, 'Finish');
     } catch (e) {
-
-    await wait(30000); // aguarda o equipamento voltar
-
-    await page.goto('http://192.168.101.1/', {
-      waitUntil: 'domcontentloaded',
-      timeout: 60000
-    });
+       await wait(40000); // aguarda o equipamento voltar
+       await page.goto('http://192.168.101.1/', {
+          waitUntil: 'domcontentloaded',
+          timeout: 60000
+       });
     }
 
     await wait(5000)
