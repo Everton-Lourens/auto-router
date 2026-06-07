@@ -64,14 +64,22 @@ var inputPassword = null;
       acao: 'click'
     });
 
-    await wait(5000);
-await clicarTextoEmFramePorSrc(page, '/PortalUPPort.asp', 'Next');
-
-await wait(5000);
-await clicarTextoEmFramePorSrc(page, '/PortalSetWiFiPwd.asp', 'Skip');
-
-await wait(5000);
+await wait(3000)
+    await screenshot('Next-before.png')
+    await wait(3000)
+    await clicarTextoEmFramePorSrc(page, '/PortalUPPort.asp', 'Next');
+await new Promise(r => setTimeout(r, 3000));
+    await wait(3000)
+await screenshot('skip111-before.png')
+await wait(3000)
+    await clicarTextoEmFramePorSrc(page, '/PortalSetWiFiPwd.asp', 'Skip');
+await new Promise(r => setTimeout(r, 3000));
+    await wait(3000)
+await screenshot('skip222-before.png')
+    await wait(3000)
 await clicarTextoEmFramePorSrc(page, '/PortalSetPWD.asp', 'Skip');
+await wait(3000)
+    await screenshot('skip-after.png')
 
 
     
@@ -299,37 +307,17 @@ await clicarTextoEmFramePorSrc(page, '/PortalSetPWD.asp', 'Skip');
     return clicked;
   }
 
-  async function listarFrames(page, label = '') {
-  console.log(`\n=== FRAMES ${label} ===`);
-  for (const f of page.frames()) {
-    console.log(f.url());
-  }
-}
-
-async function aguardarFramePorSrc(page, srcParte, timeout = 15000) {
-  const inicio = Date.now();
-
-  while (Date.now() - inicio < timeout) {
-    const frame = page.frames().find(f => f.url().includes(srcParte));
-    if (frame) return frame;
-    await new Promise(r => setTimeout(r, 300));
-  }
-
-  return null;
-}
-
 async function clicarTextoEmFramePorSrc(page, srcParte, texto) {
-  const frame = await aguardarFramePorSrc(page, srcParte, 15000);
+  const frame = page.frames().find(f => f.url().includes(srcParte));
 
   if (!frame) {
     console.log(`Frame não encontrado: ${srcParte}`);
-    await listarFrames(page, `após tentar ${srcParte}`);
     return false;
   }
 
   await frame.waitForSelector('body', { timeout: 5000 }).catch(() => null);
 
-  const ok = await frame.evaluate((texto) => {
+  const dados = await frame.evaluate((texto) => {
     const normaliza = (s) => (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
     const alvoTexto = normaliza(texto);
 
@@ -339,11 +327,58 @@ async function clicarTextoEmFramePorSrc(page, srcParte, texto) {
       'input[type="submit"]',
       'input[type="reset"]',
       'a',
-      '[role="button"]',
-      'td',
-      'span',
-      'div',
-      'label'
+      '[role="button"]'
+    ].join(',');
+
+    const candidatos = [...document.querySelectorAll(seletor)]
+      .filter(el => {
+        const style = getComputedStyle(el);
+        const r = el.getBoundingClientRect();
+        return (
+          style.display !== 'none' &&
+          style.visibility !== 'hidden' &&
+          r.width > 0 &&
+          r.height > 0
+        );
+      })
+      .map(el => {
+        const r = el.getBoundingClientRect();
+        return {
+          tag: el.tagName,
+          text: normaliza(el.innerText || el.value || el.textContent),
+          html: el.outerHTML.slice(0, 300),
+          x: r.left + r.width / 2,
+          y: r.top + r.height / 2
+        };
+      });
+
+    const alvo = candidatos.find(el => el.text === alvoTexto);
+
+    return alvo || null;
+  }, texto);
+
+  if (!dados) {
+    console.log(`Texto não encontrado em: ${srcParte} -> ${texto}`);
+    return false;
+  }
+
+  console.log('Elemento alvo:', {
+    tag: dados.tag,
+    text: dados.text,
+    html: dados.html
+  });
+
+  const box = await frame.evaluate((texto) => {
+    const normaliza = (s) => (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+    const alvoTexto = normaliza(texto);
+
+    const seletor = [
+      'button',
+      'input[type="button"]',
+      'input[type="submit"]',
+      'input[type="reset"]',
+      'a',
+      '[role="button"]'
     ].join(',');
 
     const candidatos = [...document.querySelectorAll(seletor)].filter(el => {
@@ -362,20 +397,30 @@ async function clicarTextoEmFramePorSrc(page, srcParte, texto) {
       return txt === alvoTexto;
     });
 
-    if (!alvo) return false;
+    if (!alvo) return null;
 
+    const r = alvo.getBoundingClientRect();
     alvo.scrollIntoView({ block: 'center', inline: 'center' });
-    alvo.click();
-    return true;
+
+    return {
+      x: r.left + r.width / 2,
+      y: r.top + r.height / 2
+    };
   }, texto);
 
-  if (ok) {
-    console.log(`Achou e clicou em: ${srcParte} -> ${texto}`);
-    return true;
+  if (!box) {
+    console.log(`Não consegui calcular a posição do clique: ${texto}`);
+    return false;
   }
 
-  console.log(`Texto não encontrado em: ${srcParte} -> ${texto}`);
-  return false;
+  await page.mouse.click(box.x, box.y);
+
+  await new Promise(r => setTimeout(r, 3000));
+
+  const urls = page.frames().map(f => f.url());
+  console.log('Frames após clique:', urls);
+
+  return true;
 }
 
   async function clicarTextoEmTodosFrames222(page, texto) {
