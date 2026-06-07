@@ -335,7 +335,7 @@ async function clicarBotaoPorTextoNoFrame(page, srcParte, texto) {
     await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
   }
 
-  await page.waitForTimeout(1500);
+  await wait(3000);
 
   console.log(`Achou e clicou em: ${srcParte} -> ${texto}`);
   return true;
