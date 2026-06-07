@@ -44,7 +44,7 @@ var inputPassword = null;
   async function presetHuawai() {
     if (!inputPassword) throw new Error('password é obrigatório');
 
-    await loginHuawai('root', inputPassword);
+    await loginHuawai(inputPassword);
     await wait(5000)
     ///////////////////
     ///////////////////
@@ -55,7 +55,7 @@ var inputPassword = null;
        const frameUrl = await iframeHandle.contentFrame();
 
        console.log('iframe URL:', frameUrl?.url());
-    catch (e) {
+    }  catch (e) {
        await wait(8000)
     }
 
