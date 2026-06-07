@@ -135,6 +135,34 @@ fs.writeFileSync(
 
 console.log('SSID alterado para:', novoSSID);
 
+
+
+
+    const fs = require('fs');
+
+const arquivo = '/storage/emulated/0/Download/router/default_config.bin';
+const antigo = Buffer.from('E&L - 5G', 'utf8');
+const novo = Buffer.from(novoSSID, 'utf8');
+
+let buf = fs.readFileSync(arquivo);
+
+const pos = buf.indexOf(antigo);
+if (pos === -1) {
+  throw new Error('SSID antigo não encontrado no binário');
+}
+
+if (novo.length !== antigo.length) {
+  throw new Error('Para patch binário direto, o novo SSID precisa ter o mesmo tamanho');
+}
+await wait(1000);
+novo.copy(buf, pos);
+    await wait(1000);
+fs.writeFileSync(arquivo, buf);
+
+console.log('SSID alterado para:', novoSSID);
+
+    
+
     ///////////////////////////
     ///////////////////////////
     await wait(2000);
