@@ -84,12 +84,18 @@ var inputPassword = null;
     await wait(5000)
     await clicarTextoEmTodosFrames(page, 'Skip');
 
+    try {
+      await clicarTextoEmTodosFrames(page, 'Finish');
+
+    } catch (e) {
+
     await wait(30000); // aguarda o equipamento voltar
 
     await page.goto('http://192.168.101.1/', {
       waitUntil: 'domcontentloaded',
       timeout: 60000
     });
+    }
 
     await wait(5000)
     await screenshot('04-login-after.png')
