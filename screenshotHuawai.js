@@ -36,7 +36,7 @@ var inputPassword = null;
     height: 720
   });
 
-  inputPassword = '';
+  inputPassword = 't8EtN?4y';
   await presetHuawai();
   //await loginHuawai();
   //await wanPage()
@@ -51,9 +51,9 @@ var inputPassword = null;
     await page.waitForSelector('#iframepage', { visible: true, timeout: 15000 });
 
     const iframeHandle = await page.$('#iframepage');
-    const frame = await iframeHandle.contentFrame();
+    const frameUrl = await iframeHandle.contentFrame();
 
-    console.log('iframe URL:', frame?.url());
+    console.log('iframe URL:', frameUrl?.url());
 
     await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
       modo: 'selector',
@@ -91,6 +91,8 @@ var inputPassword = null;
     await screenshot('04-login-after.png')
     ///////////////////
     ///////////////////
+
+    await loginHuawai(passwordInput);
 
     await wait(2000)
 
@@ -157,7 +159,7 @@ var inputPassword = null;
     return true;
   }
 
-  async function loginHuawai(login = 'root', password = 't8EtN?4y') {
+  async function loginHuawai(password = '@62474b3745JR') {
     if (!password) {
       throw new Error('password é obrigatório');
     }
@@ -173,6 +175,8 @@ var inputPassword = null;
     await wait(3000);
 
     console.log('Preenchendo login...');
+    console.log('[Login Huawai] Login: ' + login);
+    console.log('[Login Huawai] Senha: ' + password);
 
     await page.type('input[type="text"]', `${login}`);
     await page.type('input[type="password"]', `${password}`);
