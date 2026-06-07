@@ -49,14 +49,14 @@ var inputPassword = null;
     ///////////////////
     ///////////////////
     try {
-       await page.waitForSelector('#iframepage', { visible: true, timeout: 15000 });
+      await page.waitForSelector('#iframepage', { visible: true, timeout: 15000 });
 
-       const iframeHandle = await page.$('#iframepage');
-       const frameUrl = await iframeHandle.contentFrame();
+      const iframeHandle = await page.$('#iframepage');
+      const frameUrl = await iframeHandle.contentFrame();
 
-       console.log('iframe URL:', frameUrl?.url());
-    }  catch (e) {
-       await wait(8000)
+      console.log('iframe URL:', frameUrl?.url());
+    } catch (e) {
+      await wait(8000)
     }
 
     await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
@@ -70,12 +70,12 @@ var inputPassword = null;
     await clicarBotaoPorTextoNoFrame(page, '/PortalSetWiFiPwd.asp', 'Skip');
     await wait(3000)
     await clicarBotaoPorTextoNoFrame(page, '/PortalSetPWD.asp', 'Skip');
-      
-       await wait(30000); // aguarda o equipamento voltar
-       await page.goto('http://192.168.101.1/', {
-          waitUntil: 'domcontentloaded',
-          timeout: 60000
-       });
+
+    await wait(30000); // aguarda o equipamento voltar
+    await page.goto('http://192.168.101.1/', {
+      waitUntil: 'domcontentloaded',
+      timeout: 60000
+    });
 
     await wait(5000)
     await loginHuawai(inputPassword);
@@ -283,63 +283,60 @@ var inputPassword = null;
     return clicked;
   }
 
+  async function clicarBotaoPorTextoNoFrame(page, srcParte, texto) {
+    const frame = page.frames().find(f => f.url().includes(srcParte));
 
+    if (!frame) {
+      console.log(`Frame não encontrado: ${srcParte}`);
+      return false;
+    }
 
-  
-async function clicarBotaoPorTextoNoFrame(page, srcParte, texto) {
-  const frame = page.frames().find(f => f.url().includes(srcParte));
+    await frame.waitForSelector('body', { timeout: 5000 }).catch(() => null);
 
-  if (!frame) {
-    console.log(`Frame não encontrado: ${srcParte}`);
-    return false;
+    const handle = await frame.evaluateHandle((texto) => {
+      const normaliza = (s) => (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+      const alvoTexto = normaliza(texto);
+
+      const candidatos = [
+        ...document.querySelectorAll('button, a, input[type="button"], input[type="submit"], [role="button"]')
+      ].filter(el => {
+        const r = el.getBoundingClientRect();
+        const style = getComputedStyle(el);
+        return r.width > 0 && r.height > 0 &&
+          style.display !== 'none' &&
+          style.visibility !== 'hidden';
+      });
+
+      return candidatos.find(el => {
+        const txt = normaliza(el.innerText || el.value || el.textContent);
+        return txt === alvoTexto;
+      }) || null;
+    }, texto);
+
+    const element = handle.asElement();
+    if (!element) {
+      console.log(`Texto não encontrado em: ${srcParte} -> ${texto}`);
+      return false;
+    }
+
+    await element.evaluate(el => el.scrollIntoView({ block: 'center', inline: 'center' }));
+
+    try {
+      await element.click({ delay: 80 });
+    } catch (err) {
+      console.log('Falhou no elementHandle.click(), tentando mouse.click():', err.message);
+
+      const box = await element.boundingBox();
+      if (!box) return false;
+
+      await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    }
+
+    await wait(3000);
+
+    console.log(`Achou e clicou em: ${srcParte} -> ${texto}`);
+    return true;
   }
-
-  await frame.waitForSelector('body', { timeout: 5000 }).catch(() => null);
-
-  const handle = await frame.evaluateHandle((texto) => {
-    const normaliza = (s) => (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
-    const alvoTexto = normaliza(texto);
-
-    const candidatos = [
-      ...document.querySelectorAll('button, a, input[type="button"], input[type="submit"], [role="button"]')
-    ].filter(el => {
-      const r = el.getBoundingClientRect();
-      const style = getComputedStyle(el);
-      return r.width > 0 && r.height > 0 &&
-             style.display !== 'none' &&
-             style.visibility !== 'hidden';
-    });
-
-    return candidatos.find(el => {
-      const txt = normaliza(el.innerText || el.value || el.textContent);
-      return txt === alvoTexto;
-    }) || null;
-  }, texto);
-
-  const element = handle.asElement();
-  if (!element) {
-    console.log(`Texto não encontrado em: ${srcParte} -> ${texto}`);
-    return false;
-  }
-
-  await element.evaluate(el => el.scrollIntoView({ block: 'center', inline: 'center' }));
-
-  try {
-    await element.click({ delay: 80 });
-  } catch (err) {
-    console.log('Falhou no elementHandle.click(), tentando mouse.click():', err.message);
-
-    const box = await element.boundingBox();
-    if (!box) return false;
-
-    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
-  }
-
-  await wait(3000);
-
-  console.log(`Achou e clicou em: ${srcParte} -> ${texto}`);
-  return true;
-}
 
   async function clicarTextoEmTodosFrames222(page, texto) {
     for (const frame of page.frames()) {
