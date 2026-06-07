@@ -96,7 +96,7 @@ var inputPassword = null;
     ///////////////////
     ///////////////////
 
-    await loginHuawai(passwordInput);
+    await loginHuawai(inputPassword);
 
     await wait(2000)
 
