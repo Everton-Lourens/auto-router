@@ -69,12 +69,11 @@ var isPreset = null;
   await initRouter();
 
   async function initRouter() {
-await goTR068()
-    return true
       inputPassword = '76%t9C=Z';
       await loginHuawai();
       await presetHuawai();
 
+    await goTR068();
   }
 
   async function goTR068() {
@@ -112,7 +111,6 @@ const isPreset = tr069Frame
    await screenshot('01-TR-069.png');
     } else {
       console.log('❌ tr069.jrtelecom.com.br =》 Preset NÃO foi aplicado...');
-  await screenshot('01TesteTESTE-TESTE--TR-069.png');
     }
     
   }
@@ -120,20 +118,11 @@ const isPreset = tr069Frame
   async function presetHuawai() {
     if (!isLogged) await loginHuawai();
     if (initSetup) await initConfig();
-    await wait(3000)
+    await wait(2000)
+
+    await goMoreOptions();
     
-    await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
-    await page.click('#moreFunctionPage');
-
-    await wait(8000)
-
-    const frame = page.frames().find(
-      f => f.url().includes('configindex.asp')
-    );
-
-    await frame.click('#systool');
-
-    await wait(5000)
+    await goSystemManagement();
 
     await frame.click('#cfgconfig');
 
@@ -212,9 +201,36 @@ console.log('SSID alterado para:', novoSSID);
     await wait(1000);
 
     console.log('[IMPORT] Processo finalizado');
+    isLogged = false;
+    isPreset = true;
 
     return true;
   }
+
+  async function goMoreOptions() {
+if (!isLogged) await loginHuawai();
+    if (initSetup) await initConfig();
+    await wait(3000)
+    
+    await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
+    await page.click('#moreFunctionPage');
+
+    await wait(8000)
+  }
+
+  async function goSystemManagement() {
+if (!isLogged) await loginHuawai();
+    if (initSetup) await initConfig();
+    await wait(3000)
+    
+const frame = page.frames().find(
+      f => f.url().includes('configindex.asp')
+    );
+
+    await frame.click('#systool');
+
+    await wait(5000)
+    }
 
   async function initConfig() {
         await wait(5000)
