@@ -55,7 +55,7 @@ var isPreset = null;
 
   }
 
-  async function TR068() {
+  async function goTR068() {
     if (!isLogged) await loginHuawai();
     if (initSetup) await initConfig();
     await wait(3000)
@@ -70,8 +70,8 @@ var isPreset = null;
     );
 
     await frame.click('#systool');
-
     await wait(5000);
+   await frame.click('#tr069config');
   }
 
   async function presetHuawai() {
