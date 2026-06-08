@@ -106,7 +106,6 @@ var isPreset = null;
   }
 
   async function presetHuawai() {
-    await goMoreOptions();
     await goSystemManagement();
 
     const frame = page.frames().find(
@@ -203,6 +202,8 @@ var isPreset = null;
     if (!isLogged) await loginHuawai();
     if (initSetup) await initConfig();
     await wait(3000);
+
+    await goMoreOptions();
 
     const frame = page.frames().find(
       f => f.url().includes('configindex.asp')
