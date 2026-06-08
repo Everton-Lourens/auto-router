@@ -299,10 +299,12 @@ var isPreset = null;
         console.log('Clicando login...');
         await clickIfExistsBySelector('#loginbutton');
 
-        await wait(5000);
+        await wait(3000);
 
         loginButton = await page.$('#loginbutton');
 
+        await wait(2000);
+await screenshot('trste')
         if (loginButton) {
           console.log('Login falhou');
           isLogged = false;
