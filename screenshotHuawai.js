@@ -567,6 +567,26 @@ if (!isLogged) {
     return clicked;
   }
 
+  async function getIdSelector() {
+  for (const frame of page.frames()) {
+  try {
+    const campos = await frame.evaluate(() => {
+      return [...document.querySelectorAll('input')]
+        .map(el => ({
+          id: el.id,
+          name: el.name,
+          type: el.type,
+          value: el.value
+        }))
+        .filter(el => el.value);
+    });
+
+    console.log('FRAME:', frame.url());
+    console.table(campos);
+  } catch (e) {}
+}
+}
+
   await browser.close();
 
 })();
