@@ -269,7 +269,7 @@ if (!isLogged) {
       return false;
     }
   }
-
+}
 
   
   async function screenshot(name) {
