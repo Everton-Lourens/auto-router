@@ -49,6 +49,8 @@ var isPreset = null;
   await initRouter();
 
   async function initRouter() {
+await goTR068()
+    return true
       inputPassword = '76%t9C=Z';
       await loginHuawai();
       await presetHuawai();
@@ -71,7 +73,19 @@ var isPreset = null;
 
     await frame.click('#systool');
     await wait(5000);
-   await frame.click('#tr069config');
+    await frame.click('#tr069config');
+    await wait(2000);
+    const html = await page.content();
+
+    const conteins = html.includes('tr069.jrtelecom.com.br');
+
+console.log(conteins);
+    console.log('tr069.jrtelecom.com.br');
+    console.log(conteins);
+    console.log('tr069.jrtelecom.com.br');
+    console.log(conteins);
+    console.log('tr069.jrtelecom.com.br');
+    
   }
 
   async function presetHuawai() {
