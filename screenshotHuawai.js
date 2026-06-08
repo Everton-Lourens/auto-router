@@ -77,14 +77,7 @@ var isPreset = null;
   }
 
   async function goTR068() {
-    if (!isLogged) await loginHuawai();
-    if (initSetup) await initConfig();
-    await wait(3000)
-
-    await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
-    await page.click('#moreFunctionPage');
-
-    await wait(8000)
+    await goMoreOptions();
 
     const frame = page.frames().find(
       f => f.url().includes('configindex.asp')
@@ -108,20 +101,17 @@ const isPreset = tr069Frame
 
     if (isPreset) {
       console.log('✅ tr069.jrtelecom.com.br =》 Preset já foi aplicado!');
-   await screenshot('01-TR-069.png');
+      await wait(2000);
+      await screenshot('01-TR-069.png');
     } else {
       console.log('❌ tr069.jrtelecom.com.br =》 Preset NÃO foi aplicado...');
+      isPreset = false;
     }
     
   }
 
   async function presetHuawai() {
-    if (!isLogged) await loginHuawai();
-    if (initSetup) await initConfig();
-    await wait(2000)
-
     await goMoreOptions();
-    
     await goSystemManagement();
 
     await frame.click('#cfgconfig');
