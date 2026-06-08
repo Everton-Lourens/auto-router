@@ -293,12 +293,9 @@ if (!isLogged) {
 
   async function tryLogin(password) {
     try {
-      await wait(5000);
-
+      await wait(2000);
       let loginButton = await page.$('#loginbutton');
-
       const moreOptions = await page.$('#moreFunctionPage');
-
       if (!loginButton && moreOptions) {
         isLogged = true;
         return true;
