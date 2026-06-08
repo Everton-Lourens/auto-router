@@ -45,6 +45,26 @@ var isPreset = null;
     height: 720
   });
 
+  async function GENIALgetIdSelector() {
+  for (const frame of page.frames()) {
+  try {
+    const campos = await frame.evaluate(() => {
+      return [...document.querySelectorAll('input')]
+        .map(el => ({
+          id: el.id,
+          name: el.name,
+          type: el.type,
+          value: el.value
+        }))
+        .filter(el => el.value);
+    });
+
+    console.log('FRAME:', frame.url());
+    console.table(campos);
+  } catch (e) {}
+}
+}
+
 
   await initRouter();
 
@@ -80,7 +100,7 @@ const tr069Frame = page.frames().find(
   f => f.url().includes('/html/ssmp/tr069/tr069.asp')
 );
 
-const encontrouJR = tr069Frame
+const containsJRurl = tr069Frame
   ? await tr069Frame.$eval(
       '#URL',
       el => (el.value || '').includes('tr069.jrtelecom.com.br')
@@ -88,10 +108,15 @@ const encontrouJR = tr069Frame
   : false;
 
 console.log(
-  encontrouJR
-    ? '✅ tr069.jrtelecom.com.br encontrado'
+  containsJRurl
+    ? ''
     : '❌ tr069.jrtelecom.com.br não encontrado'
 );
+    if (containsJRurl) {
+      console.log('✅ tr069.jrtelecom.com.br =》 Preset já foi aplicado!');
+    } else {
+console.log('❌ tr069.jrtelecom.com.br =》 Preset NÃO foi aplicado...');
+    }
     
   }
 
@@ -574,25 +599,7 @@ if (!isLogged) {
     return clicked;
   }
 
-  async function getIdSelector() {
-  for (const frame of page.frames()) {
-  try {
-    const campos = await frame.evaluate(() => {
-      return [...document.querySelectorAll('input')]
-        .map(el => ({
-          id: el.id,
-          name: el.name,
-          type: el.type,
-          value: el.value
-        }))
-        .filter(el => el.value);
-    });
-
-    console.log('FRAME:', frame.url());
-    console.table(campos);
-  } catch (e) {}
-}
-}
+  
 
   await browser.close();
 
