@@ -100,22 +100,19 @@ const tr069Frame = page.frames().find(
   f => f.url().includes('/html/ssmp/tr069/tr069.asp')
 );
 
-const containsJRurl = tr069Frame
+const isPreset = tr069Frame
   ? await tr069Frame.$eval(
       '#URL',
       el => (el.value || '').includes('tr069.jrtelecom.com.br')
     ).catch(() => false)
   : false;
 
-console.log(
-  containsJRurl
-    ? ''
-    : '❌ tr069.jrtelecom.com.br não encontrado'
-);
-    if (containsJRurl) {
+    if (isPreset) {
       console.log('✅ tr069.jrtelecom.com.br =》 Preset já foi aplicado!');
+   await screenshot('01-TR-069.png');
     } else {
-console.log('❌ tr069.jrtelecom.com.br =》 Preset NÃO foi aplicado...');
+      console.log('❌ tr069.jrtelecom.com.br =》 Preset NÃO foi aplicado...');
+  await screenshot('01TesteTESTE-TESTE--TR-069.png');
     }
     
   }
