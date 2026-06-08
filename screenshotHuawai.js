@@ -75,7 +75,7 @@ await goTR068()
     await wait(5000);
     await frame.click('#tr069config');
     await wait(2000);
-    const html = await page.content();
+    const html = await frame.content();
 
     const conteins = html.includes('tr069.jrtelecom.com.br');
 
