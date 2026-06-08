@@ -211,14 +211,14 @@ console.log('SSID alterado para:', novoSSID);
   }
 
 async function loginHuawai() {
-  await tryLogin(defaultPassword);
+  if (inputPassword)
+    await tryLogin(inputPassword);
+
+  if (!isLogged)
+    await tryLogin(defaultPassword);
 
 if (!isLogged) {
-  await tryLogin(inputPassword);
-}
-
-if (!isLogged) {
-  throw new Error('Não foi possível realizar login no roteador.');
+  throw new Error('SENHA DO ROTEADOR INVÁLIDA.');
 }
 
   const loginButton = await page.$('#loginbutton');
@@ -233,11 +233,7 @@ if (!isLogged) {
   }
 
   async function tryLogin(password) {
-    if (!password) {
-      throw new Error('Informe a senha para continuar.');
-    }
-
-    await wait(5000);
+    await wait(2000);
 
     console.log('Abrindo IP do HUAWEI...');
     console.log('http://192.168.101.1/');
