@@ -75,16 +75,23 @@ await goTR068()
     await wait(5000);
     await frame.click('#tr069config');
     await wait(2000);
-    const html = await frame.content();
 
-    const conteins = html.includes('tr069.jrtelecom.com.br');
+const tr069Frame = page.frames().find(
+  f => f.url().includes('/html/ssmp/tr069/tr069.asp')
+);
 
-console.log(conteins);
-    console.log('tr069.jrtelecom.com.br');
-    console.log(conteins);
-    console.log('tr069.jrtelecom.com.br');
-    console.log(conteins);
-    console.log('tr069.jrtelecom.com.br');
+const encontrouJR = tr069Frame
+  ? await tr069Frame.$eval(
+      '#URL',
+      el => (el.value || '').includes('tr069.jrtelecom.com.br')
+    ).catch(() => false)
+  : false;
+
+console.log(
+  encontrouJR
+    ? '✅ tr069.jrtelecom.com.br encontrado'
+    : '❌ tr069.jrtelecom.com.br não encontrado'
+);
     
   }
 
