@@ -1,4 +1,3 @@
-//
 const puppeteer = require('puppeteer-core');
 const fs = require('fs');
 
@@ -13,7 +12,6 @@ const defaultPassword = '@62474b3745JR';
 var isLogged = false;
 var initSetup = null;
 var isPreset = null;
-
 
 (async () => {
 
@@ -46,33 +44,31 @@ var isPreset = null;
   });
 
   async function GENIALgetIdSelector() {
-  for (const frame of page.frames()) {
-  try {
-    const campos = await frame.evaluate(() => {
-      return [...document.querySelectorAll('input')]
-        .map(el => ({
-          id: el.id,
-          name: el.name,
-          type: el.type,
-          value: el.value
-        }))
-        .filter(el => el.value);
-    });
+    for (const frame of page.frames()) {
+      try {
+        const campos = await frame.evaluate(() => {
+          return [...document.querySelectorAll('input')]
+            .map(el => ({
+              id: el.id,
+              name: el.name,
+              type: el.type,
+              value: el.value
+            }))
+            .filter(el => el.value);
+        });
 
-    console.log('FRAME:', frame.url());
-    console.table(campos);
-  } catch (e) {}
-}
-}
-
+        console.log('FRAME:', frame.url());
+        console.table(campos);
+      } catch (e) {}
+    }
+  }
 
   await initRouter();
 
   async function initRouter() {
-      inputPassword = '76%t9C=Z';
-      await loginHuawai();
-      await presetHuawai();
-
+    inputPassword = '76%t9C=Z';
+    await loginHuawai();
+    await presetHuawai();
     await goTR068();
   }
 
@@ -88,16 +84,16 @@ var isPreset = null;
     await frame.click('#tr069config');
     await wait(2000);
 
-const tr069Frame = page.frames().find(
-  f => f.url().includes('/html/ssmp/tr069/tr069.asp')
-);
+    const tr069Frame = page.frames().find(
+      f => f.url().includes('/html/ssmp/tr069/tr069.asp')
+    );
 
-const isPreset = tr069Frame
-  ? await tr069Frame.$eval(
-      '#URL',
-      el => (el.value || '').includes('tr069.jrtelecom.com.br')
-    ).catch(() => false)
-  : false;
+    const isPreset = tr069Frame
+      ? await tr069Frame.$eval(
+          '#URL',
+          el => (el.value || '').includes('tr069.jrtelecom.com.br')
+        ).catch(() => false)
+      : false;
 
     if (isPreset) {
       console.log('✅ tr069.jrtelecom.com.br =》 Preset já foi aplicado!');
@@ -107,15 +103,17 @@ const isPreset = tr069Frame
       console.log('❌ tr069.jrtelecom.com.br =》 Preset NÃO foi aplicado...');
       isPreset = false;
     }
-    
   }
 
   async function presetHuawai() {
     await goMoreOptions();
     await goSystemManagement();
 
-    await frame.click('#cfgconfig');
+    const frame = page.frames().find(
+      f => f.url().includes('configindex.asp')
+    );
 
+    await frame.click('#cfgconfig');
     await wait(3000);
 
     console.log('[IMPORT] Procurando frame cfgfile...');
@@ -129,35 +127,7 @@ const isPreset = tr069Frame
       throw new Error('input[type=file] não encontrado');
     }
 
-
-    ///////////////////////////
-    ///////////////////////////
-async function updatePreset() {
-const novoSSID = 'CLIENTE123';
-
-let xml = fs.readFileSync(
-  '/storage/emulated/0/Download/router/preDefault.html',
-  'utf8'
-);
-
-    await wait(1000);
-
-xml = xml.replaceAll('TRICOLOR', novoSSID);
-    
-await wait(1000);
-    
-fs.writeFileSync(
-  '/storage/emulated/0/Download/router/upHuawai.html',
-  xml
-);
-
-console.log('SSID alterado para:', novoSSID);
-
-}
-    
-
-    ///////////////////////////
-    ///////////////////////////
+    await updatePreset();
     await wait(2000);
 
     console.log('[IMPORT] Iniciando upload...');
@@ -174,7 +144,6 @@ console.log('SSID alterado para:', novoSSID);
 
     await wait(2000);
 
-    // Aceita automaticamente o popup de confirmação (OK)
     page.once('dialog', async dialog => {
       console.log('[IMPORT] Dialog encontrado:', dialog.message());
       await dialog.accept();
@@ -197,37 +166,57 @@ console.log('SSID alterado para:', novoSSID);
     return true;
   }
 
+  async function updatePreset() {
+    const novoSSID = 'CLIENTE123';
+
+    let xml = fs.readFileSync(
+      '/storage/emulated/0/Download/router/preDefault.html',
+      'utf8'
+    );
+
+    await wait(1000);
+
+    xml = xml.replaceAll('TRICOLOR', novoSSID);
+
+    await wait(1000);
+
+    fs.writeFileSync(
+      '/storage/emulated/0/Download/router/upHuawai.html',
+      xml
+    );
+
+    console.log('SSID alterado para:', novoSSID);
+  }
+
   async function goMoreOptions() {
-if (!isLogged) await loginHuawai();
+    if (!isLogged) await loginHuawai();
     if (initSetup) await initConfig();
-    await wait(3000)
-    
+    await wait(3000);
+
     await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
     await page.click('#moreFunctionPage');
 
-    await wait(8000)
+    await wait(8000);
   }
 
   async function goSystemManagement() {
-if (!isLogged) await loginHuawai();
+    if (!isLogged) await loginHuawai();
     if (initSetup) await initConfig();
-    await wait(3000)
-    
-const frame = page.frames().find(
+    await wait(3000);
+
+    const frame = page.frames().find(
       f => f.url().includes('configindex.asp')
     );
 
     await frame.click('#systool');
-
-    await wait(5000)
-    }
+    await wait(5000);
+  }
 
   async function initConfig() {
-        await wait(5000)
+    await wait(5000);
     if (!isLogged) await loginHuawai();
     if (!initSetup) return true;
-    ///////////////////
-    ///////////////////
+
     try {
       await page.waitForSelector('#iframepage', { visible: true, timeout: 15000 });
 
@@ -236,7 +225,7 @@ const frame = page.frames().find(
 
       console.log('iframe URL:', frameUrl?.url());
     } catch (e) {
-      await wait(8000)
+      await wait(8000);
     }
 
     await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
@@ -244,100 +233,98 @@ const frame = page.frames().find(
       acao: 'click'
     });
 
-    await wait(3000)
+    await wait(3000);
     await clicarBotaoPorTextoNoFrame(page, '/PortalUPPort.asp', 'Next');
-    await wait(3000)
+    await wait(3000);
     await clicarBotaoPorTextoNoFrame(page, '/PortalSetWiFiPwd.asp', 'Skip');
-    await wait(3000)
+    await wait(3000);
     await clicarBotaoPorTextoNoFrame(page, '/PortalSetPWD.asp', 'Skip');
-    await wait(3000)
+    await wait(3000);
     isLogged = false;
     initSetup = false;
 
-    await wait(30000); // aguarda o equipamento voltar
+    await wait(30000);
     if (!isLogged) await loginHuawai();
     return true;
   }
 
-async function loginHuawai() {
-  if (inputPassword)
-    await tryLogin(inputPassword);
+  async function loginHuawai() {
+    if (inputPassword)
+      await tryLogin(inputPassword);
 
-  if (!isLogged)
-    await tryLogin(defaultPassword);
+    if (!isLogged)
+      await tryLogin(defaultPassword);
 
-if (!isLogged) {
-  throw new Error('SENHA DO ROTEADOR INVÁLIDA.');
-}
+    if (!isLogged) {
+      throw new Error('SENHA DO ROTEADOR INVÁLIDA.');
+    }
 
-  const loginButton = await page.$('#loginbutton');
-  const moreOptions = await page.$('#moreFunctionPage');
+    const loginButton = await page.$('#loginbutton');
+    const moreOptions = await page.$('#moreFunctionPage');
 
-  if (!loginButton && moreOptions) {
-    console.log('Roteador já configurado.');
-    initSetup = false;
-  } else {
-    console.log('Roteador requer configuração inicial.');
-    initSetup = true;
-  }
+    if (!loginButton && moreOptions) {
+      console.log('Roteador já configurado.');
+      initSetup = false;
+    } else {
+      console.log('Roteador requer configuração inicial.');
+      initSetup = true;
+    }
 
-  async function tryLogin(password) {
-    try {
-      await wait(2000);
-      let loginButton = await page.$('#loginbutton');
-      const moreOptions = await page.$('#moreFunctionPage');
-      if (!loginButton && moreOptions) {
-        isLogged = true;
-        return true;
-      }
+    async function tryLogin(password) {
+      try {
+        await wait(2000);
+        let loginButton = await page.$('#loginbutton');
+        const moreOptions = await page.$('#moreFunctionPage');
+        if (!loginButton && moreOptions) {
+          isLogged = true;
+          return true;
+        }
 
-      console.log('Abrindo IP do HUAWEI...');
-    console.log('http://192.168.101.1/');
+        console.log('Abrindo IP do HUAWEI...');
+        console.log('http://192.168.101.1/');
 
-    await page.goto('http://192.168.101.1/', {
-      waitUntil: 'domcontentloaded',
-      timeout: 30000
-    });
+        await page.goto('http://192.168.101.1/', {
+          waitUntil: 'domcontentloaded',
+          timeout: 30000
+        });
 
-      console.log('Tentando login...');
-      console.log('[Login Huawei] Login: ' + login);
-      console.log('[Login Huawei] Senha: ' + password);
+        console.log('Tentando login...');
+        console.log('[Login Huawei] Login: ' + login);
+        console.log('[Login Huawei] Senha: ' + password);
 
-      await page.type('input[type="text"]', login);
-      await page.type('input[type="password"]', password);
+        await page.type('input[type="text"]', login);
+        await page.type('input[type="password"]', password);
 
-      console.log('Clicando login...');
-      await clickIfExistsBySelector('#loginbutton');
+        console.log('Clicando login...');
+        await clickIfExistsBySelector('#loginbutton');
 
-      await wait(5000);
+        await wait(5000);
 
-      loginButton = await page.$('#loginbutton');
+        loginButton = await page.$('#loginbutton');
 
-      if (loginButton) {
-        console.log('Login falhou');
+        if (loginButton) {
+          console.log('Login falhou');
+          isLogged = false;
+          return false;
+        }
+
+        const moreOptionsAfter = await page.$('#moreFunctionPage');
+
+        if (moreOptionsAfter) {
+          console.log('Login realizado');
+          isLogged = true;
+          return true;
+        }
+
+      } catch (err) {
+        console.log('Erro no login:', err.message);
         isLogged = false;
         return false;
       }
-
-      moreOptions = await page.$('#moreFunctionPage');
-
-      if (moreOptions) {
-      console.log('Login realizado');
-      isLogged = true;
-      return true;
-      }
-
-    } catch (err) {
-      console.log('Erro no login:', err.message);
-      isLogged = false;
-      return false;
     }
   }
-}
 
-  
   async function screenshot(name) {
-
     const path = `${SAVE_DIR}/${name}`;
 
     console.log(`Screenshot: ${path}`);
@@ -347,7 +334,7 @@ if (!isLogged) {
       fullPage: true
     });
   }
-  
+
   async function wait(time) {
     await new Promise(resolve => setTimeout(resolve, time));
   }
@@ -409,8 +396,8 @@ if (!isLogged) {
 
   async function procurarEAcionarEmTodosFrames(page, alvo, opts = {}) {
     const {
-      modo = 'auto',   // 'auto' | 'id' | 'selector' | 'funcao'
-      acao = 'click',   // 'click' | 'call'
+      modo = 'auto',
+      acao = 'click',
       timeoutMs = 15000,
       verbose = true
     } = opts;
@@ -422,7 +409,6 @@ if (!isLogged) {
 
     const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
-    // Garante tempo para o iframe ser criado/carregado
     await page.waitForSelector('#iframepage', { timeout: timeoutMs }).catch(() => { });
     await sleep(1000);
 
@@ -602,8 +588,6 @@ if (!isLogged) {
     console.log(`clickIfExistsBySelector(${selector}) =>`, clicked);
     return clicked;
   }
-
-  
 
   await browser.close();
 
