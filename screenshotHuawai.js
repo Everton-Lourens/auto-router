@@ -126,9 +126,6 @@ var isPreset = null;
       throw new Error('input[type=file] não encontrado');
     }
 
-    await updatePreset();
-    await wait(2000);
-
     console.log('[IMPORT] Iniciando upload...');
     await fileInput.uploadFile(
       '/storage/emulated/0/Download/router/upHuawai.html'
