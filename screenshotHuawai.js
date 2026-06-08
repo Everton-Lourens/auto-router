@@ -55,12 +55,30 @@ var isPreset = null;
 
   }
 
+  async function TR068() {
+    if (!isLogged) await loginHuawai();
+    if (initSetup) await initConfig();
+    await wait(3000)
+
+    await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
+    await page.click('#moreFunctionPage');
+
+    await wait(8000)
+
+    const frame = page.frames().find(
+      f => f.url().includes('configindex.asp')
+    );
+
+    await frame.click('#systool');
+
+    await wait(5000);
+  }
+
   async function presetHuawai() {
     if (!isLogged) await loginHuawai();
     if (initSetup) await initConfig();
     await wait(3000)
     
-    try {
     await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
     await page.click('#moreFunctionPage');
 
