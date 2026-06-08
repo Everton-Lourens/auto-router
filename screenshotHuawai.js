@@ -9,6 +9,11 @@ var emailPPPoE = null;
 var passwordPPPoE = null;
 var nameSSID = null;
 var passwordSSID = null;
+const defaultPassword = '@62474b3745JR';
+var isLogged = false;
+var initSetup = null;
+var isPreset = null;
+
 
 (async () => {
 
@@ -40,49 +45,22 @@ var passwordSSID = null;
     height: 720
   });
 
-  inputPassword = '76%t9C=Z';
-  await presetHuawai();
+
+  await initRouter();
+
+  async function initRouter() {
+      inputPassword = '76%t9C=Z';
+      await loginHuawai();
+      await presetHuawai();
+
+  }
 
   async function presetHuawai() {
-    if (!inputPassword) throw new Error('password é obrigatório');
-
-    await loginHuawai(inputPassword);
-    await wait(5000)
-    ///////////////////
-    ///////////////////
+    if (!isLogged) await loginHuawai();
+    if (initSetup) await initConfig();
+    await wait(3000)
+    
     try {
-      await page.waitForSelector('#iframepage', { visible: true, timeout: 15000 });
-
-      const iframeHandle = await page.$('#iframepage');
-      const frameUrl = await iframeHandle.contentFrame();
-
-      console.log('iframe URL:', frameUrl?.url());
-    } catch (e) {
-      await wait(8000)
-    }
-
-    await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
-      modo: 'selector',
-      acao: 'click'
-    });
-
-    await wait(3000)
-    await clicarBotaoPorTextoNoFrame(page, '/PortalUPPort.asp', 'Next');
-    await wait(3000)
-    await clicarBotaoPorTextoNoFrame(page, '/PortalSetWiFiPwd.asp', 'Skip');
-    await wait(3000)
-    await clicarBotaoPorTextoNoFrame(page, '/PortalSetPWD.asp', 'Skip');
-
-    await wait(30000); // aguarda o equipamento voltar
-    await page.goto('http://192.168.101.1/', {
-      waitUntil: 'domcontentloaded',
-      timeout: 60000
-    });
-
-    await wait(5000)
-    await loginHuawai(inputPassword);
-    await wait(2000)
-
     await page.waitForSelector('#moreFunctionPage', { visible: true, timeout: 10000 });
     await page.click('#moreFunctionPage');
 
@@ -177,36 +155,123 @@ console.log('SSID alterado para:', novoSSID);
     return true;
   }
 
-  async function loginHuawai(password = '@62474b3745JR') {
-    if (!password) {
-      throw new Error('password é obrigatório');
+  async function initConfig() {
+        await wait(5000)
+    if (!isLogged) await loginHuawai();
+    if (!initSetup) return true;
+    ///////////////////
+    ///////////////////
+    try {
+      await page.waitForSelector('#iframepage', { visible: true, timeout: 15000 });
+
+      const iframeHandle = await page.$('#iframepage');
+      const frameUrl = await iframeHandle.contentFrame();
+
+      console.log('iframe URL:', frameUrl?.url());
+    } catch (e) {
+      await wait(8000)
     }
 
-    console.log('Abrindo HUAWAI...');
+    await procurarEAcionarEmTodosFrames(page, 'a.continue-config', {
+      modo: 'selector',
+      acao: 'click'
+    });
 
-    //await page.goto('http://100.68.12.253/', {
+    await wait(3000)
+    await clicarBotaoPorTextoNoFrame(page, '/PortalUPPort.asp', 'Next');
+    await wait(3000)
+    await clicarBotaoPorTextoNoFrame(page, '/PortalSetWiFiPwd.asp', 'Skip');
+    await wait(3000)
+    await clicarBotaoPorTextoNoFrame(page, '/PortalSetPWD.asp', 'Skip');
+    await wait(3000)
+    isLogged = false;
+    initSetup = false;
+
+    await wait(30000); // aguarda o equipamento voltar
+    if (!isLogged) await loginHuawai();
+    return true;
+  }
+
+async function loginHuawai() {
+  await tryLogin(defaultPassword);
+
+if (!isLogged) {
+  await tryLogin(inputPassword);
+}
+
+if (!isLogged) {
+  throw new Error('Não foi possível realizar login no roteador.');
+}
+
+  const loginButton = await page.$('#loginbutton');
+  const moreOptions = await page.$('#moreFunctionPage');
+
+  if (!loginButton && moreOptions) {
+    console.log('Roteador já configurado.');
+    initSetup = false;
+  } else {
+    console.log('Roteador requer configuração inicial.');
+    initSetup = true;
+  }
+
+  async function tryLogin(password) {
+    if (!password) {
+      throw new Error('Informe a senha para continuar.');
+    }
+
+    await wait(5000);
+
+    console.log('Abrindo IP do HUAWEI...');
+    console.log('http://192.168.101.1/');
+
     await page.goto('http://192.168.101.1/', {
       waitUntil: 'domcontentloaded',
       timeout: 30000
     });
 
-    await wait(3000);
+    try {
+      await wait(5000);
 
-    console.log('Preenchendo login...');
-    console.log('[Login Huawai] Login: ' + login);
-    console.log('[Login Huawai] Senha: ' + password);
+      let loginButton = await page.$('#loginbutton');
 
-    await page.type('input[type="text"]', `${login}`);
-    await page.type('input[type="password"]', `${password}`);
+      if (!loginButton) {
+        isLogged = true;
+        return true;
+      }
 
-    console.log('Clicando login...');
-    await clickIfExistsBySelector('#loginbutton')
-    console.log('Login realizado...');
-    await wait(2000);
+      console.log('Tentando login...');
+      console.log('[Login Huawei] Login: ' + login);
+      console.log('[Login Huawei] Senha: ' + password);
 
-    return true;
+      await page.type('input[type="text"]', login);
+      await page.type('input[type="password"]', password);
+
+      console.log('Clicando login...');
+      await clickIfExistsBySelector('#loginbutton');
+
+      await wait(5000);
+
+      loginButton = await page.$('#loginbutton');
+
+      if (loginButton) {
+        console.log('Login falhou');
+        isLogged = false;
+        return false;
+      }
+
+      console.log('Login realizado');
+      isLogged = true;
+      return true;
+
+    } catch (err) {
+      console.log('Erro no login:', err.message);
+      isLogged = false;
+      return false;
+    }
   }
 
+
+  
   async function screenshot(name) {
 
     const path = `${SAVE_DIR}/${name}`;
