@@ -292,25 +292,25 @@ if (!isLogged) {
   }
 
   async function tryLogin(password) {
-    await wait(2000);
+    try {
+      await wait(5000);
 
-    console.log('Abrindo IP do HUAWEI...');
+      let loginButton = await page.$('#loginbutton');
+
+      const moreOptions = await page.$('#moreFunctionPage');
+
+      if (!loginButton && moreOptions) {
+        isLogged = true;
+        return true;
+      }
+
+      console.log('Abrindo IP do HUAWEI...');
     console.log('http://192.168.101.1/');
 
     await page.goto('http://192.168.101.1/', {
       waitUntil: 'domcontentloaded',
       timeout: 30000
     });
-
-    try {
-      await wait(5000);
-
-      let loginButton = await page.$('#loginbutton');
-
-      if (!loginButton) {
-        isLogged = true;
-        return true;
-      }
 
       console.log('Tentando login...');
       console.log('[Login Huawei] Login: ' + login);
@@ -332,9 +332,13 @@ if (!isLogged) {
         return false;
       }
 
+      moreOptions = await page.$('#moreFunctionPage');
+
+      if (moreOptions) {
       console.log('Login realizado');
       isLogged = true;
       return true;
+      }
 
     } catch (err) {
       console.log('Erro no login:', err.message);
