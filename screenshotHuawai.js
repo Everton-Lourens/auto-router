@@ -68,6 +68,10 @@ var isPreset = null;
   async function initRouter() {
     inputPassword = '76%t9C=Z';
     await loginHuawai();
+
+    await goPPPoEConfig();
+    return true;
+    
     await presetHuawai();
     //await goTR068();
   }
@@ -182,6 +186,19 @@ var isPreset = null;
     );
 
     console.log('SSID alterado para:', novoSSID);
+  }
+
+  async function goPPPoEConfig() {
+    if (!isLogged) await loginHuawai();
+    if (initSetup) await initConfig();
+    await wait(3000);
+
+    await page.waitForSelector('#internetPageBtn', { visible: true, timeout: 10000 });
+    await page.click('#internetPageBtn');
+
+    await wait(8000);
+    await screenshot('02-PPPoE.png')
+    return true;
   }
 
   async function goMoreOptions() {
