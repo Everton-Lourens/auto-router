@@ -3,15 +3,19 @@ const fs = require('fs');
 
 const SAVE_DIR = '/storage/emulated/0/Download/router';
 const login = 'root';
+const defaultPassword = '@62474b3745JR';
 var inputPassword = null;
 var emailPPPoE = null;
 var passwordPPPoE = null;
 var nameSSID = null;
 var passwordSSID = null;
-const defaultPassword = '@62474b3745JR';
 var isLogged = false;
 var initSetup = null;
 var isPreset = null;
+var emailPPPoE = 'nullEmail'
+var passwordPPPoE = 'nullPassword'
+
+var printPPPoE = null;
 
 (async () => {
 
@@ -69,12 +73,14 @@ var isPreset = null;
     inputPassword = '76%t9C=Z';
     await loginHuawai();
 
+    printPPPoE = false;
     await goPPPoEConfig();
     return true;
     
     await presetHuawai();
     //await goTR068();
   }
+
 
   async function goTR068() {
     await goMoreOptions();
@@ -196,7 +202,49 @@ var isPreset = null;
     await page.waitForSelector('#internetPageBtn', { visible: true, timeout: 10000 });
     await page.click('#internetPageBtn');
 
-    await wait(8000);
+    const pppoeFrame = page.frames().find(
+    f => f.url().includes('/html/bbsp/internetAP/internetAP.asp')
+  );
+
+  if (!pppoeFrame) {
+    console.log('❌ Frame PPPoE não encontrado');
+    return false;
+  }
+
+  const usuarioAtual = await pppoeFrame
+    .$eval('#UserName', el => el.value.trim())
+    .catch(() => '');
+
+  if (usuarioAtual === emailPPPoE || (printPPPoE)) {
+    console.log(`✅ PPPoE já configurado: ${usuarioAtual}`);
+    await screenshot('02-PPPoE.png');
+    return true;
+  }
+
+    if (!emailPPPoE || !passwordPPPoE) throw new Error('EMAIL OU SENHA DO "PPPoE" INVÁLIDA.');
+
+  console.log(`🔄 Alterando PPPoE para: ${emailPPPoE}`);
+
+  await pppoeFrame.$eval('#UserName', (el, valor) => {
+    el.value = '';
+    el.value = valor;
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  }, emailPPPoE);
+
+  await pppoeFrame.$eval('#Password', (el, valor) => {
+    el.value = '';
+    el.value = valor;
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  }, passwordPPPoE);
+
+    await wait(1000);
+
+  await pppoeFrame.click('#btnSaveTransmit');
+
+  console.log('✅ PPPoE salvo');
+    await wait(4000);
     await screenshot('02-PPPoE.png')
     return true;
   }
