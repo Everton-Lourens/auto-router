@@ -270,6 +270,7 @@ if (!isLogged) {
 
   async function tryLogin(password) {
     await wait(2000);
+    if (isPreset) password = defaultPassword;
 
     console.log('Abrindo IP do HUAWEI...');
     console.log('http://192.168.101.1/');
