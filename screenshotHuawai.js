@@ -12,8 +12,8 @@ var passwordSSID = null;
 var isLogged = false;
 var initSetup = null;
 var isPreset = null;
-var emailPPPoE = 'nullEmail'
-var passwordPPPoE = 'nullPassword'
+var emailPPPoE = null;
+var passwordPPPoE = null;
 
 var printPPPoE = null;
 
