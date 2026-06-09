@@ -72,13 +72,11 @@ var printPPPoE = null;
   async function initRouter() {
     inputPassword = '76%t9C=Z';
     await loginHuawai();
+    await presetHuawai();
 
     printPPPoE = false;
     await goPPPoEConfig();
-    return true;
-    
-    await presetHuawai();
-    //await goTR068();
+    await goTR068();
   }
 
 
