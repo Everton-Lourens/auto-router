@@ -69,7 +69,7 @@ var isPreset = null;
     inputPassword = '76%t9C=Z';
     await loginHuawai();
     await presetHuawai();
-    await goTR068();
+    //await goTR068();
   }
 
   async function goTR068() {
