@@ -202,6 +202,8 @@ var printPPPoE = null;
     await page.waitForSelector('#internetPageBtn', { visible: true, timeout: 10000 });
     await page.click('#internetPageBtn');
 
+    await wait(5000);
+    
     const pppoeFrame = page.frames().find(
     f => f.url().includes('/html/bbsp/internetAP/internetAP.asp')
   );
