@@ -114,6 +114,7 @@ var printPPPoE = null;
   }
 
   async function presetHuawai() {
+    if (isPreset) return true;
     await goSystemManagement();
 
     const frame = page.frames().find(
@@ -377,6 +378,7 @@ if (!isLogged) {
 
       console.log('Login realizado');
       isLogged = true;
+      if (password == defaultPassword) isPreset = true;
       return true;
 
     } catch (err) {
