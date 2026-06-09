@@ -4,6 +4,9 @@ const fs = require('fs');
 const SAVE_DIR = '/storage/emulated/0/Download/router';
 const login = 'root';
 const defaultPassword = '@62474b3745JR';
+let TEMPO_ESPERA_ROTEADOR_MS = 2 * 60 * 1000; // 2 minutos
+const INTERVALO_TENTATIVA_ROTEADOR_MS = 5000;  // 5 segundos entre tentativas
+const URL_ROTEADOR = 'http://192.168.101.1/';
 var inputPassword = null;
 var emailPPPoE = null;
 var passwordPPPoE = null;
@@ -313,6 +316,13 @@ var printPPPoE = null;
   }
 
   async function loginHuawai() {
+    const roteadorPronto = await aguardarRoteadorLigar();
+
+  if (!roteadorPronto) {
+    isLogged = false;
+    return false;
+  }
+    
   if (inputPassword)
     await tryLogin(inputPassword);
 
@@ -389,84 +399,6 @@ if (!isLogged) {
   }
 }
 
-  async function loginHuawai22222222() {
-    if (inputPassword)
-      await tryLogin(inputPassword);
-
-    if (!isLogged)
-      await tryLogin(defaultPassword);
-
-    if (!isLogged) {
-      throw new Error('SENHA DO ROTEADOR INVÁLIDA.');
-    }
-
-    const loginButton = await page.$('#loginbutton');
-    const moreOptions = await page.$('#moreFunctionPage');
-
-    if (!loginButton && moreOptions) {
-      console.log('Roteador já configurado.');
-      initSetup = false;
-    } else {
-      console.log('Roteador requer configuração inicial.');
-      initSetup = true;
-    }
-
-    async function tryLogin(password) {
-      try {
-        await wait(2000);
-        let loginButton = await page.$('#loginbutton');
-        const moreOptions = await page.$('#moreFunctionPage');
-        if (!loginButton && moreOptions) {
-          isLogged = true;
-          return true;
-        }
-
-        console.log('Abrindo IP do HUAWEI...');
-        console.log('http://192.168.101.1/');
-
-        await page.goto('http://192.168.101.1/', {
-          waitUntil: 'domcontentloaded',
-          timeout: 30000
-        });
-
-        console.log('Tentando login...');
-        console.log('[Login Huawei] Login: ' + login);
-        console.log('[Login Huawei] Senha: ' + password);
-
-        await page.type('input[type="text"]', login);
-        await page.type('input[type="password"]', password);
-
-        console.log('Clicando login...');
-        await clickIfExistsBySelector('#loginbutton');
-
-        await wait(3000);
-
-        loginButton = await page.$('#loginbutton');
-
-        await wait(2000);
-await screenshot('trste')
-        if (loginButton) {
-          console.log('Login falhou');
-          isLogged = false;
-          return false;
-        }
-
-        const moreOptionsAfter = await page.$('#moreFunctionPage');
-
-        if (moreOptionsAfter) {
-          console.log('Login realizado');
-          isLogged = true;
-          return true;
-        }
-
-      } catch (err) {
-        console.log('Erro no login:', err.message);
-        isLogged = false;
-        return false;
-      }
-    }
-  }
-
   async function screenshot(name) {
     const path = `${SAVE_DIR}/${name}`;
 
@@ -536,6 +468,35 @@ await screenshot('trste')
     console.log(`Achou e clicou em: ${srcParte} -> ${texto}`);
     return true;
   }
+
+  async function aguardarRoteadorLigar() {
+  const inicio = Date.now();
+
+  while (Date.now() - inicio < TEMPO_ESPERA_ROTEADOR_MS) {
+    try {
+      console.log('Aguardando o roteador responder...');
+      await page.goto(URL_ROTEADOR, {
+        waitUntil: 'domcontentloaded',
+        timeout: 10000
+      });
+
+      const loginButton = await page.$('#loginbutton');
+      const moreOptions = await page.$('#moreFunctionPage');
+
+      if (loginButton || moreOptions) {
+        console.log('Roteador respondeu e a página carregou.');
+        return true;
+      }
+    } catch (err) {
+      console.log('Roteador ainda não respondeu:', err.message);
+    }
+
+    await wait(INTERVALO_TENTATIVA_ROTEADOR_MS);
+  }
+
+  console.log('Tempo limite de espera do roteador atingido. Seguindo o fluxo normalmente.');
+  return false;
+}
 
   async function procurarEAcionarEmTodosFrames(page, alvo, opts = {}) {
     const {
