@@ -174,27 +174,7 @@ var printPPPoE = null;
     return true;
   }
 
-  async function updatePreset() {
-    const novoSSID = 'CLIENTE123';
 
-    let xml = fs.readFileSync(
-      '/storage/emulated/0/Download/router/preDefault.html',
-      'utf8'
-    );
-
-    await wait(1000);
-
-    xml = xml.replaceAll('TRICOLOR', novoSSID);
-
-    await wait(1000);
-
-    fs.writeFileSync(
-      '/storage/emulated/0/Download/router/upHuawai.html',
-      xml
-    );
-
-    console.log('SSID alterado para:', novoSSID);
-  }
 
   async function goPPPoEConfig() {
     if (!isLogged) await loginHuawai();
